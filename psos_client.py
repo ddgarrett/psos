@@ -1,5 +1,8 @@
-import queue
-import uasyncio
+"""
+    PSOS Client Superclass
+    
+"""
+from psos_subscriber import Subscriber
 
 from xmit_message import XmitMsg
 import queue
@@ -12,28 +15,30 @@ from psos_subscriber import Subscriber
 class Client:
     
     """
-        A Publish Subscriber OS Client who can publish and subscriber to topics.
-        Superclass for other clients.
-        
-                cl_parms = the parameters defined by the .json file for this Client.
+        Superclass of all PSOS Clients.
+
+        psos_parms = the parameters defined by the .json file for this Client.
                   
         Note: parameters must include at a minimum:
-        - name   - logical name of service
-        - module - name of the file with the definition for a module Client class
+        - name   - logical name of Client
+        - module - name of the file with the definition of the Module class for this Client
         
-        Client subclasses may also have additional parms such as pin definitions.
-        Those will be available to the client via a call to
+        Other optional parameters include:
+        - sub  - a list of topics this Client subscribers to
+        
+        Client subclasses are always named Module and may also have additional parms
+        such as pin definitions.
+        Those will be available to the service via a call to
             self.get_parm(name,default)
         where 'name' is the parm name and default is the default value if name was not
         specified in the .json file.
                 
         JSON file example:
             {"name":"log", "module":"cl_print", sub=["log/#"] },
-
-
+        
     """
     
-    def __init__(self, cl_parms):
+        def __init__(self, cl_parms):
         self.cl_parms = cl_parms
         self.name = cl_parms['name']        
         self.has_focus = False
