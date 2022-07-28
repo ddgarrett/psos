@@ -6,6 +6,9 @@
 
 import ujson
 import uasyncio
+import gc
+
+# print("0_boot: start - free space "+str(gc.mem_free()))
 
 # read the paramter file
 with open("psos_parms.json") as f:
@@ -13,14 +16,10 @@ with open("psos_parms.json") as f:
 
 # start main
 if "name" in parms:
-    print("starting",parms["name"])
+    print("boot: starting",parms["name"])
           
 main_name = parms["main"]
-print("starting " + main_name)
+print("boot: starting " + main_name)
 
 main = __import__(main_name)
 uasyncio.run(main.main(parms))
-    
-
-
-

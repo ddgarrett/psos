@@ -1,0 +1,23 @@
+{
+"name":"PSOS v00.02",
+"main":"psos_main",
+
+"defaults": {
+    "mqtt_prefix":"e01/",
+    "mqtt_name":"office_monitor"
+    "mqtt_descr":"e01 - ESP32 Office Temperature and Humidity Monitor"
+    },
+    
+"NOTE":"wifi and mqtt must be first two services",
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"e01/log" },
+    
+    {"name": "temp", "module":"svc_dht11", "dht11_pin":4,
+             "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht/" }
+
+ ]
+}
