@@ -1,12 +1,13 @@
 # psos
-Publish / Subscribe based OS
+Publish / Subscribe based OS.
 
-# Release 1
-Lightweight subset of MQTT used to communicate between clients on a single microcontroller.
+Instead of using queues and I2C to communicate between different microcontrollers, as MBOS did, use MQTT messages which can be sent and received over a local area network or the world wide web. MQTT uses a lightweight (compared to HTTP) protocol running under TCP/IP. It includes protocols that can guarantee delivery to clients which subscribe to topics.
 
-# Release 2 
-Will expand this to clients on other microcontrollers via I2C.
+# Release 0.0.1
+This first release is very lightweight. It is able to run on ESP8266 which implements WiFi and a TCP/IP stack, along with Micropython. The public MQTT broker, HiveMQ, uses TLS (the succssor to SSL) plus usernames and passwords to assure secure communications across the internet.
 
-# Release 3 
-Will expand this to include cloud based communication which will include MQTT support. 
-This version will probabaly use HiveMQ as a cloud based broker.
+- Free HiveMQ server for publicly accessible MQTT broker
+- Local Area Network docker based Mosquitto MQTT broker
+- Node-Red Server running from docker container to monitor messages and generate MQTT messages
+
+
