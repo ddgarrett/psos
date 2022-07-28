@@ -13,7 +13,6 @@ class PsosService:
     def __init__(self, parms):
         self._parms  = parms
         self._name   = self.get_parm("name")
-        self._device = self.get_parm("device","xxx")
         
     # get a parameter value
     # return default if parameter not specified
