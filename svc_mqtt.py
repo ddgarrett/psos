@@ -35,8 +35,6 @@ class ModuleService(PsosService):
         self._client_id = ubinascii.hexlify(machine.unique_id())
         self._client = None
         self._subscriptions = []
-        self._q = queue.Queue()
-        self._q_wait_cnt = 0
         
         print("mqtt: free space "+str(gc.mem_free()))
         self._retry_connect_mqtt()
