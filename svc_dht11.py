@@ -32,7 +32,7 @@ class ModuleService(PsosService):
         
     async def run(self):
         
-        mqtt = await self.get_mqtt()
+        mqtt = self.get_mqtt()
         await mqtt.subscribe(self._subscr_topic,self._trigger_q)
         
         while True:
@@ -59,13 +59,13 @@ class ModuleService(PsosService):
             # print("temp: "+str(temp)+", humidity:" + str(hum))
             # await self.log(msg)
             
-            mqtt = await self.get_mqtt()
+            mqtt = self.get_mqtt()
             await self.log("updating temp and humidity")
             await mqtt.publish(self._pub_topic,msg)
             # break # exit loop
     
         except OSError as e:
             print("Failed to read sensor")
-            mqtt = await self.get_mqtt()
+            mqtt = self.get_mqtt()
             await mqtt.publish(self._pub_topic,"starting...")
 

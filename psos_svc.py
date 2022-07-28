@@ -23,9 +23,8 @@ class PsosService:
     def get_svc(self,name):
         return self._parms.get_svc(name)
     
-    # suspend task until MQTT is ready
-    # then return the MQTT service
-    async def get_mqtt(self):
+    # return mqtt service
+    def get_mqtt(self):
         return self.get_svc("mqtt")
 
     # if a log service has been defined
