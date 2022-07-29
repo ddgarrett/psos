@@ -17,7 +17,12 @@
     {"name": "log",  "module":"svc_log",   "pub_log":"d01/log" },
     
     {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
-             "subscr_upd":"d01/dht/upd",   "pub_upd":"d01/dht/" }
+             "subscr_upd":"d01/dht/upd",   "pub_upd":"d01/dht/" },
+
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"d01/mem/upd",   "pub_dsk":"d01/dsk", "pub_mem":"d01/mem"}
 
  ]
 }
+
+
