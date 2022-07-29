@@ -1,10 +1,10 @@
 {
-"name":"PSOS v00.02",
+"name":"PSOS v00.02 - d01 device",
 "main":"psos_main",
 
 "defaults": {
     "mqtt_prefix":"d01/",
-    "mqtt_name":"office_monitor"
+    "mqtt_name":"office_monitor",
     "mqtt_descr":"d01 - ESP8266 Office Temperature and Humidity Monitor"
     },
     
