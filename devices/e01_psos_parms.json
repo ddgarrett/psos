@@ -16,14 +16,17 @@
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e01/log" },
     
-    {"name": "temp", "module":"svc_dht11", "dht11_pin":4,
+    {"name": "temp", "module":"svc_dht11", "dht11_pin":5,
              "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht/" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e01/mem/upd",   "pub_dsk":"e01/dsk", "pub_mem":"e01/mem"},
              
-    {"name": "touch", "module":"svc_touch", "pin":15, "threshold":300,
-             "pub_touch":"e01/dht/upd" }
+    {"name": "touch15", "module":"svc_touch", "pin":15, "threshold":300,
+             "pub_touch":"e01/dht/upd" },
+             
+    {"name": "touch4",  "module":"svc_touch", "pin":4, "threshold":300,
+             "pub_touch":"e01/mem/upd" }
 
  ]
 }
