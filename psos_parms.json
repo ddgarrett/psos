@@ -1,27 +1,41 @@
 {
-"name":"PSOS v00.02 - d01 device",
+"name":"PSOS v00.02 - emp device",
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"d01/",
+    "mqtt_prefix":"emp/",
     "mqtt_name":"office_monitor",
-    "mqtt_descr":"d01 - ESP8266 Office Temperature and Humidity Monitor"
+    "mqtt_descr":"emp - ESP32 Office Temperature and Humidity Monitor"
     },
     
-"NOTE":"wifi and mqtt must be first two services",
+"NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
-    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "disconnect":false},
-    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_esp", "_wifi":"wifi_home", "disconnect":true},
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_esp", "__broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    {"name": "i2c0", "module":"svc_i2c"  },
     
-    {"name": "log",  "module":"svc_log",   "pub_log":"d01/log" },
+    {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
     
-    {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
-             "subscr_upd":"d01/dht/upd",   "pub_upd":"d01/dht/" },
+    {"name": "temp", "module":"svc_dht11", "dht11_pin":5,
+             "subscr_upd":"emp/dht/upd",   "pub_upd":"emp/dht/" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"d01/mem/upd",   "pub_dsk":"d01/dsk", "pub_mem":"d01/mem"}
+             "subscr_upd":"emp/mem/upd",   "pub_dsk":"emp/dsk", "pub_mem":"emp/mem"},
+             
+    {"name": "touch15", "module":"svc_touch", "pin":15, "threshold":300,
+             "pub_touch":"emp/dht/upd" },
+             
+    {"name": "touch4",  "module":"svc_touch", "pin":4, "threshold":300,
+             "pub_touch":"emp/mem/upd" },
+             
+    {"name": "i2c_scan", "module":"svc_i2c_scan", "i2c":"i2c0",
+             "subscr_upd":"emp/i2c/upd",   "pub_scan":"emp/i2c"},
+             
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27",
+             "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
+             "subscr_msg":"emp/lcd" }
+                   
 
  ]
 }
-
