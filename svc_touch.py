@@ -39,7 +39,7 @@ class ModuleService(PsosService):
         touched = False
         r = 0
         
-        print("starting touch sensor")
+        print("starting touch sensor "+self._name)
         
         while True:
             try:
