@@ -37,7 +37,7 @@ class ModuleService(PsosService):
         
         mqtt = self.get_mqtt()
         touched = False
-        r = 0
+        r = 1000
         
         print("starting touch sensor "+self._name)
         
