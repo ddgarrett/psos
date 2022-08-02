@@ -17,25 +17,29 @@
     
     {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
     
-    {"name": "temp", "module":"svc_dht11", "dht11_pin":5,
-             "subscr_upd":"emp/dht/upd",   "pub_upd":"emp/dht/" },
+    {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
+             "subscr_upd":"emp/dht/upd",   "pub_upd":"emp/dht" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"emp/mem/upd",   "pub_dsk":"emp/dsk", "pub_mem":"emp/mem"},
-             
-    {"name": "touch15", "module":"svc_touch", "pin":15, "threshold":300,
-             "pub_touch":"emp/dht/upd" },
-             
-    {"name": "touch4",  "module":"svc_touch", "pin":4, "threshold":300,
-             "pub_touch":"emp/mem/upd" },
+             "subscr_upd":"emp/mem/upd",   "pub_upd":"emp/mem" },
              
     {"name": "i2c_scan", "module":"svc_i2c_scan", "i2c":"i2c0",
-             "subscr_upd":"emp/i2c/upd",   "pub_scan":"emp/i2c"},
+             "subscr_upd":"emp/i2c/upd",   "pub_upd":"emp/i2c"},
+             
+    {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
+             "pub_touch":"emp/dht/upd" },
              
     {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27",
              "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
-             "subscr_msg":"emp/lcd" }
-                   
+             "subscr_msg":"emp/lcd" },
+             
+    {"name": "dsp_temp", "module":"svc_pipe",
+             "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'cursor':[0,0]}}, {{'msg':'Temp: {temp}'}}, {{'cursor':[0,1]}}, {{'msg':'Humidity : {hum}'}}]" },               
+
+    {"name": "dsp_i2c", "module":"svc_pipe",
+             "subscr_in":"emp/i2c",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'cursor':[0,0]}}, {{'msg':'I2C Addr: {i2c_addr}'}}]" }                   
 
  ]
 }
