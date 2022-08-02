@@ -2,6 +2,8 @@
     Utility functions
 '''
 
+import ujson
+
 def to_str(t):
     if type(t) == str:
         return t
@@ -18,5 +20,5 @@ def to_bytes(t):
     if type(t) == str:
         return t.encode("utf-8")
     
-    return str(t).encode("utf-8")
+    return ujson.dumps(t).encode("utf-8")
     
