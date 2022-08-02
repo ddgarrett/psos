@@ -26,8 +26,7 @@ class ModuleService(PsosService):
         # which then sends updated data in the pub topic
         self._subscr_topic = parms.get_parm("subscr_upd")
         self._trigger_q = queue.Queue()
-        self._pub_mem = parms.get_parm("pub_mem")
-        self._pub_dsk = parms.get_parm("pub_dsk")
+        self._pub_upd = parms.get_parm("pub_upd")
         
     async def run(self):
         
@@ -36,14 +35,17 @@ class ModuleService(PsosService):
         
         while True:
             data = await self._trigger_q.get()
-            await self.send_data()
+            await self.send_data(mqtt)
             
             
     # send data via MQTT after receiving a update request
-    async def send_data(self):
-        mqtt = self.get_mqtt()
-        await mqtt.publish(self._pub_mem,self.free())
-        await mqtt.publish(self._pub_dsk,self.df())
+    async def send_data(self,mqtt):
+        msg = {
+            'disk_free' : self.df(),
+            'mem_free'  : self.free() }
+        
+        await mqtt.publish(self._pub_upd,msg)
+
 
     # disk free space
     def df(self):
@@ -52,7 +54,7 @@ class ModuleService(PsosService):
         total_mb = (s[2] * blk_size) / 1048576
         free_mb  = (s[3] * blk_size) / 1048576
         pct = free_mb/total_mb*100
-        return ('Disk Total: {0:.2f} MB Free: {1:.2f} ({2:.2f}%)'.format(total_mb, free_mb, pct))
+        return '{0:.2f}MB ({1:.2f}%)'.format(free_mb, pct)
         # return ('DFr {0:.2f}MB {1:.0f}%'.format(free_mb, pct))
 
     def free(self):
@@ -61,5 +63,5 @@ class ModuleService(PsosService):
         A = gc.mem_alloc()
         T = F+A
         P = '{0:.0f}%'.format(F/T*100)
-        return ('Mem free: {0:,} {1}'.format(F,P))
+        return '{0:,} {1}'.format(F,P)
 
