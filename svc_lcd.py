@@ -135,7 +135,6 @@ class ModuleService(PsosService):
         elif isinstance(command,dict):
             for key in command:
                 if key == 'msg':
-                    print("command msg: " + command[key])
                     self.lcd.putstr(command[key])
                 elif key == 'cursor':
                     self.set_cursor(command[key])
