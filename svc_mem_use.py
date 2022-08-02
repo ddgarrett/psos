@@ -54,7 +54,7 @@ class ModuleService(PsosService):
         total_mb = (s[2] * blk_size) / 1048576
         free_mb  = (s[3] * blk_size) / 1048576
         pct = free_mb/total_mb*100
-        return '{0:.2f}MB ({1:.2f}%)'.format(free_mb, pct)
+        return '{0:.2f}MB ({1:.0f}%)'.format(free_mb, pct)
         # return ('DFr {0:.2f}MB {1:.0f}%'.format(free_mb, pct))
 
     def free(self):
@@ -63,5 +63,5 @@ class ModuleService(PsosService):
         A = gc.mem_alloc()
         T = F+A
         P = '{0:.0f}%'.format(F/T*100)
-        return '{0:,} {1}'.format(F,P)
+        return '{0:,} ({1})'.format(F,P)
 

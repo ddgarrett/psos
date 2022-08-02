@@ -35,11 +35,15 @@
              
     {"name": "dsp_temp", "module":"svc_pipe",
              "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'cursor':[0,0]}}, {{'msg':'Temp: {temp}'}}, {{'cursor':[0,1]}}, {{'msg':'Humidity : {hum}'}}]" },               
+             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}'}}]" },               
 
     {"name": "dsp_i2c", "module":"svc_pipe",
              "subscr_in":"emp/i2c",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'cursor':[0,0]}}, {{'msg':'I2C Addr: {i2c_addr}'}}]" }                   
+             "format":"['clear', {{'msg':'I2C Addr: {i2c_addr}'}}]" }                   
+
+    {"name": "dsp_mem", "module":"svc_pipe",
+             "subscr_in":"emp/mem",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}'}}]" },               
 
  ]
 }
