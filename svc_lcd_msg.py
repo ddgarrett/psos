@@ -35,9 +35,6 @@ class SvcLcdMsg(SvcMsg):
         
         super().__init__(f,t,payload)
         
-        if self._payload == "":
-            self._payload = []
-        
     def set_payload(self,payload):
         self._payload.append({"payload":payload})
         return self
