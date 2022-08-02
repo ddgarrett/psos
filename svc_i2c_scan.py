@@ -23,7 +23,7 @@ class ModuleService(PsosService):
         # which then sends updated data in the pub topic
         self._subscr_topic = parms.get_parm("subscr_upd")
         self._trigger_q = queue.Queue()
-        self._pub_scan = parms.get_parm("pub_scan")
+        self._pub_upd = parms.get_parm("pub_upd")
         
         self._i2c_svc = parms.get_parm("i2c")
         
@@ -34,12 +34,11 @@ class ModuleService(PsosService):
         
         while True:
             data = await self._trigger_q.get()
-            await self.pub_scan(mqtt)
+            await self.pub_upd(mqtt)
             
     # send scan results via MQTT after receiving a update request
-    async def pub_scan(self,mqtt):
+    async def pub_upd(self,mqtt):
         i2c_svc = self.get_svc(self._i2c_svc)
         resp = i2c_svc.get_i2c().scan()
-        msg = "I2C addr: {}".format(resp)
-        print(msg)
-        await mqtt.publish(self._pub_scan,msg)
+        msg = {"i2c_addr": "{}".format(resp)}
+        await mqtt.publish(self._pub_upd,msg)
