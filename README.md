@@ -1,7 +1,19 @@
-# psos
-Publish / Subscribe based OS.
+# PSOS
+Publish / Subscribe OS (PSOS) is a framework that supports incremental development of complex microcontroller systems using simple Micropython modules. Key features include:
+- Simple to learn and use
+- Easily extensible through simple to develop reusable modules
+- Low overhead
 
-Instead of using queues and I2C to communicate between different microcontrollers, as MBOS did, use MQTT messages which can be sent and received over a local area network or the world wide web. MQTT uses a lightweight (compared to HTTP) protocol running under TCP/IP. It includes protocols that can guarantee delivery to clients which subscribe to topics.
+PSOS is uses the [uasyncio](https://docs.micropython.org/en/latest/library/uasyncio.html) library. This supports cooperative multitasking through coroutines that are both simple to learn and use as well as low overhead.
+
+The publish/subscribe functionality is supported using [MQTT](https://en.wikipedia.org/wiki/MQTT) a "lightweight, easy to use machine to machine network protocol." Although MQTT was developed primarily for communication between devices, PSOS also uses it to communicate between coroutines on a single microcontroller. The result is a flexible topology that allows services to run independently of where related services are physically located allowing the redistribution of services to where the most resources are available.
+
+An MQTT related technology, [Node-RED](https://en.wikipedia.org/wiki/Node-RED), is also a major influence on PSOS. As described in the linked to Wikipedia article
+
+> Node-RED is a flow-based development tool.. for wiring together hardware devices, APIs and online services as part of the Internet of Things... 
+>Elements of applications can be saved or shared for re-use. The runtime is built on Node.js. The flows created in Node-RED are stored using JSON
+
+Although PSOS uses Micropython instead of JavaScript, and is not developed via a visual UI like Node-RED, it does store the system definition in JSON and uses an Application Programming Interface (API) similar to Node-RED.
 
 # Release 0.0.1
 This first release is very lightweight. It is able to run on ESP8266 which implements WiFi and a TCP/IP stack, along with Micropython. The public MQTT broker, HiveMQ, uses TLS (the succssor to SSL) plus usernames and passwords to assure secure communications across the internet.
