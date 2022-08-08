@@ -26,7 +26,9 @@ from psos_parms import PsosParms
 async def main(parms):
         
     # globally accessible default parameters
-    defaults = parms["defaults"]
+    defaults = {}
+    if "defaults" in parms:
+        defaults = parms["defaults"]
     
     # globally accessible service instances
     services = {}
