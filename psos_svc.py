@@ -6,7 +6,6 @@
 """
 
 import uasyncio
-import queue
 
 class PsosService:
     
