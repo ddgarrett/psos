@@ -8,26 +8,34 @@
     "mqtt_descr":"e01 - ESP32 Office Temperature and Humidity Monitor"
     },
     
-"NOTE":"wifi and mqtt must be first two services",
+"NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
-    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "disconnect":false},
-    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_esp", "_wifi":"wifi_home", "disconnect":true},
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_esp", "__broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    {"name": "i2c0", "module":"svc_i2c"  },
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e01/log" },
     
     {"name": "temp", "module":"svc_dht11", "dht11_pin":5,
-             "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht/" },
+             "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e01/mem/upd",   "pub_dsk":"e01/dsk", "pub_mem":"e01/mem"},
+             "subscr_upd":"e01/mem/upd",   "pub_upd":"e01/mem" },
              
     {"name": "touch15", "module":"svc_touch", "pin":15, "threshold":300,
              "pub_touch":"e01/dht/upd" },
              
     {"name": "touch4",  "module":"svc_touch", "pin":4, "threshold":300,
-             "pub_touch":"e01/mem/upd" }
+             "pub_touch":"e01/mem/upd" },
+             
+    {"name": "dsp_temp", "module":"svc_pipe",
+             "subscr_in":"e01/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: e01'}}]" },               
+
+    {"name": "dsp_mem", "module":"svc_pipe",
+             "subscr_in":"e01/mem",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: e01'}}]" },               
 
  ]
 }
-
