@@ -1,0 +1,49 @@
+{
+"name":"PSOS v00.02 - emp device",
+"main":"psos_main",
+
+"defaults": {
+    "mqtt_prefix":"emp",
+    "mqtt_name":"office_monitor",
+    "mqtt_descr":"emp - ESP32 Office Temperature and Humidity Monitor"
+    },
+    
+"NOTE":"wifi, mqtt and i2c (if used) must be first three services",
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "_wifi":"wifi_esp", "disconnect":true},
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq", "_broker":"mqtt_docker_esp", "__broker":"mqtt_docker_home_acer" },
+    {"name": "i2c0", "module":"svc_i2c"  },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
+    
+    {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
+             "subscr_upd":"emp/dht/upd",   "pub_upd":"emp/dht" },
+
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"emp/mem/upd",   "pub_upd":"emp/mem" },
+             
+    {"name": "i2c_scan", "module":"svc_i2c_scan", "i2c":"i2c0",
+             "subscr_upd":"emp/i2c/upd",   "pub_upd":"emp/i2c"},
+             
+    {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
+             "pub_touch":"emp/dht/upd" },
+             
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27",
+             "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
+             "subscr_msg":"emp/lcd" },
+             
+    {"name": "dsp_temp", "module":"svc_pipe",
+             "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: emp'}}]" },               
+
+    {"name": "dsp_i2c", "module":"svc_pipe",
+             "subscr_in":"emp/i2c",  "pub_out":"emp/lcd",
+             "format":"['clear', {{'msg':'I2C Addr: {i2c_addr}\nDev: emp'}}]" }                   
+
+    {"name": "dsp_mem", "module":"svc_pipe",
+             "subscr_in":"emp/mem",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: emp'}}]" },               
+
+ ]
+}
