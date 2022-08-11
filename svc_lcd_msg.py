@@ -115,6 +115,7 @@ class SvcLcdMsg(SvcMsg):
     # display an hourglass for 2 seconds
     def dsp_hg(self):
         self._payload.append({CMD_DSP_HG:2})
+        return self
         
     # blank out the hourglass
     def blk_hg(self):
