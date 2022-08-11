@@ -3,16 +3,15 @@
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"emp/",
-    "mqtt_name":"office_monitor",
-    "mqtt_descr":"emp - ESP32 Office Temperature and Humidity Monitor"
+    "mqtt_prefix":"emp",
+    "pub_hourglass":"emp/lcd"
     },
     
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
-    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_esp", "_wifi":"wifi_home", "disconnect":true},
-    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_esp", "__broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "_wifi":"wifi_esp", "disconnect":true},
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq", "_broker":"mqtt_docker_esp", "__broker":"mqtt_docker_home_acer" },
     {"name": "i2c0", "module":"svc_i2c"  },
     
     {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
@@ -23,11 +22,17 @@
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"emp/mem/upd",   "pub_upd":"emp/mem" },
              
-    {"name": "i2c_scan", "module":"svc_i2c_scan", "i2c":"i2c0",
-             "subscr_upd":"emp/i2c/upd",   "pub_upd":"emp/i2c"},
+    {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
+             "pub_touch":"d01/dht/upd" },
+             
+    {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
+             "pub_touch":"d01/mem/upd" },
              
     {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
              "pub_touch":"emp/dht/upd" },
+             
+    {"name": "touch9", "module":"svc_touch", "pin":32, "threshold":300,
+             "pub_touch":"emp/mem/upd" },
              
     {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27",
              "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
@@ -35,15 +40,20 @@
              
     {"name": "dsp_temp", "module":"svc_pipe",
              "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}'}}]" },               
-
-    {"name": "dsp_i2c", "module":"svc_pipe",
-             "subscr_in":"emp/i2c",  "pub_out":"emp/lcd",
-             "format":"['clear', {{'msg':'I2C Addr: {i2c_addr}'}}]" }                   
+             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: emp'}}]" },               
 
     {"name": "dsp_mem", "module":"svc_pipe",
              "subscr_in":"emp/mem",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}'}}]" },               
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: emp'}}]" },  
+             
+    {"name": "dsp_temp_d01", "module":"svc_pipe",
+             "subscr_in":"d01/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: d01'}}]" },               
+
+    {"name": "dsp_mem_d01", "module":"svc_pipe",
+             "subscr_in":"d01/mem",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: d01'}}]" }
+             
 
  ]
 }
