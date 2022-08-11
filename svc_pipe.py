@@ -46,6 +46,9 @@ class ModuleService(PsosService):
 
         out = msg.get_payload()
         
+        if type(out) != dict:
+            out = {}
+        
         if self._format != "":
             out_t = self._format.format(**out)
             
