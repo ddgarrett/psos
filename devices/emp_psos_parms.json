@@ -39,11 +39,11 @@
 
     {"name": "dsp_i2c", "module":"svc_pipe",
              "subscr_in":"emp/i2c",  "pub_out":"emp/lcd",
-             "format":"['clear', {{'msg':'I2C Addr: {i2c_addr}\nDev: emp'}}]" }                   
+             "format":"['clear', {{'msg':'I2C Addr: {i2c_addr}\nDev: emp'}}]" },                 
 
     {"name": "dsp_mem", "module":"svc_pipe",
              "subscr_in":"emp/mem",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: emp'}}]" },               
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: emp'}}]" }           
 
  ]
 }
