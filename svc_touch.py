@@ -64,7 +64,7 @@ class ModuleService(PsosService):
             else:
                 touched = False
                     
-            await uasyncio.sleep_ms(300)
+            await uasyncio.sleep_ms(100)
 
     async def pub_hourglass(self,mqtt):
         if self._pub_hourglass != None:

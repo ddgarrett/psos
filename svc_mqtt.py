@@ -65,11 +65,11 @@ class ModuleService(PsosService):
         while True:
             
             # check for any subscribed messages
-            # ping MQTT every 66 loops
+            # ping MQTT every 200 loops
             if self._client != None:
                 try:
                     ping_wait = ping_wait + 1
-                    if ping_wait > 66:
+                    if ping_wait > 200:
                         ping_wait = 0
                         self._client.ping()
                         # print("pinged mqtt")
@@ -80,7 +80,7 @@ class ModuleService(PsosService):
                     self._client.disconnect()
                     self._client = None 
                     
-            await uasyncio.sleep_ms(300)
+            await uasyncio.sleep_ms(100)
             
     def _retry_connect_mqtt(self,try_cnt=3):
         while try_cnt > 0:
