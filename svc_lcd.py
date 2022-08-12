@@ -52,6 +52,8 @@ class ModuleService(PsosService):
         self.backlight_on   = True
         self.blink_task     = None
         self.blink_interval = 0
+        self.timeout        = parms.get_parm("timeout",0)
+        self.to_remain      = self.timeout + 1
         
         self.hg_task_cnt    = 0
         
@@ -86,6 +88,17 @@ class ModuleService(PsosService):
                 
             await uasyncio.sleep_ms(500)
         
+    # run forever, but only turn off backlight 
+    # if timeout == 0
+    async def timeout_backlight(self):
+        while True:
+            if self.timeout != 0 and self.to_remain > 0:
+                self.to_remain = self.to_remain - 1
+                if self.to_remain <= 0:
+                     self.set_backlight(False)
+                     
+            await uasyncio.sleep_ms(1000)
+        
     async def run(self):
         # Add any custom characters
         # Any custom characters must have a byte array
@@ -99,6 +112,10 @@ class ModuleService(PsosService):
         # Start the blink coroutine.
         # It won't do anything until blink_interval is set
         self.blink_task = uasyncio.create_task(self.blink_lcd())
+        
+        # Start the timeout coroutine.
+        # It won't do anything until timeout count is < 0-
+        self.timeout_task = uasyncio.create_task(self.timeout_backlight())
         
         # subscribe to topic and wait for messages
         mqtt = self.get_mqtt()
@@ -115,6 +132,12 @@ class ModuleService(PsosService):
             self.process_msg(msg)
                     
     def process_msg(self, msg):
+        
+        if not self.backlight_on:
+            self.set_backlight(True)
+            
+        if self.timeout > 0:
+            self.to_remain = self.timeout + 1
             
         payload = msg.get_payload()
         
@@ -174,7 +197,7 @@ class ModuleService(PsosService):
     # we reset the display, backlight and cursor
     def clear_screen(self):
         self.lcd.clear()
-        self.lcd.backlight_on()
+        self.set_backlight(True)
         self.lcd.display_on()
         self.lcd.blink_cursor_off()
         self.lcd.hide_cursor()
@@ -206,14 +229,3 @@ class ModuleService(PsosService):
         
         self.set_cursor([col,row])
         self.lcd.putstr(" ")
-
-        
-
-        
-        
-            
-                
-        
-
-    
-
