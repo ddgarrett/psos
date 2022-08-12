@@ -75,10 +75,8 @@ class ModuleService(PsosService):
                         # print("pinged mqtt")
                         
                     self._client.check_msg()
-                except OSError as e:
-                    print(e)
-                    self._client.disconnect()
-                    self._client = None 
+                except Exception as e:
+                    self.reset("MQTT :"+str(e))
                     
             await uasyncio.sleep_ms(100)
             
@@ -88,11 +86,14 @@ class ModuleService(PsosService):
               self._client = self._connect_mqtt()
               print("connected to mqtt")
               break
-            except OSError as e:
+            except Exception as e:
               print("error connecting to MQTT: " + str(e))
               try_cnt = try_cnt - 1
               
             time.sleep_ms(500)
+            
+        if try_cnt <= 0:
+            self.reset("unable to connect to MQTT")
         
         
     def _connect_mqtt(self):
@@ -163,12 +164,3 @@ class ModuleService(PsosService):
     # publish messages
     async def publish(self,topic,payload,retain=False, qos=0):
         self._client.publish(to_bytes(topic), to_bytes(payload),retain,qos)
-        
-
-        
-        
-                
-        
-        
-
-

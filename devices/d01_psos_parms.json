@@ -1,34 +1,22 @@
 {
-"name":"PSOS v00.02 - d01 device",
-"main":"psos_main",
-
-"defaults": {
-    "mqtt_prefix":"d01/",
-    "mqtt_name":"office_monitor",
-    "mqtt_descr":"d01 - ESP8266 Office Temperature and Humidity Monitor"
-    },
+    "name":"PSOS Example xx - ESP8266 ????",
+    "main":"psos_main",
     
-"NOTE":"wifi and mqtt must be first two services",
+    "services": [
+        {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "disconnect":true},
+        {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq" },
     
-"services": [
-    {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_esp", "_wifi":"wifi_home", "disconnect":true},
-    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_esp", "__broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+        {"name": "log",  "module":"svc_log",   "pub_log":"d01/log" },
     
-    {"name": "log",  "module":"svc_log",   "pub_log":"d01/log" },
-    
-    {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
+        {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
              "subscr_upd":"d01/dht/upd",   "pub_upd":"d01/dht" },
 
-    {"name": "mem_use", "module":"svc_mem_use", 
+        {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"d01/mem/upd",   "pub_upd":"d01/mem"},
-             
-    {"name": "dsp_temp", "module":"svc_pipe",
-             "subscr_in":"d01/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: d01'}}]" },               
-
-    {"name": "dsp_mem", "module":"svc_pipe",
-             "subscr_in":"d01/mem",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: d01'}}]" }
-
- ]
+        
+        {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
+             "subscr_upd":"d01/reset/upd" },
+            
+    ]
 }
+    

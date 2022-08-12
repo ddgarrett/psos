@@ -41,7 +41,7 @@ class ModuleService(PsosService):
         
         while True:
             if not self.wifi_connected():
-                machine.reset()
+                await self.reset()
             else:
                 pass
                 # print("wifi connected")
