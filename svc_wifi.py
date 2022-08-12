@@ -11,6 +11,7 @@ import uasyncio
 import secrets
 import network
 import time
+import machine
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -40,11 +41,7 @@ class ModuleService(PsosService):
         
         while True:
             if not self.wifi_connected():
-                print("lost wifi connection")
-                self.connect_wifi()
-                while not self.wifi_connected():
-                    print(".",end="")
-                    time.sleep_ms(500)
+                machine.reset()
             else:
                 pass
                 # print("wifi connected")
