@@ -40,7 +40,11 @@ class ModuleService(PsosService):
         
         while True:
             if not self.wifi_connected():
-                await self.log("... connnecting wifi")
+                print("lost wifi connection")
+                self.connect_wifi()
+                while not self.wifi_connected():
+                    print(".",end="")
+                    time.sleep_ms(500)
             else:
                 pass
                 # print("wifi connected")
