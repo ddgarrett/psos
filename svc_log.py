@@ -17,7 +17,7 @@ class ModuleService(PsosService):
         
     async def log_msg(self,name,msg):
         
-        mqtt = self.get_svc("mqtt")
+        mqtt = self.get_mqtt()
         
         log_msg = name + ": " + msg
         
