@@ -36,18 +36,13 @@ class ModuleService(PsosService):
         self._client = None
         self._subscriptions = []
         
-        print("mqtt: free space "+str(gc.mem_free()))
         self._retry_connect_mqtt()
         
         gc.collect()
-        print("mqtt: free space "+str(gc.mem_free()))
         
         if self._client == None:
-            print("unable to connect to MQTT")
-            sys.exit(1)
+            self.reset("unable to connect to MQTT")
             
-        
-        
     def mqtt_callback(self,topic,msg):
         t = to_str(topic)
         m = to_str(msg)
@@ -57,19 +52,17 @@ class ModuleService(PsosService):
         for subscr in self._subscriptions:
             subscr.put_match(t_split,t,m)
             
-        
     async def run(self):
 
         ping_wait = 0
         
         while True:
-            
             # check for any subscribed messages
-            # ping MQTT every 200 loops
+            # ping MQTT every 150 loops
             if self._client != None:
                 try:
                     ping_wait = ping_wait + 1
-                    if ping_wait > 200:
+                    if ping_wait > 150:
                         ping_wait = 0
                         self._client.ping()
                         # print("pinged mqtt")
@@ -139,13 +132,6 @@ class ModuleService(PsosService):
             
         client.set_callback(self.mqtt_callback)
         client.connect()
-        
-        print("mqtt: free space "+str(gc.mem_free()))
-        # try to free up some memory
-        # ssl_params = {}
-        # cert_data = None
-        # gc.collect()
-        # print("mqtt: free space "+str(gc.mem_free()))
         
         return client
     
