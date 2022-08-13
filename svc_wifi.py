@@ -28,8 +28,6 @@ class ModuleService(PsosService):
                 self._station.disconnect()
                 time.sleep_ms(50) # wait for disconnect
                 
-        # version 2 - connect to wifi during startup
-        
         self.connect_wifi()
         while not self.wifi_connected():
             print(".",end="")
@@ -38,15 +36,13 @@ class ModuleService(PsosService):
         
     async def run(self):
 
-        
         while True:
             if not self.wifi_connected():
                 await self.reset()
             else:
                 pass
-                # print("wifi connected")
                 
-            await uasyncio.sleep_ms(1000)
+            await uasyncio.sleep_ms(5000)
     
     
     def connect_wifi(self):
