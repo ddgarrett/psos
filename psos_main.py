@@ -35,6 +35,8 @@ async def main(parms):
     defaults["services"] = services
     
     print("main: create service objects")
+    gc.collect()
+    print("memory: ",gc.mem_free())
     for svc_parms in parms["services"]:
         
         # create module specific parms object
@@ -48,6 +50,9 @@ async def main(parms):
         print("... " + name)
         module = __import__(module_name)
         services[name] =  module.ModuleService(psos_parms)
+        
+        gc.collect()
+        print("memory: ",gc.mem_free())
         
         
     print("main: starting services")
@@ -66,5 +71,3 @@ async def main(parms):
         # allow co-routines to execute
         # print("main: free space "+str(gc.mem_free()))
         await uasyncio.sleep_ms(5000)
-        
-
