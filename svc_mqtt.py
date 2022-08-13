@@ -32,11 +32,15 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
         
-        self._client_id = ubinascii.hexlify(machine.unique_id())
+        
         self._client = None
         self._subscriptions = []
         
         self._retry_connect_mqtt()
+        
+        # try to reduce memory use - info no longer needed?
+        secrets.hivemq_root_ca = None
+        secrets.mqtt = None
         
         gc.collect()
         
@@ -59,30 +63,31 @@ class ModuleService(PsosService):
         while True:
             # check for any subscribed messages
             # ping MQTT every 150 loops
-            if self._client != None:
-                try:
-                    ping_wait = ping_wait + 1
-                    if ping_wait > 150:
-                        ping_wait = 0
-                        self._client.ping()
-                        # print("pinged mqtt")
-                        
-                    self._client.check_msg()
-                except Exception as e:
-                    self.reset("MQTT :"+str(e))
+
+            try:
+                ping_wait = ping_wait + 1
+                if ping_wait > 150:
+                    ping_wait = 0
+                    self._client.ping()
+                    # print("pinged mqtt")
+                    
+                self._client.check_msg()
+            except Exception as e:
+                self.reset("MQTT :"+str(e))
                     
             await uasyncio.sleep_ms(100)
             
     def _retry_connect_mqtt(self,try_cnt=3):
         while try_cnt > 0:
             try:
-              self._client = self._connect_mqtt()
-              print("connected to mqtt")
-              break
+                self._client = self._connect_mqtt()
+                print("connected to mqtt")
+                break
             except Exception as e:
               print("error connecting to MQTT: " + str(e))
               try_cnt = try_cnt - 1
-              
+
+               
             time.sleep_ms(500)
             
         if try_cnt <= 0:
@@ -96,39 +101,41 @@ class ModuleService(PsosService):
         print("connecting to MQTT broker "+broker)
         
         mqtt_secrets = secrets.mqtt[broker]
-        mqtt_server = mqtt_secrets['server']
-        mqtt_port   = mqtt_secrets['port']
+        server = mqtt_secrets['server']
+        port   = mqtt_secrets['port']
         
-        mqtt_username = None
-        mqtt_password = None
-        cert_data     = None
+        username = None
+        password = None
+        cert     = None
         
         client = None
         
+        cid = ubinascii.hexlify(machine.unique_id())
+        
         if 'username' in mqtt_secrets:
-            mqtt_username = mqtt_secrets['username']
-            mqtt_password = mqtt_secrets['password']
+            username = mqtt_secrets['username']
+            password = mqtt_secrets['password']
         
         if 'ca_cert' in mqtt_secrets:
-            cert_data = mqtt_secrets['ca_cert']
+            cert = mqtt_secrets['ca_cert']
             
         
         ssl_params = {}
-        if cert_data != None:
-            ssl_params = {"server_hostname":mqtt_server, "cert":cert_data}
+        if cert != None:
+            ssl_params = {"server_hostname":server, "cert":cert}
             
-        if mqtt_username != None:
+        if username != None:
             
-            if cert_data != None:
-                client = MQTTClient(self._client_id, mqtt_server,
-                                          user=mqtt_username, password=mqtt_password, port=mqtt_port,
+            if cert != None:
+                client = MQTTClient(cid, server,
+                                          user=username, password=password, port=port,
                                           keepalive=30, ssl=True, ssl_params=ssl_params)
             else:
-                client = MQTTClient(self._client_id, mqtt_server,
-                                          user=mqtt_username, password=mqtt_password, port=mqtt_port,
+                client = MQTTClient(cid, server,
+                                          user=username, password=password, port=port,
                                           keepalive=30)
         else:
-            client = MQTTClient(self._client_id, mqtt_server, port=mqtt_port, keepalive=30)
+            client = MQTTClient(cid, server, port=port, keepalive=30)
             
         client.set_callback(self.mqtt_callback)
         client.connect()
