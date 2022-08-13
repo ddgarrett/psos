@@ -37,13 +37,12 @@ class ModuleService(PsosService):
         
         while True:
             data = await self._trigger_q.get()
-            await self.send_data()
+            await self.send_data(mqtt)
             
             
     # send data via MQTT after receiving a update request
-    async def send_data(self):
+    async def send_data(self,mqtt):
         
-
         try:
             self._sensor.measure()
             temp = self._sensor.temperature()
@@ -51,23 +50,13 @@ class ModuleService(PsosService):
             
             hum = self._sensor.humidity()
     
-            temp = ('{0:3.1f}'.format(temp))
-            hum =  ('{0:3.1f}'.format(hum))
+            temp = ('{0:3.0f}°'.format(temp))
+            hum =  ('{0:3.0f}%'.format(hum))
             
-            # msg = "Office temp: {0:3.1f}, humidity: {1:3.1f}".format(temp,hum)
-
             msg = {"temp": temp, "hum": hum}
-            
-            # print("temp: "+str(temp)+", humidity:" + str(hum))
-            # await self.log(msg)
-            
-            mqtt = self.get_mqtt()
-            # await self.log("updating temp and humidity")
+                        
             await mqtt.publish(self._pub_topic,msg)
-            # break # exit loop
     
         except OSError as e:
             print("Failed to read sensor")
-            mqtt = self.get_mqtt()
             await mqtt.publish(self._pub_topic,{"temp": "starting...", "hum": "..."})
-
