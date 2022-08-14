@@ -21,8 +21,10 @@
 import uasyncio
 import gc
 
+import micropython
+
 from psos_parms import PsosParms
- 
+
 async def main(parms):
         
     # globally accessible default parameters
@@ -37,6 +39,7 @@ async def main(parms):
     print("main: create service objects")
     gc.collect()
     print("memory: ",gc.mem_free())
+    
     for svc_parms in parms["services"]:
         
         # create module specific parms object
@@ -62,8 +65,13 @@ async def main(parms):
         
         # print("... " + name)
         uasyncio.create_task(svc.run())
+        gc.collect()
         
     # gc.collect()
+    # print("memory: ",gc.mem_free())
+    
+
+    # pmap = False
     
     while True:
         # nothing to do here, but can't return?
@@ -71,3 +79,10 @@ async def main(parms):
         # allow co-routines to execute
         # print("main: free space "+str(gc.mem_free()))
         await uasyncio.sleep_ms(5000)
+        '''
+        if not pmap:
+            gc.collect()
+            print("memory: ",gc.mem_free())
+            pmap = True
+            micropython.mem_info(1)
+        '''

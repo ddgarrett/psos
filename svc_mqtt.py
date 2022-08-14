@@ -40,6 +40,7 @@ class ModuleService(PsosService):
         
         # try to reduce memory use - info no longer needed?
         secrets.hivemq_root_ca = None
+        secrets.wifi = None
         secrets.mqtt = None
         
         gc.collect()
