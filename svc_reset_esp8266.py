@@ -28,7 +28,7 @@ class ModuleService(PsosService):
         
         # when a message is received via the subscribed topic
         # data is written to the trigger_q
-        self._subscr_topic = parms.get_parm("subscr_upd")
+        # self._subscr_topic = parms.get_parm("subscr_upd")
         self._trigger_q = queue.Queue()
         
         pin = self.get_parm("pin",5)
@@ -38,7 +38,7 @@ class ModuleService(PsosService):
     async def run(self):
         
         mqtt = self.get_mqtt()
-        await mqtt.subscribe(self._subscr_topic,self._trigger_q)
+        await mqtt.subscribe(self.get_parm("subscr_upd"),self._trigger_q)
         
         while True:
             data = await self._trigger_q.get()

@@ -24,14 +24,14 @@ class ModuleService(PsosService):
         # when a message is received via the subscribed topic
         # data is written to the trigger_q
         # which then sends updated data in the pub topic
-        self._subscr_topic = parms.get_parm("subscr_upd")
+        # self._subscr_topic = parms.get_parm("subscr_upd")
         self._trigger_q = queue.Queue()
-        self._pub_upd = parms.get_parm("pub_upd")
+        # self._pub_upd = parms.get_parm("pub_upd")
         
     async def run(self):
         
         mqtt = self.get_mqtt()
-        await mqtt.subscribe(self._subscr_topic,self._trigger_q)
+        await mqtt.subscribe(self.get_parm("subscr_upd"),self._trigger_q)
         
         while True:
             data = await self._trigger_q.get()
@@ -44,7 +44,7 @@ class ModuleService(PsosService):
             'disk_free' : self.df(),
             'mem_free'  : self.free() }
         
-        await mqtt.publish(self._pub_upd,msg)
+        await mqtt.publish(self.get_parm("pub_upd"),msg)
 
 
     # disk free space
@@ -64,4 +64,3 @@ class ModuleService(PsosService):
         T = F+A
         P = '{0:.0f}%'.format(F/T*100)
         return '{0:,} ({1})'.format(F,P)
-
