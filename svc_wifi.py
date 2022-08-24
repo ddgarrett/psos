@@ -11,7 +11,6 @@ import uasyncio
 import secrets
 import network
 import time
-import machine
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -28,6 +27,8 @@ class ModuleService(PsosService):
                 self._station.disconnect()
                 time.sleep_ms(50) # wait for disconnect
                 
+        # version 2 - connect to wifi during startup
+        
         self.connect_wifi()
         while not self.wifi_connected():
             print(".",end="")
@@ -36,13 +37,12 @@ class ModuleService(PsosService):
         
     async def run(self):
 
+        
         while True:
             if not self.wifi_connected():
                 await self.reset()
-            else:
-                pass
                 
-            await uasyncio.sleep_ms(5000)
+            await uasyncio.sleep_ms(1000)
     
     
     def connect_wifi(self):
@@ -51,7 +51,11 @@ class ModuleService(PsosService):
             self._station.active(True)
     
         if not self.wifi_connected():
-            wifi_network = self.get_parm("wifi")
+            wifi_network = self.get_parm("wifi",None)
+            
+            if wifi_network == None:
+                print("scanning network for options")
+                wifi_network = self.scan_networks()
             
             wifi = secrets.wifi[wifi_network]
             ssid = wifi["ssid"]
@@ -64,6 +68,23 @@ class ModuleService(PsosService):
         
     def wifi_connected(self):
         return self._station.isconnected()
+    
+    # Scan wifi network then compare to
+    # to secrets.wifi_priority to find a recognized wifi network
+    def scan_networks(self):
+        nets = self._station.scan()
+        
+        for known in secrets.wifi_priority:
+            known_ssid = secrets.wifi[known]["ssid"].encode()
+            print("checking for ssid == ",known_ssid)
+            for net in nets:
+                ssid, bssid, channel, RSSI, authmode, hidden = net
+                if known_ssid == ssid:
+                    return known
+                
+        print("no known wifi networks found")
+        return None
+        
         
         
 
