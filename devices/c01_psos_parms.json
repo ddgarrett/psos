@@ -1,0 +1,36 @@
+{
+"name":"PSOS v00.02 - Cam01 device",
+"main":"psos_main",
+
+"defaults": {
+    "mqtt_prefix":"c01"
+    },
+    
+"NOTE":"wifi, mqtt and i2c (if used) must be first three services",
+    
+"services": [
+    {"name": "wifi",    "module":"svc_wifi", "disconnect":true, "set_time":true},
+    {"name": "mqtt",    "module":"svc_mqtt",  "broker":"hivemq", "__broker":"docker_esp", "_broker":"docker_home_acer" },
+    
+    {"name": "sd_card", "module":"svc_sd_card", "mount_pt":"/sd" },
+    
+    {"name": "log",     "module":"svc_log",   "pub_log":"c01/log" },
+    
+    {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "pub_msg":"upd",
+             "pub_topics": ["e01/dht/upd", "emp/dht/upd","d01/dht/upd"] },
+    
+    {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"/sd/dht.txt",
+             "format":"{dt}\t{topic}\t{hum}\t{temp}" },
+             
+    {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"/sd/log.txt"},
+    
+    {"name": "log_all", "module":"svc_log_dat", "subscr_log":"#",     "file_name":"/sd/log_all.txt"},
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"c01/mem/upd",   "pub_upd":"c01/mem" },           
+    {"name": "dsp_mem", "module":"svc_pipe",
+             "subscr_in":"c01/mem",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: c01'}}]" },  
+             
+ ]
+}
