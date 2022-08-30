@@ -33,7 +33,9 @@ class SvcMsg:
         if (self._payload.startswith('[') or
             self._payload.startswith('{')):
             self._payload = ujson.loads(self._payload)
-                
+    
+        return self
+    
     def set_payload(self,payload):
         self._payload = payload
         return self
