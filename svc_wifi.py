@@ -11,6 +11,7 @@ import uasyncio
 import secrets
 import network
 import time
+import ntptime  # uses special version in lib
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -33,10 +34,28 @@ class ModuleService(PsosService):
         while not self.wifi_connected():
             print(".",end="")
             time.sleep_ms(500)
+            
+        if self.get_parm("set_time",False):
+            retry = 3
+            while retry > 0:
+                if self.set_time():
+                    break
+                else:
+                    retry = retry - 1
+                
+            if retry <= 0:
+                print("unable to set time")
     
         
+    def set_time(self):
+        try:
+            ntptime.settime()
+            return True
+        except Exception as e:
+            return False
+        
+        
     async def run(self):
-
         
         while True:
             if not self.wifi_connected():
