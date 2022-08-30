@@ -17,6 +17,14 @@ Although PSOS uses MicroPython instead of JavaScript, and is not developed via a
 
 There is a major difference though in that PSOS does not require a central server to run the defined modules. Instead services are distributed over one or more microcontrollers in the MQTT network.
 
+Related Projects:  (TODO: add links and format this)
+
+  - Examples
+  
+  - MQTT Go Websocket Server
+  
+  
+
 # Release 0.0.1
 This first release is very lightweight. It is able to run on ESP8266 which implements WiFi and a TCP/IP stack, along with Micropython. The public MQTT broker, HiveMQ, uses TLS (the succssor to SSL) plus usernames and passwords to assure secure communications across the internet.
 
