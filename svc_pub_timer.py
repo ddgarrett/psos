@@ -43,6 +43,11 @@ class ModuleService(PsosService):
             await sleep_ms(ticks_add(next_time,-ticks_ms()))
             next_time = ticks_add(next_time,wait_ms)
             
-            for topic in topics:
-                await mqtt.publish(topic,msg)
+            for i in range(len(topics)):
+                if i >= len(msg):
+                    m = ""
+                else:
+                    m = msg[i]
+                    
+                await mqtt.publish(topics[i],m)
                 await sleep_ms(10)
