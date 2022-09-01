@@ -16,13 +16,6 @@
     
     {"name": "log",     "module":"svc_log",   "pub_log":"c01/log" },
     
-    {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"/sd/dht.txt",
-             "format":"{dt}\t{topic}\t{hum}\t{temp}" },
-             
-    {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"/sd/log.txt"},
-    
-    {"name": "log_all", "module":"svc_log_dat", "subscr_log":"#",     "file_name":"/sd/log_all.txt"},
-    
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"c01/mem/upd",   "pub_upd":"c01/mem" },           
     {"name": "dsp_mem", "module":"svc_pipe",
