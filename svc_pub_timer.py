@@ -31,6 +31,7 @@ class ModuleService(PsosService):
         topics = self.get_parm("pub_topics",[])
         msg    = self.get_parm("pub_msg",[])
         wait_ms   = self.get_parm("pub_wait",5*60)*1000
+        sleep     = self.get_parm("sleep_ms",10)
         
         # function aliases 
         ticks_add = time.ticks_add
@@ -50,4 +51,4 @@ class ModuleService(PsosService):
                     m = msg[i]
                     
                 await mqtt.publish(topics[i],m)
-                await sleep_ms(10)
+                await sleep_ms(sleep)
