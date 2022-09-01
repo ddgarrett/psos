@@ -53,10 +53,7 @@
     {"name": "dsp_mem_d01", "module":"svc_pipe",
              "subscr_in":"d01/mem",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: d01'}}]" }
-             
-
-
-             
 
  ]
 }
+
