@@ -1,0 +1,22 @@
+{
+    "name":"PSOS v00.02 - ESP8266 Logger",
+    "main":"psos_main",
+    
+    "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
+    
+    "services": [
+        {"name": "wifi", "module":"svc_wifi",  "wifi":"home", "disconnect":true},
+        {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq" },
+    
+        {"name": "log",  "module":"svc_log",   "pub_log":"d02/log" },
+    
+        {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"d02/mem/upd",   "pub_upd":"d02/mem"},
+             
+        {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"dht.txt",
+             "format":"{dt}\t{topic}\t{hum}\t{temp}" },
+             
+        {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"log.txt"}
+    ]
+}
+    

@@ -16,10 +16,6 @@
     
     {"name": "log",     "module":"svc_log",   "pub_log":"c01/log" },
     
-    {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, 
-             "pub_msg":[    "upd",         "upd",        "upd"],
-             "pub_topics": ["e01/dht/upd", "emp/dht/upd","d01/dht/upd"] },
-    
     {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"/sd/dht.txt",
              "format":"{dt}\t{topic}\t{hum}\t{temp}" },
              
