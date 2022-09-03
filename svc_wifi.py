@@ -46,6 +46,7 @@ class ModuleService(PsosService):
             if retry <= 0:
                 print("unable to set time")
     
+        del secrets.wifi 
         
     def set_time(self):
         try:

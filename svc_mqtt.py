@@ -39,9 +39,8 @@ class ModuleService(PsosService):
         self._retry_connect_mqtt()
         
         # try to reduce memory use - info no longer needed?
-        secrets.hivemq_root_ca = None
-        secrets.wifi = None
-        secrets.mqtt = None
+        del secrets.hivemq_root_ca 
+        del secrets.mqtt 
         
         gc.collect()
         
@@ -96,7 +95,7 @@ class ModuleService(PsosService):
         
         
     def _connect_mqtt(self):
-        wifi = self.get_svc("wifi")
+        # wifi = self.get_svc("wifi")
         
         broker = self.get_parm("broker")
         print("connecting to MQTT broker "+broker)
