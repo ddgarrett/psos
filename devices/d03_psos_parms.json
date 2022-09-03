@@ -1,0 +1,22 @@
+{
+    "name":"PSOS v00.02 - ESP8266 D03",
+    "main":"psos_main",
+    
+    "services": [
+        {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "disconnect":true},
+        {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq" },
+    
+        {"name": "log",  "module":"svc_log",   "pub_log":"d03/log" },
+    
+        {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
+             "subscr_upd":"d03/dht/upd",   "pub_upd":"d03/dht" },
+
+        {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"d03/mem/upd",   "pub_upd":"d03/mem"},
+        
+        {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
+             "subscr_upd":"d03/reset/upd" }
+            
+    ]
+}
+    
