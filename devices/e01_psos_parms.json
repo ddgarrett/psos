@@ -11,7 +11,7 @@
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
-    {"name": "wifi", "module":"svc_wifi", "disconnect":true},
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt",  "_broker":"docker_esp", "__broker":"docker_home_acer", "broker":"hivemq" },
     {"name": "i2c0", "module":"svc_i2c"  },
     

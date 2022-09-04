@@ -5,7 +5,7 @@
     "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
     "services": [
-        {"name": "wifi", "module":"svc_wifi",  "wifi":"home", "disconnect":true},
+        {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
         {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq" },
     
         {"name": "log",  "module":"svc_log",   "pub_log":"d02/log" },

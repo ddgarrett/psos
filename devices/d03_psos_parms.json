@@ -3,7 +3,7 @@
     "main":"psos_main",
     
     "services": [
-        {"name": "wifi", "module":"svc_wifi",  "wifi":"wifi_home", "disconnect":true},
+        {"name": "wifi", "module":"svc_wifi",   "disconnect":false},
         {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq" },
     
         {"name": "log",  "module":"svc_log",   "pub_log":"d03/log" },
