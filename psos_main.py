@@ -20,10 +20,17 @@
 
 import uasyncio
 import gc
-
-import micropython
-
+# import micropython
 from psos_parms import PsosParms
+
+# additional imports to load them now instead of later
+import machine
+import network
+import ntptime
+import os
+import psos_util
+import secrets
+import time
 
 async def main(parms):
         
@@ -70,7 +77,6 @@ async def main(parms):
     # gc.collect()
     # print("memory: ",gc.mem_free())
     
-
     # pmap = False
     
     while True:
@@ -79,6 +85,7 @@ async def main(parms):
         # allow co-routines to execute
         # print("main: free space "+str(gc.mem_free()))
         await uasyncio.sleep_ms(5000)
+        
         '''
         if not pmap:
             gc.collect()
