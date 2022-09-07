@@ -40,7 +40,7 @@
              
     {"name": "dsp_temp", "module":"svc_pipe",
              "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: emp'}}]" },               
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: emp'}}]" },               
 
     {"name": "dsp_mem", "module":"svc_pipe",
              "subscr_in":"emp/mem",  "pub_out":"emp/lcd",
@@ -48,7 +48,7 @@
              
     {"name": "dsp_temp_d01", "module":"svc_pipe",
              "subscr_in":"d01/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: d01'}}]" },               
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: d01'}}]" },               
 
     {"name": "dsp_mem_d01", "module":"svc_pipe",
              "subscr_in":"d01/mem",  "pub_out":"emp/lcd",
