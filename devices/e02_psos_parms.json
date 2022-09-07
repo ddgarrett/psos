@@ -12,11 +12,11 @@
     
 "services": [
     {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
-    {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_docker_home_acer", "_broker":"mqtt_hivemq" },
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"_docker_home_acer", "broker":"hivemq" },
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e02/log" },
     
-    {"name": "temp", "module":"svc_dht11", "dht11_pin":4,
+    {"name": "temp", "module":"svc_dht", "dh_pin":4, "dht22":true,
              "subscr_upd":"e02/dht/upd",   "pub_upd":"e02/dht/" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
