@@ -16,11 +16,23 @@
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e02/log" },
     
-    {"name": "temp", "module":"svc_dht", "dh_pin":4, "dht22":true,
-             "subscr_upd":"e02/dht/upd",   "pub_upd":"e02/dht/" },
+    {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
+             "subscr_upd":"e02/dht/upd",   "pub_upd":"e02/dht" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e02/mem/upd",   "pub_dsk":"e02/dsk", "pub_mem":"e02/mem"}
+             "subscr_upd":"e02/mem/upd",   "pub_dsk":"e02/dsk", "pub_mem":"e02/mem"},
+             
+    {"name": "touch3", "module":"svc_touch", "pin":15, "threshold":300,
+             "pub_touch":"e02/dht/upd", "pub_hourglass":"emp/lcd" },
+             
+    {"name": "dsp_temp", "module":"svc_pipe",
+             "subscr_in":"e02/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e02'}}]" },
+             
+    {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
+             "pub_msg":["upd"],
+             "pub_topics": ["e02/dht/upd"] }
 
  ]
 }
+
