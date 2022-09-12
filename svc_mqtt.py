@@ -39,8 +39,8 @@ class ModuleService(PsosService):
         self._retry_connect_mqtt()
         
         # try to reduce memory use - info no longer needed?
-        del secrets.hivemq_root_ca 
-        del secrets.mqtt 
+        # del secrets.hivemq_root_ca 
+        # del secrets.mqtt 
         
         gc.collect()
         
