@@ -43,9 +43,6 @@ class ModuleService(PsosService):
         # del secrets.mqtt 
         
         gc.collect()
-        
-        if self._client == None:
-            self.reset("unable to connect to MQTT")
             
     def mqtt_callback(self,topic,msg):
         t = to_str(topic)
@@ -57,6 +54,9 @@ class ModuleService(PsosService):
             subscr.put_match(t_split,t,m)
             
     async def run(self):
+        # have to do this here sinces it's an async call
+        if self._client == None:
+            await self.reset("unable to connect to MQTT")
 
         ping_wait = 0
         
@@ -73,7 +73,7 @@ class ModuleService(PsosService):
                     
                 self._client.check_msg()
             except Exception as e:
-                self.reset("MQTT :"+str(e))
+                await self.reset("MQTT :"+str(e))
                     
             await uasyncio.sleep_ms(100)
             
@@ -91,7 +91,7 @@ class ModuleService(PsosService):
             time.sleep_ms(500)
             
         if try_cnt <= 0:
-            self.reset("unable to connect to MQTT")
+            _client = None
         
         
     def _connect_mqtt(self):
