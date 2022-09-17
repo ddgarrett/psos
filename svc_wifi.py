@@ -60,7 +60,7 @@ class ModuleService(PsosService):
         
         while True:
             if not self.wifi_connected():
-                await self.reset("wifi connection lost")
+                self.reset("wifi connection lost")
                 
             await uasyncio.sleep_ms(1000)
     
