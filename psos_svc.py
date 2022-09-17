@@ -8,6 +8,7 @@
 import uasyncio
 
 import machine
+import time
 
 class PsosService:
     
@@ -32,14 +33,15 @@ class PsosService:
     # If there is a service named "reset"
     # will use that service.reset() method.
     # Otherwise just use machine.reset()
-    async def reset(self,rsn=None):
+    def reset(self,rsn=None):
         svc = self.get_svc("reset")
         if svc != None:
-            await svc.reset(rsn)
+            svc.reset(rsn)
         else:
             print("resetting system: ", rsn)
-            await uasyncio.sleep_ms(1000) # give print time to run before resetting
+            time.sleep_ms(1000) # give print time to run before resetting
             machine.reset()
+
 
     # if a log service has been defined
     # write a message to the log

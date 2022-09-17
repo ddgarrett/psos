@@ -19,6 +19,7 @@ import uasyncio
 import queue
 
 from machine import Pin
+import time
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -46,9 +47,9 @@ class ModuleService(PsosService):
             
             
     # reset system by pushing pin connect to reset high (0)
-    async def reset(self,data=None):
+    def reset(self,data=None):
         print("resetting system, reason: ",data)
-        await uasyncio.sleep_ms(1000) # give print time to run before resetting
+        time.sleep_ms(1000) # give print time to run before resetting
         
         self._rst(0)
 
