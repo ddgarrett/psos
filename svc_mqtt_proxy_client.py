@@ -32,7 +32,6 @@ import time
 import gc
 import os
 import ujson
-import queue
 
 from psos_subscription import Subscription
 
