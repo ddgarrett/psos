@@ -157,3 +157,10 @@ class ModuleService(PsosService):
     # publish messages
     async def publish(self,topic,payload,retain=False, qos=0):
         self._client.publish(to_bytes(topic), to_bytes(payload),retain,qos)
+
+    # remove all of the subscriptions for a given queue
+    async def unsubscribe(self,queue):
+        for s in self._subscriptions:
+            if s._queue == queue:
+                self._subscriptions.remove(s)
+        
