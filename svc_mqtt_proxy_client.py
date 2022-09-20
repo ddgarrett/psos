@@ -32,6 +32,7 @@ import time
 import gc
 import os
 import ujson
+import queue
 
 from psos_subscription import Subscription
 
@@ -62,7 +63,7 @@ class ModuleService(PsosService):
             print("unable to connect to MQTT proxy server... exiting")
             sys.exit()
 
-        print("mem: ",self.free())
+        # print("mem: ",self.free())
         
         while True:
             # check for any subscribed messages
@@ -76,6 +77,8 @@ class ModuleService(PsosService):
                     
             except Exception as e:
                 self.close_sock()
+                sys.print_exception(e)
+                # sys.exit()
                 self.reset("MQTT Proxy Client :"+str(e))
                     
             await uasyncio.sleep_ms(100)
@@ -135,7 +138,7 @@ class ModuleService(PsosService):
     # until a payload to be written to a queue.
     async def subscribe(self,topic_filter,queue,qos=0):
         
-        await self.log("sub: " + topic_filter)
+        await self.log("subscr " + topic_filter)
         
         sub = Subscription(topic_filter,queue,qos)
         self._subscriptions.append(sub)
@@ -159,7 +162,9 @@ class ModuleService(PsosService):
             resp = await self.send_msg(msg)
             func = resp["func"]
             if func == "rcv":
-                await self.mqtt_callback(resp["topic"],resp["payload"])
+                resp = resp["payload"]
+                # print("resp:",resp)
+                await self.mqtt_callback(resp[1],resp[2])
             else:
                 # TODO: check responses?
                 pass
@@ -184,7 +189,7 @@ class ModuleService(PsosService):
             self.swriter.write('{}\n'.format(ujson.dumps(msg)))
             await self.swriter.drain()
             resp = await self.sreader.readline()
-            return ujson.loads(resp)
+            return ujson.loads(resp.rstrip())
         except OSError as e:
             self.close_sock()
             print('Server disconnect.')
