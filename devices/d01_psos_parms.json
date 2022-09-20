@@ -1,22 +1,22 @@
 {
-    "name":"PSOS Example xx - ESP8266 ????",
+    "name":"PSOS Example xx - ESP8266 D01",
     "main":"psos_main",
     
     "services": [
-        {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
-        {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq" },
-    
+        {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+        {"name": "mqtt", "module":"svc_mqtt_proxy_client", "broker":"hivemq",
+            "server":"10.0.0.67", "port":8123 },
+            
         {"name": "log",  "module":"svc_log",   "pub_log":"d01/log" },
     
-        {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
+        {"name": "temp", "module":"svc_dht", "dht_pin":14,
              "subscr_upd":"d01/dht/upd",   "pub_upd":"d01/dht" },
 
         {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"d01/mem/upd",   "pub_upd":"d01/mem"},
         
         {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
-             "subscr_upd":"d01/reset/upd" }
+             "subscr_upd":"d01/reset/upd" },
             
     ]
 }
-    
