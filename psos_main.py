@@ -20,17 +20,15 @@
 
 import uasyncio
 import gc
-# import micropython
 from psos_parms import PsosParms
 
 # additional imports to load them now instead of later
 import machine
 import network
-import ntptime
 import os
 import psos_util
 import secrets
-import time
+
 
 async def main(parms):
         
