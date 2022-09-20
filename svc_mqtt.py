@@ -148,7 +148,7 @@ class ModuleService(PsosService):
     # Tasks can therefore just go into a wait
     # until a payload to be written to a queue.
     async def subscribe(self,topic_filter,queue,qos=0):
-        await self.log("subscribing to " + topic_filter)
+        await self.log("subscr " + topic_filter)
         
         sub = Subscription(topic_filter,queue,qos)
         self._subscriptions.append(sub)
