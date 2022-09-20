@@ -4,11 +4,12 @@
     
     "services": [
         {"name": "wifi", "module":"svc_wifi",   "disconnect":false},
-        {"name": "mqtt", "module":"svc_mqtt",  "broker":"mqtt_hivemq" },
+        {"name": "mqtt", "module":"svc_mqtt_proxy_client", 
+            "server":"10.0.0.67", "port":8123 },
     
         {"name": "log",  "module":"svc_log",   "pub_log":"d03/log" },
     
-        {"name": "temp", "module":"svc_dht11", "dht11_pin":14,
+        {"name": "temp", "module":"svc_dht", "dht_pin":14,
              "subscr_upd":"d03/dht/upd",   "pub_upd":"d03/dht" },
 
         {"name": "mem_use", "module":"svc_mem_use", 
