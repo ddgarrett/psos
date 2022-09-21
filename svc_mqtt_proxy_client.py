@@ -33,6 +33,7 @@ import gc
 import os
 import ujson
 import queue
+import secrets
 
 from psos_subscription import Subscription
 
@@ -42,9 +43,13 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
         
-        self._server = self.get_parm("server")
-        self._port   = self.get_parm("port")
+        self._server = self.get_parm("server",None)
+        self._port   = self.get_parm("port",8123)
         
+        if self._server == None:
+            wifi = self.get_svc("wifi").scan_networks()
+            self._server = secrets.wifi[wifi]['mqtt_proxy']
+            
         self._sock = None
         self._subscriptions = []
         
@@ -119,9 +124,8 @@ class ModuleService(PsosService):
         print("connected to proxy server")
         
         cid = ubinascii.hexlify(machine.unique_id())
-        broker = self.get_parm("broker")
 
-        resp = await self.send_msg({"func":"con","cid":cid, "mqtt":broker})
+        resp = await self.send_msg({"func":"con","cid":cid})
         
         if "func" in resp and "payload" in resp:
             if resp["func"] != "con" or resp["payload"] != cid.decode("utf-8"):
