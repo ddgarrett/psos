@@ -107,9 +107,9 @@ class ModuleService(PsosService):
             time.sleep_ms(2000)
             
         if try_cnt <= 0:
-            print('Unable to {} on port {}'.format(self._server, self._port))
-            sys.exit()
-        
+            msg = 'MQTT Proxy {}:{} not available'.format(self._server, self._port)
+            print(msg)
+            self.reset(msg)        
         
     async def connect_mqtt_proxy(self):
 
