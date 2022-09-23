@@ -59,10 +59,15 @@ class ModuleService(PsosService):
     async def run(self):
 
         ping_wait = 0
+        wifi = self.get_svc("wifi")
         
         while True:
             # check for any subscribed messages
             # ping MQTT every 150 loops
+            
+            # make sure wifi is connected
+            while not wifi.wifi_connected():
+                await uasyncio.sleep_ms(300)
 
             try:
                 ping_wait = ping_wait + 1
