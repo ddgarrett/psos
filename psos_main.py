@@ -43,7 +43,6 @@ async def main(parms):
     
     print("main: create service objects")
     gc.collect()
-    print("memory: ",gc.mem_free())
     
     for svc_parms in parms["services"]:
         
@@ -60,7 +59,6 @@ async def main(parms):
         services[name] =  module.ModuleService(psos_parms)
         
         gc.collect()
-        print("memory: ",gc.mem_free())
         
         
     print("main: starting services")
@@ -68,13 +66,9 @@ async def main(parms):
         name = svc_parms["name"]
         svc  = services[name]
         
-        # print("... " + name)
         uasyncio.create_task(svc.run())
         gc.collect()
         
-    # gc.collect()
-    # print("memory: ",gc.mem_free())
-    
     # pmap = False
     
     while True:
