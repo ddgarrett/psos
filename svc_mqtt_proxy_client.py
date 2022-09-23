@@ -63,14 +63,13 @@ class ModuleService(PsosService):
     async def run(self):
             
         await self.retry_connect_mqtt_proxy()
-        
-        if self._sock == None:
-            print("unable to connect to MQTT proxy server... exiting")
-            sys.exit()
-
-        # print("mem: ",self.free())
-        
+        wifi = self.get_svc("wifi")
+       
         while True:
+            # make sure wifi is connected
+            while not wifi.wifi_connected():
+                await uasyncio.sleep_ms(300)
+
             # check for any subscribed messages
             try:
                 # send any queued pub/sub messages
@@ -189,7 +188,6 @@ class ModuleService(PsosService):
     # and receive a response
     async def send_msg(self,msg):
         try:
-            # print("sending msg: ",msg)
             self.swriter.write('{}\n'.format(ujson.dumps(msg)))
             await self.swriter.drain()
             resp = await self.sreader.readline()
@@ -197,11 +195,12 @@ class ModuleService(PsosService):
         except OSError as e:
             self.close_sock()
             print('Server disconnect.')
-            return {"err":e}
+            self.reset('Server disconnect')
         except ValueError as e:
-            print("received invalid json response: ",resp)
+            msg = "received invalid json response: {}".format(resp)
+            print(msg)
             self.close_sock()
-            return {"err":e}
+            self.reset(msg)
 
     def close_sock(self):
         if self._sock != None:
