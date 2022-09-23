@@ -39,7 +39,7 @@ class PsosService:
             svc.reset(rsn)
         else:
             print("resetting system: ", rsn)
-            time.sleep_ms(1000) # give print time to run before resetting
+            time.sleep_ms(5000) # give print time to run before resetting
             machine.reset()
 
 

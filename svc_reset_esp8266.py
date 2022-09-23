@@ -49,7 +49,7 @@ class ModuleService(PsosService):
     # reset system by pushing pin connect to reset high (0)
     def reset(self,data=None):
         print("resetting system, reason: ",data)
-        time.sleep_ms(1000) # give print time to run before resetting
+        time.sleep_ms(5000) # give print time to run before resetting
         
         self._rst(0)
 
