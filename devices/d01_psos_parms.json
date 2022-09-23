@@ -4,8 +4,7 @@
     
     "services": [
         {"name": "wifi", "module":"svc_wifi", "disconnect":false},
-        {"name": "mqtt", "module":"svc_mqtt_proxy_client",
-            "server":"10.0.0.67", "port":8123 },
+        {"name": "mqtt", "module":"svc_mqtt_proxy_client" },
             
         {"name": "log",  "module":"svc_log",   "pub_log":"d01/log" },
     
