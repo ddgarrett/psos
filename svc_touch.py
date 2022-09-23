@@ -52,8 +52,8 @@ class ModuleService(PsosService):
         while True:
             try:
                 r = self._touch.read()
-            except:
-                print("touchpad error")
+            except Exception as e:
+                print("touchpad error: ",e)
             
             # sensor being touched?
             if r < self._t_threshold:
