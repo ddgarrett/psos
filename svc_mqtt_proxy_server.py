@@ -164,6 +164,11 @@ class ModuleService(PsosService):
         cid = msg["cid"]
         q = queue.Queue()
         
+        # IF client is already connected
+        # Wait for that socket to timeout
+        while cid in self.users:
+            await uasyncio.sleep(1)
+            
         self.users[cid] = q
             
         print("client connected: ",cid)
