@@ -41,7 +41,7 @@ class ModuleService(PsosService):
         self.users = {} # dictionary of users to queue
 
     async def run(self):
-        print('Awaiting client connection: ',network.WLAN(network.STA_IF).ifconfig()[0])
+        await self.log('Awaiting client connection: {}'.format(network.WLAN(network.STA_IF).ifconfig()[0]))
         self.cid = 0
         # uasyncio.create_task(heartbeat(100))
         self.server = await uasyncio.start_server(self.run_client, self.host, self.port, self.backlog)
@@ -74,9 +74,8 @@ class ModuleService(PsosService):
             await self.get_mqtt().unsubscribe(q)
             del self.users[cid]
         
-        print('Client {} disconnect.'.format(cid))
+        await self.log('Client {} disconnect.'.format(cid))
         await sreader.wait_closed()
-        print('Client {} socket closed.'.format(cid))
 
     async def process_input(self,cid,rcv):
         msg = ujson.loads(rcv.rstrip())
@@ -171,7 +170,7 @@ class ModuleService(PsosService):
             
         self.users[cid] = q
             
-        print("client connected: ",cid)
+        await self.log("client connected: {} ".format(cid))
         return cid,ujson.dumps({"func":"con", "payload":cid})        
         
     # return an error response
@@ -180,7 +179,7 @@ class ModuleService(PsosService):
 
     # never called?
     async def close(self):
-        print('Closing server')
+        await self.log('Closing server')
         self.server.close()
         await self.server.wait_closed()
-        print('Server closed.')
+        await self.log('Server closed.')
