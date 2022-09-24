@@ -14,8 +14,6 @@ import gc
 with open("psos_parms.json") as f:
         parms = ujson.load(f)
 
-gc.collect()
-
 # start main
 if "name" in parms:
     print("boot: starting",parms["name"])
