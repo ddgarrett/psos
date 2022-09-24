@@ -203,10 +203,12 @@ class ModuleService(PsosService):
             self.reset(msg)
 
     def close_sock(self):
-        if self._sock != None:
-            self._sock.close()
-            self._sock = None
         self._connected = False
+        if self._sock != None:
+            s = self._sock
+            self._sock = None
+            s.close()
+
         
         # while debugging only!!!
         # sys.exit()
