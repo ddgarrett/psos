@@ -80,7 +80,7 @@ class ModuleService(PsosService):
                 await self.check_msg()
                     
             except Exception as e:
-                self.close_sock()
+                # self.close_sock()
                 sys.print_exception(e)
                 # sys.exit()
                 self.reset("MQTT Proxy Client :"+str(e))
