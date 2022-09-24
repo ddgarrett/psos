@@ -1,12 +1,12 @@
 {
-    "name":"PSOS v00.02 - ESP8266 Logger",
+    "name":"PSOS v00.02 - d02 - ESP8266 Logger",
     "main":"psos_main",
     
     "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
     "services": [
         {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
-        {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq" },
+        {"name": "mqtt", "module":"svc_mqtt_proxy_client" },
     
         {"name": "log",  "module":"svc_log",   "pub_log":"d02/log" },
     
@@ -16,7 +16,10 @@
         {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"dht.txt",
              "format":"{dt}\t{topic}\t{hum}\t{temp}" },
              
-        {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"log.txt"}
+        {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"log.txt"},
+        
+        {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
+             "subscr_upd":"d01/reset/upd" },
     ]
 }
-    
+
