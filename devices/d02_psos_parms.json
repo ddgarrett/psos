@@ -19,7 +19,7 @@
         {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"log.txt"},
         
         {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
-             "subscr_upd":"d01/reset/upd" },
+             "subscr_upd":"d02/reset/upd" }
     ]
 }
 
