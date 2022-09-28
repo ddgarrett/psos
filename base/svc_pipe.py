@@ -51,6 +51,8 @@ class ModuleService(PsosService):
         
         if self._format != "":
             out_t = self._format.format(**out)
+        else:
+            out_t = msg.get_payload()
             
 
         await mqtt.publish(self._pub_topic,out_t)
