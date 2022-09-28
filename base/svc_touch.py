@@ -33,6 +33,7 @@ class ModuleService(PsosService):
         
         # topic to send message under
         self._pub_touch = parms.get_parm("pub_touch")
+        self.pti = 0  # index for list of _pub_touch IF it is a list
         
         # touch sensor pin and threshold
         self._t_pin       = parms.get_parm("pin",15)
@@ -59,7 +60,14 @@ class ModuleService(PsosService):
             if r < self._t_threshold:
                 if not touched:
                     await self.pub_hourglass(mqtt)
-                    await mqtt.publish(self._pub_touch,r)
+                    
+                    if type(self._pub_touch) == list:
+                        await mqtt.publish(self._pub_touch[self.pti],r)
+                        self.pti += 1
+                        if self.pti >= len(self._pub_touch):
+                            self.pti = 0
+                    else:
+                        await mqtt.publish(self._pub_touch,r)
                     touched = True
             else:
                 touched = False
