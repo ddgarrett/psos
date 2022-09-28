@@ -14,9 +14,12 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
         
+        channel = self.get_parm("channel",0)
+        
         # topic to send message under
-        # for now, just support I2C(0) with default pins
-        self._i2c = I2C(0)  # on esp32 defaults to pins 18 and 19
+        #  I2C(0)  defaults to scl=18, sda=19
+        #  I2C(1)  defaults to scl=25, sda=26
+        self._i2c = I2C(channel)  # on esp32 defaults to pins 18 and 19
         
     def get_i2c(self):
         return self._i2c
