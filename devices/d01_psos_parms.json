@@ -15,7 +15,7 @@
              "subscr_upd":"d01/mem/upd",   "pub_upd":"d01/mem"},
         
         {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
-             "subscr_upd":"d01/reset/upd" },
+             "subscr_upd":"d01/reset/upd" }
             
     ]
 }
