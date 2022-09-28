@@ -14,25 +14,49 @@
     {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt",  "broker":"_docker_home_acer", "broker":"hivemq" },
     
+    {"name": "i2c1", "module":"svc_i2c", "channel":1 },
+    
+    {"name": "sd_card", "module":"svc_sd_card", "mount_pt":"/sd", 
+             "slot":2, "sck":18, "mosi":23, "miso":19, "cs":5, "baud":1000000,
+             "subscr_upd":"e02/sd/upd",  "pub_upd":"e02/sd" },
+    
     {"name": "log",  "module":"svc_log",   "pub_log":"e02/log" },
     
+    {"name": "usvr", "module":"svc_mqtt_proxy_server" },
+
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c1", "i2c_addr":"0x3C", "timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"e02/lcd" },
+             
     {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
              "subscr_upd":"e02/dht/upd",   "pub_upd":"e02/dht" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e02/mem/upd",   "pub_dsk":"e02/dsk", "pub_mem":"e02/mem"},
+             "subscr_upd":"e02/mem/upd",   "pub_upd":"e02/mem" },
              
-    {"name": "touch3", "module":"svc_touch", "pin":15, "threshold":300,
-             "pub_touch":"e02/dht/upd", "pub_hourglass":"emp/lcd" },
+    {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
+             "pub_touch":["e02/dht/upd","d01/dht/upd","emp/dht/upd","e01/dht/upd"], 
+             "pub_hourglass":"e02/lcd" },
              
     {"name": "dsp_temp", "module":"svc_pipe",
-             "subscr_in":"e02/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e02'}}]" },
+             "subscr_in":"e02/dht",  "pub_out":"e02/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e02'}}]" },
+             
+    {"name": "dsp_mem", "module":"svc_pipe",
+             "subscr_in":"e02/mem",  "pub_out":"e02/lcd",
+             "format":"['clear',{{'msg':'FREE MEM & DISK\nMEM: {mem_free}\nDSK: {disk_free}\nDEV: e02'}}]" },
+             
+    {"name": "dsp_sd", "module":"svc_pipe",
+             "subscr_in":"e02/sd",  "pub_out":"e02/lcd",
+             "format":"['clear',{{'msg':'SD CARD\nFREE DISK:\n {disk_free}\nDEV: e02-SD'}}]" },
              
     {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
              "pub_msg":["upd"],
-             "pub_topics": ["e02/dht/upd"] }
-
+             "pub_topics": ["e02/dht/upd"] },
+             
+    {"name": "fwd_emp", "module":"svc_pipe",
+             "subscr_in":"emp/lcd",  "pub_out":"e02/lcd" }
+             
  ]
 }
-
