@@ -23,7 +23,6 @@
     
 """
 from psos_svc import PsosService
-from pico_i2c_lcd import I2cLcd
 
 import utf8_char
 import svc_lcd_msg
@@ -46,8 +45,14 @@ class ModuleService(PsosService):
         i2c_addr         = int(self.get_parm("i2c_addr", "0x27"))
         self.lcd_row_cnt = int(self.get_parm("lcd_row_cnt", "2"))
         self.lcd_col_cnt = int(self.get_parm("lcd_col_cnt", "16"))
-        
-        self.lcd = I2cLcd(i2c, i2c_addr, self.lcd_row_cnt, self.lcd_col_cnt)
+
+        # modify class to support different displays in addition to LCD1602
+        # *** in particular, supports the SSD1306 OLED emulating an LCD1602
+        # *** for SSD1306 use "disp_class":"ssd1306_lcd" in psos_parms.json
+        # self.lcd = I2cLcd(i2c, i2c_addr, self.lcd_row_cnt, self.lcd_col_cnt)
+        mod_name = self.get_parm("disp_driver","pico_i2c_lcd")
+        module = __import__(mod_name)
+        self.lcd = module.I2cLcd(i2c,i2c_addr,self.lcd_row_cnt, self.lcd_col_cnt)
         
         self.backlight_on   = True
         self.blink_task     = None
@@ -75,6 +80,7 @@ class ModuleService(PsosService):
             
             svc_lcd_msg.CMD_BLK_HG      : self.blank_hourglass
         }
+        
         
     # run forever, but only blink backlight if
     # blink_interval > 0
