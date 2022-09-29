@@ -37,10 +37,12 @@ class PsosService:
         svc = self.get_svc("reset")
         if svc != None:
             svc.reset(rsn)
+            time.sleep_ms(5000) # in case reset is not immediate
         else:
             print("resetting system: ", rsn)
             time.sleep_ms(5000) # give print time to run before resetting
             machine.reset()
+            time.sleep_ms(5000) # in case reset is not immediate
 
 
     # if a log service has been defined

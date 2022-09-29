@@ -75,6 +75,11 @@ class ModuleService(PsosService):
                 print("scanning network for options")
                 wifi_network = self.scan_networks()
             
+            if wifi_network == None:
+                # wait extra time for wifi network
+                time.sleep_ms(5000)
+                self.reset("no wifi network available")
+                
             wifi = secrets.wifi[wifi_network]
             ssid = wifi["ssid"]
             password = wifi["password"]
