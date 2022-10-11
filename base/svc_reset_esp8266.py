@@ -7,7 +7,7 @@
     
     2. programmatically, another service can get the reset service and call the reset method
           svc = self.get_svc("reset")
-          await svc.reset()
+          svc.reset()
        
     For more reliable reset this service pushes a pin connected to the reset high.
     Default is pin 5 (D1)
