@@ -95,7 +95,8 @@ class ModuleService(PsosService):
                 if self._sock != None:
                     print("connected to mqtt proxy {}:{}".format(self._server, self._port))
                     self._connected = True
-                break
+                    break
+                try_cnt = try_cnt - 1
             except OSError as e:
                 print('Error connecting to {} on port {}'.format(self._server, self._port))
                 self.close_sock()
