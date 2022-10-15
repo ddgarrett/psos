@@ -31,8 +31,12 @@ class ModuleService(PsosService):
         # version 2 - connect to wifi during startup
         
         self.connect_wifi()
+        retry = 60 # try for max 30 seconds, then reset
         while not self.wifi_connected():
             print(".",end="")
+            retry = retry - 1
+            if retry <= 0:
+                self.reset("unable to connect to wifi")
             time.sleep_ms(500)
             
         if self.get_parm("set_time",False):
