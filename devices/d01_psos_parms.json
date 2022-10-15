@@ -2,6 +2,10 @@
     "name":"PSOS Example xx - ESP8266 D01",
     "main":"psos_main",
     
+    "defaults": {
+        "log_file":"reset_rsn.txt"
+    },
+    
     "services": [
         {"name": "wifi", "module":"svc_wifi", "disconnect":false},
         {"name": "mqtt", "module":"svc_mqtt_proxy_client" },
@@ -15,7 +19,7 @@
              "subscr_upd":"d01/mem/upd",   "pub_upd":"d01/mem"},
         
         {"name": "reset", "module":"svc_reset_esp8266", "pin":5,
-             "subscr_upd":"d01/reset/upd" }
+             "subscr_upd":"d01/reset/upd" },
             
     ]
 }

@@ -4,7 +4,8 @@
 
 "defaults": {
     "mqtt_prefix":"emp",
-    "pub_hourglass":"emp/lcd"
+    "pub_hourglass":"emp/lcd",
+    "log_file":"reset_rsn.txt"
     },
     
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",

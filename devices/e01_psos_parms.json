@@ -5,19 +5,21 @@
 "defaults": {
     "mqtt_prefix":"e01/",
     "mqtt_name":"office_monitor",
-    "mqtt_descr":"e01 - ESP32 Bedroom Temp & Humidity + timed triggers for temp"
+    "mqtt_descr":"e01 - ESP32 Bedroom Temp & Humidity + timed triggers for temp",
+    "log_file":"reset_rsn.txt"
     },
-    
+  
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt",  "_broker":"docker_esp", "__broker":"docker_home_acer", "broker":"hivemq" },
-    {"name": "i2c0", "module":"svc_i2c"  },
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e01/log" },
     
-    {"name": "temp", "module":"svc_dht11", "dht11_pin":25,
+    {"name": "usvr", "module":"svc_mqtt_proxy_server" },
+    
+    {"name": "temp", "module":"svc_dht", "dht_pin":25, "dht22":true,
              "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht" },
 
     {"name": "mem_use", "module":"svc_mem_use", 

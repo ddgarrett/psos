@@ -4,8 +4,12 @@
     
     "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
+    "defaults": {
+        "log_file":"reset_rsn.txt"
+    },
+    
     "services": [
-        {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
+        {"name": "wifi", "module":"svc_wifi",  "disconnect":false, "set_time":true},
         {"name": "mqtt", "module":"svc_mqtt_proxy_client" },
     
         {"name": "log",  "module":"svc_log",   "pub_log":"d02/log" },
@@ -22,4 +26,3 @@
              "subscr_upd":"d02/reset/upd" }
     ]
 }
-

@@ -34,6 +34,15 @@ class PsosService:
     # will use that service.reset() method.
     # Otherwise just use machine.reset()
     def reset(self,rsn=None):
+        
+        if rsn != None:
+            fname = self.get_parm("log_file",None)
+            if fname != None:
+                f = open(fname,"a")
+                f.write(rsn)
+                f.write('\n')
+                f.close()
+            
         svc = self.get_svc("reset")
         if svc != None:
             svc.reset(rsn)
