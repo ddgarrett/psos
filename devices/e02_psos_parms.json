@@ -5,7 +5,8 @@
 "defaults": {
     "mqtt_prefix":"e02/",
     "mqtt_name":"office_monitor",
-    "mqtt_descr":"e02 - ESP32 Office Temperature and Humidity Monitor"
+    "mqtt_descr":"e02 - ESP32 Office Temperature and Humidity Monitor",
+    "log_file":"reset_rsn.txt"
     },
     
 "NOTE":"wifi and mqtt must be first two services",
@@ -52,9 +53,13 @@
              "format":"['clear',{{'msg':'SD CARD\nFREE DISK:\n {disk_free}\nDEV: e02-SD'}}]" },
              
     {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
-             "pub_msg":["upd"],
-             "pub_topics": ["e02/dht/upd"] },
+             "pub_msg":["upd","upd","upd","upd","upd","upd","upd"],
+             "pub_topics": ["emp/mem/upd","e01/mem/upd","e02/mem/upd","e02/sd/upd","d01/mem/upd","d02/mem/upd","d03/mem/upd"] },
              
+    {"name": "log_mem", "module":"svc_log_dat", "subscr_log":"+/mem", "file_name":"sd/mem.txt"},
+    
+    {"name": "log_sd",  "module":"svc_log_dat", "subscr_log":"+/sd", "file_name":"sd/mem.txt"},
+    
     {"name": "fwd_emp", "module":"svc_pipe",
              "subscr_in":"emp/lcd",  "pub_out":"e02/lcd" }
              
