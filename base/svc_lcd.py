@@ -81,6 +81,9 @@ class ModuleService(PsosService):
             svc_lcd_msg.CMD_BLK_HG      : self.blank_hourglass
         }
         
+        msg = svc_lcd_msg.SvcLcdMsg(payload=["clear",{"msg":"LCD STARTING..."}])
+        self.process_msg(msg)
+        
         
     # run forever, but only blink backlight if
     # blink_interval > 0
@@ -126,8 +129,11 @@ class ModuleService(PsosService):
         # subscribe to topic and wait for messages
         mqtt = self.get_mqtt()
         await mqtt.subscribe(self._subscr_topic,self._trigger_q)
-        msg = svc_lcd_msg.SvcLcdMsg()
-            
+        
+        # msg = svc_lcd_msg.SvcLcdMsg()
+        msg = svc_lcd_msg.SvcLcdMsg(payload=[{"msg":"\nLCD RUNNING..."}])
+        self.process_msg(msg)
+        
         while True:
             q = await self._trigger_q.get()
             msg.load_subscr(q)
