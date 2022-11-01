@@ -76,9 +76,12 @@ class I2cLcd(SSD1306_I2C):
             if self.x < self.col_cnt and self.y < self.row_cnt:
                 # TODO: write out special character bit map
                 if c in self.spc:
+                    '''
                     px = self.x * self.col_width
                     py = self.y * self.row_height
                     super().text("*",px,py)
+                    '''
+                    self.write_bits(self.spc[c])
                 else:
                     px = self.x * self.col_width
                     py = self.y * self.row_height
@@ -87,6 +90,22 @@ class I2cLcd(SSD1306_I2C):
             self.x += 1
     
         super().show()
+        
+    def zfl(self,s,width):
+        # pad s with leading zeroes
+        return '{:0>{w}}'.format(s,w=width)
+    
+    def write_bits(self,bmap):
+        py = self.y * self.row_height - 1
+        for b in bmap:
+            py = py + 1
+            px = self.x * self.col_width - 1
+            bp = self.zfl(bin(b)[2:],7)
+            for b2 in range(7):
+                px = px + 1
+                if bp[b2] == "1":
+                    self.pixel(px,py,1)            
+        
         
     def move_to(self,x,y):
         self.x = x
