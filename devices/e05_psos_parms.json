@@ -1,0 +1,36 @@
+{
+"name":"PSOS v00.02 - e05 device",
+"main":"psos_main",
+
+"defaults": {
+    "mqtt_prefix":"e05/",
+    "mqtt_name":"office_monitor",
+    "mqtt_descr":"e05 - ESP32 Soil Moisture and Temperature Monitor",
+    "pub_hourglass":"emp/lcd" 
+    },
+    
+"NOTE":"wifi and mqtt must be first two services",
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"e05/log" },
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
+             
+    {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
+             "pub_touch":"e05/mem/upd" },
+             
+    {"name": "dsp_mem_emp", "module":"svc_pipe",
+             "subscr_in":"e05/mem",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Free Mem & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: e05'}}]" },
+
+    {"name": "dsp_mem_e02", "module":"svc_pipe",
+             "subscr_in":"e05/mem",  "pub_out":"e02/lcd",
+             "format":"['clear',{{'msg':'FREE MEM & DISK\nMEM: {mem_free}\nDSK: {disk_free}\nDEV: e05'}}]" }
+
+                         
+ ]
+}

@@ -1,0 +1,36 @@
+{
+"name":"PSOS v00.02 - e04 device",
+"main":"psos_main",
+
+"defaults": {
+    "mqtt_prefix":"emp",
+    "pub_hourglass":"emp/lcd"
+    },
+    
+"NOTE":"wifi, mqtt and i2c (if used) must be first three services",
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":true},
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq", "__broker":"docker_esp", "_broker":"docker_home_acer" },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"emp/mem/upd",   "pub_upd":"emp/mem" },
+             
+    {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
+             "pub_touch":"d01/dht/upd" },
+             
+    {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
+             "pub_touch":"d01/mem/upd" },
+             
+    {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
+             "pub_touch":"emp/dht/upd" },
+             
+    {"name": "touch9", "module":"svc_touch", "pin":32, "threshold":300,
+             "pub_touch":"emp/mem/upd" },
+             
+             
+
+ ]
+}
