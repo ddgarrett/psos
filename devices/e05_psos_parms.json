@@ -20,16 +20,20 @@
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
              
+    {"name": "soil",    "module":"svc_soil", 
+             "pin": 32, "dry":2525, "wet":1422, 
+             "sub":"e05/soil/upd",   "pub":"e05/soil" },
+             
     {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
-             "pub_touch":"e05/mem/upd" },
+             "pub_touch":"e05/soil/upd" },
              
     {"name": "dsp_mem_emp", "module":"svc_pipe",
-             "subscr_in":"e05/mem",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Free Mem & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: e05'}}]" },
+             "subscr_in":"e05/soil",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Soil Moisture\nLevel: {mv}\nDev: e05'}}]" },
 
     {"name": "dsp_mem_e02", "module":"svc_pipe",
-             "subscr_in":"e05/mem",  "pub_out":"e02/lcd",
-             "format":"['clear',{{'msg':'FREE MEM & DISK\nMEM: {mem_free}\nDSK: {disk_free}\nDEV: e05'}}]" }
+             "subscr_in":"e05/soil",  "pub_out":"e02/lcd",
+             "format":"['clear',{{'msg':'Soil Moisture\nLevel: {mv}\nDev: e05'}}]" }
 
                          
  ]
