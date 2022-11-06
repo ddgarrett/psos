@@ -30,9 +30,10 @@ class SvcMsg:
         self._topic  = q[1]
         self._payload = q[2]
         
-        if (self._payload.startswith('[') or
-            self._payload.startswith('{')):
-            self._payload = ujson.loads(self._payload)
+        if isinstance(self._payload,str):
+            if (self._payload.startswith('[') or
+                self._payload.startswith('{')):
+                self._payload = ujson.loads(self._payload)
     
         return self
     
