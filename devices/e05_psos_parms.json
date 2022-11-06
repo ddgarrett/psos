@@ -6,7 +6,7 @@
     "mqtt_prefix":"e05/",
     "mqtt_name":"office_monitor",
     "mqtt_descr":"e05 - ESP32 Soil Moisture and Temperature Monitor",
-    "pub_hourglass":"emp/lcd" 
+    "pub_hourglass":"e05/lcd" 
     },
     
 "NOTE":"wifi and mqtt must be first two services",
@@ -15,8 +15,15 @@
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
     
+    {"name": "i2c1", "module":"svc_i2c", "channel":1 },
+    
     {"name": "log",  "module":"svc_log",   "pub_log":"e05/log" },
     
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c1", "i2c_addr":"0x3C", "timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"e05/lcd" },
+             
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
              
@@ -32,7 +39,7 @@
              "format":"['clear',{{'msg':'Soil Moisture\nLevel: {mv}\nDev: e05'}}]" },
 
     {"name": "dsp_mem_e02", "module":"svc_pipe",
-             "subscr_in":"e05/soil",  "pub_out":"e02/lcd",
+             "subscr_in":"e05/soil",  "pub_out":"e05/lcd",
              "format":"['clear',{{'msg':'Soil Moisture\nLevel: {mv}\nDev: e05'}}]" }
 
                          
