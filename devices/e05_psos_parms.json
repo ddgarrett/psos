@@ -6,7 +6,7 @@
     "mqtt_prefix":"e05/",
     "mqtt_name":"office_monitor",
     "mqtt_descr":"e05 - ESP32 Soil Moisture and Temperature Monitor",
-    "pub_hourglass":"e05/lcd" 
+    "show_hourglass":"lcd" 
     },
     
 "NOTE":"wifi and mqtt must be first two services",
@@ -24,11 +24,21 @@
              "disp_driver":"ssd1306_lcd",
              "subscr_msg":"e05/lcd" },
              
+    {"name": "temp", "module":"svc_dht", "dht_pin":5,
+             "subscr_upd":"e05/dht/upd",   "pub_upd":"e05/dht" },
+             
+    {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
+             "pub_touch":"e05/dht/upd" },
+             
+    {"name": "dsp_temp", "module":"svc_pipe",
+             "subscr_in":"e05/dht",  "pub_out":"e05/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },   
+             
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
              
     {"name": "soil",    "module":"svc_soil", 
-             "pin": 32, "dry":2525, "wet":1422, 
+             "pin": 32, "dry":2769, "wet":1419, 
              "sub":"e05/soil/upd",   "pub":"e05/soil" },
              
     {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
