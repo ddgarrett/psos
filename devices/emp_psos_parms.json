@@ -4,7 +4,7 @@
 
 "defaults": {
     "mqtt_prefix":"emp",
-    "pub_hourglass":"emp/lcd",
+    "show_hourglass":"lcd",
     "log_file":"reset_rsn.txt"
     },
     
@@ -24,10 +24,10 @@
              "subscr_upd":"emp/mem/upd",   "pub_upd":"emp/mem" },
              
     {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
-             "pub_touch":"d01/dht/upd" },
+             "pub_touch":"e02/dht/upd" },
              
     {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
-             "pub_touch":"d01/mem/upd" },
+             "pub_touch":"e05/dht/upd" },
              
     {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
              "pub_touch":"emp/dht/upd" },
@@ -41,12 +41,25 @@
              
     {"name": "dsp_temp", "module":"svc_pipe",
              "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: emp'}}]" },               
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: emp'}}]" },     
 
+    {"name": "dsp_e02", "module":"svc_pipe",
+             "subscr_in":"e02/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e02'}}]" },
+
+    {"name": "dsp_e05", "module":"svc_pipe",
+             "subscr_in":"e05/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e05'}}]" }
+
+
+ ],
+ 
+ "removed":[
+ 
     {"name": "dsp_mem", "module":"svc_pipe",
              "subscr_in":"emp/mem",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Free Memory & Disk\nMem: {mem_free}\nDsk: {disk_free}\nDev: emp'}}]" },  
-             
+
     {"name": "dsp_temp_d01", "module":"svc_pipe",
              "subscr_in":"d01/dht",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: d01'}}]" },               
@@ -57,4 +70,3 @@
 
  ]
 }
-
