@@ -14,9 +14,12 @@
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq", "__broker":"docker_esp", "_broker":"docker_home_acer" },
     {"name": "i2c0", "module":"svc_i2c"  },
-    
     {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
     
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27", "timeout":10,
+             "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
+             "subscr_msg":"emp/lcd" },
+             
     {"name": "temp", "module":"svc_dht", "dht_pin":5,
              "subscr_upd":"emp/dht/upd",   "pub_upd":"emp/dht" },
 
@@ -25,19 +28,12 @@
              
     {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
              "pub_touch":"e02/dht/upd" },
-             
     {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
              "pub_touch":"e05/dht/upd" },
-             
     {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
              "pub_touch":"emp/dht/upd" },
-             
     {"name": "touch9", "module":"svc_touch", "pin":32, "threshold":300,
              "pub_touch":"e01/dht/upd" },
-             
-    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27", "timeout":10,
-             "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
-             "subscr_msg":"emp/lcd" },
              
     {"name": "dsp_temp", "module":"svc_pipe",
              "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
