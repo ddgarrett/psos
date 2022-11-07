@@ -14,11 +14,22 @@
 "services": [
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt",  "_broker":"docker_esp", "__broker":"docker_home_acer", "broker":"hivemq" },
+    {"name": "i2c0", "module":"svc_i2c", "channel":0 },
     {"name": "log",  "module":"svc_log",   "pub_log":"e01/log" },
     
-    {"name": "temp", "module":"svc_dht", "dht_pin":25, "dht22":true,
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C", "timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"e01/lcd" },
+             
+    {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
              "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht" },
-    {"name": "dsp_temp", "module":"svc_pipe",
+    {"name": "touch3", "module":"svc_touch", "pin":15, "threshold":300,
+             "pub_touch":"e01/dht/upd", "show_hourglass":"lcd"},
+    {"name": "dsp_temp_e01", "module":"svc_pipe",
+             "subscr_in":"e01/dht",  "pub_out":"e01/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e01'}}]" },               
+    {"name": "dsp_temp_emp", "module":"svc_pipe",
              "subscr_in":"e01/dht",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: e01'}}]" },               
              
