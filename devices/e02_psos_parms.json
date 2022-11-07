@@ -12,7 +12,7 @@
 "NOTE":"wifi and mqtt must be first two services",
     
 "services": [
-    {"name": "wifi", "module":"svc_wifi",  "disconnect":false},
+    {"name": "wifi", "module":"svc_wifi",  "disconnect":false, "set_time":true},
     {"name": "mqtt", "module":"svc_mqtt",  "_broker":"_docker_home_acer", "broker":"hivemq" },
     
     {"name": "i2c1", "module":"svc_i2c", "channel":1 },
@@ -23,8 +23,6 @@
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e02/log" },
     
-    {"name": "usvr", "module":"svc_mqtt_proxy_server" },
-
     {"name": "lcd", "module":"svc_lcd", "i2c":"i2c1", "i2c_addr":"0x3C", "timeout":10,
              "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
              "disp_driver":"ssd1306_lcd",
@@ -37,8 +35,8 @@
              "subscr_upd":"e02/mem/upd",   "pub_upd":"e02/mem" },
              
     {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
-             "pub_touch":["e02/dht/upd","emp/dht/upd","e01/dht/upd","e05/dht/upd"], 
-             "pub_hourglass":"e02/lcd" },
+             "pub_touch":["e02/dht/upd","e05/dht/upd","emp/dht/upd","e01/dht/upd"], 
+             "show_hourglass":"lcd" },
              
     {"name": "dsp_temp", "module":"svc_pipe",
              "subscr_in":"e02/dht",  "pub_out":"e02/lcd",
@@ -51,13 +49,19 @@
     {"name": "dsp_sd", "module":"svc_pipe",
              "subscr_in":"e02/sd",  "pub_out":"e02/lcd",
              "format":"['clear',{{'msg':'SD CARD\nFREE DISK:\n {disk_free}\nDEV: e02-SD'}}]" },
-                          
+             
     {"name": "log_mem", "module":"svc_log_dat", "subscr_log":"+/mem", "file_name":"sd/mem.txt"},
     
-    {"name": "log_sd",  "module":"svc_log_dat", "subscr_log":"+/sd", "file_name":"sd/mem.txt"},
+    {"name": "log_sd",  "module":"svc_log_dat", "subscr_log":"+/sd", "file_name":"sd/mem.txt"}             
+ ],
+ 
+ "removed":[
+ 
+     {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
+             "pub_msg":["upd","upd","upd","upd","upd","upd","upd"],
+             "pub_topics": ["emp/mem/upd","e01/mem/upd","e02/mem/upd","e02/sd/upd","d01/mem/upd","d02/mem/upd","d03/mem/upd"] },
     
     {"name": "fwd_emp", "module":"svc_pipe",
              "subscr_in":"emp/lcd",  "pub_out":"e02/lcd" }
-             
  ]
 }
