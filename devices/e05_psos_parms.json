@@ -6,7 +6,7 @@
     "mqtt_prefix":"e05/",
     "mqtt_name":"office_monitor",
     "mqtt_descr":"e05 - ESP32 Soil Moisture and Temperature Monitor",
-    "show_hourglass":"lcd" 
+    "pub_hourglass":"local/e05/lcd" 
     },
     
 "NOTE":"wifi and mqtt must be first two services",
