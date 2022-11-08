@@ -14,7 +14,6 @@
 from psos_svc import PsosService
 import uasyncio
 import queue
-import svc_lcd_msg
 
 from machine import Pin, TouchPad
 from svc_lcd_msg import SvcLcdMsg
@@ -26,13 +25,10 @@ class ModuleService(PsosService):
         super().__init__(parms)
         
         # topic to send LCD hourglass message under
-        self._show_hourglass = parms.get_parm("show_hourglass",None)
         self._pub_hourglass = parms.get_parm("pub_hourglass",None)
         self._hg_msg = None
         
-        if self._show_hourglass != None :
-            self._hg_msg = SvcLcdMsg().dsp_hg()
-        elif self._pub_hourglass != None :
+        if self._pub_hourglass != None :
             self._hg_msg = SvcLcdMsg().dsp_hg().dumps()
         
         # topic to send message under
@@ -80,10 +76,6 @@ class ModuleService(PsosService):
 
     async def pub_hourglass(self,mqtt):
         
-        if self._show_hourglass != None:
-            svc = self.get_svc(self._show_hourglass)
-            svc.process_msg(self._hg_msg)
-            
-        elif self._pub_hourglass != None:
+        if self._pub_hourglass != None:
             await mqtt.publish(self._pub_hourglass,self._hg_msg)
     

@@ -161,7 +161,11 @@ class ModuleService(PsosService):
     
     # publish messages
     async def publish(self,topic,payload,retain=False, qos=0):
-        self._client.publish(to_bytes(topic), to_bytes(payload),retain,qos)
+        # if local topic, only send to local services
+        if topic.startswith('local/'):
+            self.mqtt_callback(topic[6:],payload)
+        else:
+            self._client.publish(to_bytes(topic), to_bytes(payload),retain,qos)
 
     # remove all of the subscriptions for a given queue
     async def unsubscribe(self,queue):
