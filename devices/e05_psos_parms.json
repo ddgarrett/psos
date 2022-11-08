@@ -30,7 +30,7 @@
              "subscr_in":"e05/dht",  "pub_out":"e05/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },   
     {"name": "dsp_temp_emp", "module":"svc_pipe",
-             "subscr_in":"e05/dht",  "pub_out":"eno/lcd",
+             "subscr_in":"e05/dht",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Temp & Humidity\nTemp: {temp}°\nHum: {hum}%\nDEV: e05'}}]" },   
              
     {"name": "soil",    "module":"svc_soil",   "pin": 32, "dry":2769, "wet":1419, 
