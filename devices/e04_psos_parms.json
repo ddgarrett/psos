@@ -3,34 +3,37 @@
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"emp",
-    "pub_hourglass":"emp/lcd"
+    "mqtt_prefix":"e04",
+    "show_hourglass":"lcd"
     },
     
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
-    {"name": "wifi", "module":"svc_wifi", "disconnect":true},
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false, "set_time":true},
     {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq", "__broker":"docker_esp", "_broker":"docker_home_acer" },
+    {"name": "i2c0", "module":"svc_i2c",   "channel":0 },
     
-    {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
+    {"name": "log",  "module":"svc_log",   "pub_log":"e04/log" },
     
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C", "timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"e04/lcd" },
+             
+    {"name": "temp", "module":"svc_dht", "dht_pin":5,
+             "subscr_upd":"e04/dht/upd",   "pub_upd":"e04/dht" },
+    {"name": "touch0", "module":"svc_touch", "pin":4, "threshold":300,
+             "pub_touch":"e04/dht/upd" },      
+    {"name": "dsp_temp_e04", "module":"svc_pipe",
+             "subscr_in":"e04/dht",  "pub_out":"e04/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e04'}}]" },   
+    {"name": "dsp_temp_emp", "module":"svc_pipe",
+             "subscr_in":"e04/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp & Humidity\nTemp: {temp}°\nHum: {hum}%\nDev: e04'}}]" },   
+
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"emp/mem/upd",   "pub_upd":"emp/mem" },
-             
-    {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
-             "pub_touch":"d01/dht/upd" },
-             
-    {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
-             "pub_touch":"d01/mem/upd" },
-             
-    {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
-             "pub_touch":"emp/dht/upd" },
-             
-    {"name": "touch9", "module":"svc_touch", "pin":32, "threshold":300,
-             "pub_touch":"emp/mem/upd" },
-             
-             
+             "subscr_upd":"e04/mem/upd",   "pub_upd":"e04/mem" }
 
  ]
 }
