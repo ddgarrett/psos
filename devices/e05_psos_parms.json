@@ -61,14 +61,7 @@
                        {"a":"pub","p":"e05/soil/upd"}]
                  },
              "items": [
-                 {"item":"SOIL MOISTURE", "a":[
-                     {"a":"exit"}, 
-                     {"a":"pub","p":"e05/soil/upd"}]},
-                     
-                 {"item":"TEMP & HUMIDITY", "a":[
-                     {"a":"exit"}, 
-                     {"a":"pub","p":"e05/dht/upd"}]},
-                     
+                 {"item":" --- SETUP ---", "a":[]},
                  {"item":"SET DRY", "a":[{"a":"exit"}] }
                  {"item":"SET WET", "a":[{"a":"exit"}]},
                  {"item":"SET TEMP", "a":[{"a":"exit"}]},
