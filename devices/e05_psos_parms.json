@@ -6,7 +6,7 @@
     "mqtt_prefix":"e05/",
     "mqtt_name":"office_monitor",
     "mqtt_descr":"e05 - ESP32 Soil Moisture and Temperature Monitor",
-    "pub_hourglass":"local/e05/lcd" 
+    "_pub_hourglass":"local/e05/lcd" 
     },
     
 "NOTE":"wifi and mqtt must be first two services",
@@ -24,8 +24,6 @@
              
     {"name": "temp", "module":"svc_dht", "dht_pin":5,
              "subscr_upd":"e05/dht/upd",   "pub_upd":"e05/dht" },
-    {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
-             "pub_touch":"e05/dht/upd" },      
     {"name": "dsp_temp_e05", "module":"svc_pipe",
              "subscr_in":"e05/dht",  "pub_out":"e05/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },   
@@ -35,8 +33,6 @@
              
     {"name": "soil",    "module":"svc_soil",   "pin": 32, "dry":2769, "wet":1419, 
              "sub":"e05/soil/upd",   "pub":"e05/soil" },
-    {"name": "touch7", "module":"svc_touch",   "pin":27, "threshold":300,
-             "pub_touch":"e05/soil/upd" },
     {"name": "dsp_soil_emp", "module":"svc_pipe",
              "subscr_in":"e05/soil",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Soil Moisture\nLevel: {mv}\nDev: e05'}}]" },
@@ -45,6 +41,39 @@
              "format":"['clear',{{'msg':'SOIL MOISTURE\nLEVEL: {mv}\nDEV: e05'}}]" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" }                         
+             "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" }
+             
+    {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
+             "pub_touch":"local/e05/menu", "pub_msg":"UL"},      
+    {"name": "touch7", "module":"svc_touch",   "pin":27, "threshold":300,
+             "pub_touch":"local/e05/menu", "pub_msg":"LL" },
+    {"name": "touch5", "module":"svc_touch",   "pin":12, "threshold":300,
+             "pub_touch":"local/e05/menu", "pub_msg":"LR" },
+    {"name": "touch6", "module":"svc_touch",   "pin":14, "threshold":300,
+             "pub_touch":"local/e05/menu", "pub_msg":"UR" },
+             
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e05/menu",
+             "quick": {
+                 "LR":[{"a":"msg", "m":"TEMP & HUMIDITY"},
+                       {"a":"pub","p":"e05/dht/upd"}], 
+                       
+                 "UR":[{"a":"msg", "m":"SOIL MOISTURE"},
+                       {"a":"pub","p":"e05/soil/upd"}]
+                 },
+             "items": [
+                 {"item":"SOIL MOISTURE", "a":[
+                     {"a":"exit"}, 
+                     {"a":"pub","p":"e05/soil/upd"}]},
+                     
+                 {"item":"TEMP & HUMIDITY", "a":[
+                     {"a":"exit"}, 
+                     {"a":"pub","p":"e05/dht/upd"}]},
+                     
+                 {"item":"SET DRY", "a":[{"a":"exit"}] }
+                 {"item":"SET WET", "a":[{"a":"exit"}]},
+                 {"item":"SET TEMP", "a":[{"a":"exit"}]},
+                 {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
+             ]}
+
  ]
 }
