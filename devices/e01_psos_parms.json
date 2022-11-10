@@ -31,7 +31,7 @@
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e01'}}]" },               
     {"name": "dsp_temp_emp", "module":"svc_pipe",
              "subscr_in":"e01/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp: {temp}\nHumidity: {hum}\nDev: e01'}}]" },               
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e01'}}]" },               
              
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e01/mem/upd",   "pub_upd":"e01/mem" },
