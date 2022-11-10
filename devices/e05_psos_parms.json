@@ -26,10 +26,7 @@
              "subscr_upd":"e05/dht/upd",   "pub_upd":"e05/dht" },
     {"name": "dsp_temp_e05", "module":"svc_pipe",
              "subscr_in":"e05/dht",  "pub_out":"e05/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },   
-    {"name": "dsp_temp_emp", "module":"svc_pipe",
-             "subscr_in":"e05/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp & Humidity\nTemp: {temp}°\nHum: {hum}%\nDEV: e05'}}]" },   
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },     
              
     {"name": "soil",    "module":"svc_soil",   "pin": 32, "dry":2769, "wet":1419, 
              "sub":"e05/soil/upd",   "pub":"e05/soil" },
