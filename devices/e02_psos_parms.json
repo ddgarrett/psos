@@ -33,10 +33,6 @@
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e02/mem/upd",   "pub_upd":"e02/mem" },
              
-    {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
-             "pub_touch":["e01/dht/upd","e02/dht/upd","e05/dht/upd","emp/dht/upd"], 
-             "show_hourglass":"lcd" },
-             
     {"name": "dsp_dht_e02", "module":"svc_pipe",
              "subscr_in":"e02/dht",  "pub_out":"e02/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e02'}}]" },
@@ -53,6 +49,36 @@
     {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"sd/dht_log.txt"},
     {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"sd/log_log.txt"},
     {"name": "log_all", "module":"svc_log_dat", "subscr_log":"#",     "file_name":"sd/all_log.txt"}
+    
+    {"name": "touch4", "module":"svc_touch",   "pin":13, "threshold":300,
+             "pub_touch":"local/e02/menu", "pub_msg":"UL"},      
+    {"name": "touch7", "module":"svc_touch",   "pin":27, "threshold":300,
+             "pub_touch":"local/e02/menu", "pub_msg":"LL" },
+    {"name": "touch5", "module":"svc_touch",   "pin":12, "threshold":300,
+             "pub_touch":"local/e02/menu", "pub_msg":"LR" },
+    {"name": "touch6", "module":"svc_touch",   "pin":14, "threshold":300,
+             "pub_touch":"local/e02/menu", "pub_msg":"UR" },
+             
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e02/menu",
+             "quick": {
+                 "UR":[{"a":"msg", "m":"E02 TEMP"},
+                       {"a":"pub","p":"e02/dht/upd"}], 
+                       
+                 "LR":[{"a":"msg", "m":"E01 TEMP"},
+                       {"a":"pub","p":"e01/dht/upd"}],
+                       
+                 "LL":[{"a":"pub", "p":"local/e02/lcd", "m":["backlight_on"]}]
+                 },
+             "items": [
+                 {"item":" --- SHOW ---", "a":[{"a":"exit", "m":" "}]},
+                 {"item":"E01 TEMP", "a":[{"a":"exit"},{"a":"pub","p":"e01/dht/upd"}] },
+                 {"item":"E02 TEMP", "a":[{"a":"exit"},{"a":"pub","p":"e02/dht/upd"}]},
+                 {"item":"E04 TEMP", "a":[{"a":"exit"},{"a":"pub","p":"e04/dht/upd"}]},
+                 {"item":"E05 TEMP", "a":[{"a":"exit"},{"a":"pub","p":"e05/dht/upd"}]},
+                 {"item":"EMP TEMP", "a":[{"a":"exit"},{"a":"pub","p":"emp/dht/upd"}]}
+                 
+             ]}
+
             
  ],
  
@@ -66,4 +92,3 @@
              "subscr_in":"emp/lcd",  "pub_out":"e02/lcd" }
  ]
 }
-
