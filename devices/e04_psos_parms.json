@@ -4,7 +4,7 @@
 
 "defaults": {
     "mqtt_prefix":"e04",
-    "show_hourglass":"lcd"
+    "pub_hourglass":"local/e04/lcd"
     },
     
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
