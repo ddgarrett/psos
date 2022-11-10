@@ -146,7 +146,7 @@ class ModuleService(PsosService):
         self.unlock_lcd()
         self.lcd.set_timeout(self.save_timeout)
         if m == None:
-            m = "exiting menu..."
+            m = " "
             
         self.update_lcd(m)
         
