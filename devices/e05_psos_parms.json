@@ -38,7 +38,7 @@
              "format":"['clear',{{'msg':'SOIL MOISTURE\nLEVEL: {mv}\nDEV: e05'}}]" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" }
+             "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
              
     {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
              "pub_touch":"local/e05/menu", "pub_msg":"UL"},      
@@ -59,7 +59,7 @@
                  },
              "items": [
                  {"item":" --- SETUP ---", "a":[]},
-                 {"item":"SET DRY", "a":[{"a":"exit"}] }
+                 {"item":"SET DRY", "a":[{"a":"exit"}] },
                  {"item":"SET WET", "a":[{"a":"exit"}]},
                  {"item":"SET TEMP", "a":[{"a":"exit"}]},
                  {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
