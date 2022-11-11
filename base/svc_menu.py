@@ -47,6 +47,13 @@ class ModuleService(PsosService):
         self.item_idx = 0
         
         self.quick = self.get_parm("quick",{})
+        
+        # builtin commands defined at the endof this module
+        self.cmd_bi = {
+                "exit": self.cmd_exit,
+                "pub" : self.cmd_pub,
+                "msg" : self.cmd_msg
+            }
 
     async def run(self):
         
@@ -115,32 +122,23 @@ class ModuleService(PsosService):
             actions = item["a"]
             await self.exec_actions(item["a"],item["item"])                        
                         
+    # execute a list of commands
+    # each command consists of an action and additional parameters
     async def exec_actions(self,act,exit_msg):               
-        for a in act:
-            if "a" in a:
-                if a["a"] == "pub":
-                    p = ""
-                    m = ""
-                    if "p" in a:
-                        p = a["p"]
-                    if "m" in a:
-                        m = a["m"]
-                        
-                    await self.get_mqtt().publish(p,m)
+        for parms in act:
+            if "a" in parms:
+                cmd = a["a"]
+                
+                # is command one of the builtin commands?
+                if cmd in self.cmd_bi:
+                    cmd = a["a"]
+                    await self.cmd_bi[cmd](exit_msg,parms)
                     
-                elif a["a"] == "exit":
-                    m=exit_msg
-                    if "m" in a:
-                        m = a["m"]
-                    await self.exit_menu(m=m)
-                    
-                elif a["a"] == "msg":
-                    m = exit_msg
-                    if "m" in a:
-                        m = a["m"]
-                    self.update_lcd(m)                    
-                    
-
+            else:
+                # try to look up an external command
+                # TODO: finish this
+                pass
+                            
     async def exit_menu(self,m=None):
         self.in_menu = False
         self.unlock_lcd()
@@ -177,5 +175,31 @@ class ModuleService(PsosService):
         msg = SvcMsg(payload=["clear",{"msg":msg}])
         self.lcd.process_msg(msg)
 
-    
+
+     ############### Builtin Commands ################
+                    
+    async def cmd_pub(self,exit_msg,parms):
+        p = ""
+        m = ""
+        if "p" in parms:
+            p = parms["p"]
+        if "m" in parms:
+            m = parms["m"]
+            
+        await self.get_mqtt().publish(p,m)
+        
+    async def cmd_exit(self,exit_msg,parms):
+        m=exit_msg
+        if "m" in parms:
+            m = parms["m"]
+        await self.exit_menu(m=m)        
+
+    async def cmd_msg(self,exit_msg,parms):
+        m = exit_msg
+        if "m" in parms:
+            m = parms["m"]
+        self.update_lcd(m)        
+
+    #########################################
+   
     
