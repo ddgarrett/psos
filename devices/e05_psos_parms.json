@@ -55,7 +55,9 @@
                        {"a":"pub","p":"e05/dht/upd"}], 
                        
                  "UR":[{"a":"msg", "m":"SOIL MOISTURE"},
-                       {"a":"pub","p":"e05/soil/upd"}]
+                       {"a":"pub","p":"e05/soil/upd"}],
+                       
+                 "LL":[{"a":"pub", "p":"local/e05/lcd", "m":["backlight_on"]}]
                  },
              "items": [
                  {"item":" --- SETUP ---", "a":[]},
