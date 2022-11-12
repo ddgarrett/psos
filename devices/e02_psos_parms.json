@@ -46,13 +46,13 @@
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: emp'}}]" },
              
     {"name": "touch4", "module":"svc_touch",   "pin":13, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"UL"},      
+             "pub_touch":"local/e02/menu", "pub_msg":"LR"},      
     {"name": "touch7", "module":"svc_touch",   "pin":27, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"LL" },
-    {"name": "touch5", "module":"svc_touch",   "pin":12, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"LR" },
-    {"name": "touch6", "module":"svc_touch",   "pin":14, "threshold":300,
              "pub_touch":"local/e02/menu", "pub_msg":"UR" },
+    {"name": "touch5", "module":"svc_touch",   "pin":12, "threshold":300,
+             "pub_touch":"local/e02/menu", "pub_msg":"UL" },
+    {"name": "touch6", "module":"svc_touch",   "pin":14, "threshold":300,
+             "pub_touch":"local/e02/menu", "pub_msg":"LL" },
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e02/menu",
              "quick": {
