@@ -13,6 +13,7 @@ import gc
 # read the paramter file
 with open("psos_parms.json") as f:
         parms = ujson.load(f)
+        f.close()
 
 # start main
 if "name" in parms:
