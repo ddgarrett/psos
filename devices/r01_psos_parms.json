@@ -17,7 +17,7 @@
     
     {"name": "log",  "module":"svc_log",   "pub_log":"local/r01/log" },
     
-    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C",
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C","timeout":10,
              "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
              "disp_driver":"ssd1306_lcd",
              "subscr_msg":"r01/lcd" },
