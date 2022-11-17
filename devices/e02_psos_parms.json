@@ -43,9 +43,6 @@
     {"name": "dsp_cam", "module":"svc_pipe",
              "subscr_in":"cam02/#",  "pub_out":"local/e02/lcd",
              "format":"['clear',{{'msg':'{payload}'}}]" },
-
-    {"name": "fwd_e02", "module":"svc_pipe",
-             "subscr_in":"e02/lcd",  "pub_out":"e05/lcd" }
              
     {"name": "touch4", "module":"svc_touch",   "pin":13, "threshold":300,
              "pub_touch":"local/e02/menu", "pub_msg":"LR"},      
@@ -80,6 +77,9 @@
  ],
  
  "removed":[
+ 
+    {"name": "fwd_e02", "module":"svc_pipe",
+             "subscr_in":"e02/lcd",  "pub_out":"e05/lcd" },
  
     {"name": "dsp_dht_e01", "module":"svc_pipe",
              "subscr_in":"e01/dht",  "pub_out":"local/e02/lcd",
