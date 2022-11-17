@@ -12,11 +12,17 @@ import ubinascii
 import machine
 import secrets
 import queue
-from umqtt.simple import MQTTClient
 from psos_util import to_str, to_bytes
 import sys
 import time
 import gc
+
+
+# not present on non-wifi pico
+try:
+    from umqtt.simple import MQTTClient
+except ImportError:
+    pass
 
 from psos_subscription import Subscription
 
@@ -36,16 +42,17 @@ class ModuleService(PsosService):
         self._client = None
         self._subscriptions = []
         
-        self._retry_connect_mqtt()
-        
-        # try to reduce memory use - info no longer needed?
-        # secrets.hivemq_root_ca = None
-        # del secrets.mqtt
-        
-        gc.collect()
-        
-        if self._client == None:
-            self.reset("unable to connect to MQTT")
+        if self.get_svc("wifi") != None:
+            self._retry_connect_mqtt()
+            
+            # try to reduce memory use - info no longer needed?
+            # secrets.hivemq_root_ca = None
+            # del secrets.mqtt
+            
+            gc.collect()
+            
+            if self._client == None:
+                self.reset("unable to connect to MQTT")
             
     def mqtt_callback(self,topic,msg):
         t = to_str(topic)
@@ -62,23 +69,25 @@ class ModuleService(PsosService):
         wifi = self.get_svc("wifi")
         
         while True:
-            # check for any subscribed messages
-            # ping MQTT every 150 loops
             
-            # make sure wifi is connected
-            while not wifi.wifi_connected():
-                await uasyncio.sleep_ms(300)
+            if self._client != None:
+                # check for any subscribed messages
+                # ping MQTT every 150 loops
+                
+                # make sure wifi is connected
+                while not wifi.wifi_connected():
+                    await uasyncio.sleep_ms(300)
 
-            try:
-                ping_wait = ping_wait + 1
-                if ping_wait > 150:
-                    ping_wait = 0
-                    self._client.ping()
-                    # print("pinged mqtt")
-                    
-                self._client.check_msg()
-            except Exception as e:
-                self.reset("MQTT :"+str(e))
+                try:
+                    ping_wait = ping_wait + 1
+                    if ping_wait > 150:
+                        ping_wait = 0
+                        self._client.ping()
+                        # print("pinged mqtt")
+                        
+                    self._client.check_msg()
+                except Exception as e:
+                    self.reset("MQTT :"+str(e))
                     
             await uasyncio.sleep_ms(100)
             
@@ -157,7 +166,8 @@ class ModuleService(PsosService):
         
         sub = Subscription(topic_filter,queue,qos)
         self._subscriptions.append(sub)
-        sub.subscribe(self._client)
+        if self._client != None:
+            sub.subscribe(self._client)
     
     # publish messages
     async def publish(self,topic,payload,retain=False, qos=0):
@@ -165,7 +175,8 @@ class ModuleService(PsosService):
         if topic.startswith('local/'):
             self.mqtt_callback(to_bytes(topic[6:]),to_bytes(payload))
         else:
-            self._client.publish(to_bytes(topic), to_bytes(payload),retain,qos)
+            if self._client != None:
+                self._client.publish(to_bytes(topic), to_bytes(payload),retain,qos)
 
     # remove all of the subscriptions for a given queue
     async def unsubscribe(self,queue):
