@@ -50,6 +50,7 @@ class ModuleService(PsosService):
         if self._pub_hourglass != None :
             self._hg_msg = SvcLcdMsg().dsp_hg().dumps()
             
+        self.trigger = self.get_parm("trigger",25)
         self.pub = self.get_parm("pub")
         
         i2c_svc = parms.get_parm("i2c")
@@ -71,7 +72,7 @@ class ModuleService(PsosService):
             temp=round((self.imu.temperature* 1.8 + 32),1)
             
             button = state
-            tr = 30  # trigger angle to detect tilt
+            tr = self.trigger  # trigger angle to detect tilt
             if ay < -tr:
                 button = "UL"
             elif ay > tr:

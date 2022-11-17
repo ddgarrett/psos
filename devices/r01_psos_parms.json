@@ -29,7 +29,7 @@
              "subscr_in":"r01/dht",  "pub_out":"local/r01/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: r01'}}]" },
              
-    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", 
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":25,
              "pub":"local/r01/menu" },
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r01/menu",
