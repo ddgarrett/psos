@@ -24,7 +24,7 @@ from psos_parms import PsosParms
 
 # additional imports to load them now instead of later
 import machine
-import network
+# import network
 import os
 import psos_util
 import secrets
