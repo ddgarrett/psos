@@ -30,7 +30,9 @@ class ModuleService(PsosService):
         # parameters
         topics = self.get_parm("pub_topics",[])
         msg    = self.get_parm("pub_msg",[])
-        wait_ms   = self.get_parm("pub_wait",5*60)*1000
+        wait = self.get_parm("pub_wait",5*60)
+        wait_ms   = wait*1000
+        initial_wait_ms = self.get_parm("init_wait",wait)*1000
         sleep     = self.get_parm("sleep_ms",10)
         
         # function aliases 
@@ -38,7 +40,7 @@ class ModuleService(PsosService):
         ticks_ms  = time.ticks_ms
         sleep_ms  = uasyncio.sleep_ms       
        
-        next_time = ticks_add(ticks_ms(),wait_ms)
+        next_time = ticks_add(ticks_ms(),initial_wait_ms)
         
         while True:
             await sleep_ms(ticks_add(next_time,-ticks_ms()))
