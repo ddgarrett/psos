@@ -127,11 +127,10 @@ class ModuleService(PsosService):
     async def exec_actions(self,act,exit_msg):               
         for parms in act:
             if "a" in parms:
-                cmd = a["a"]
+                cmd = parms["a"]
                 
                 # is command one of the builtin commands?
                 if cmd in self.cmd_bi:
-                    cmd = a["a"]
                     await self.cmd_bi[cmd](exit_msg,parms)
                     
             else:
