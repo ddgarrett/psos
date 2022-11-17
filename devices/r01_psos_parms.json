@@ -3,35 +3,63 @@
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"e02/",
+    "mqtt_prefix":"r01/",
     "mqtt_name":"office_monitor",
-    "mqtt_descr":"e02 - ESP32 Office Temperature and Humidity Monitor",
+    "mqtt_descr":"r01 - RP2040 Standalone Monitor",
     "log_file":"reset_rsn.txt"
     },
     
 "NOTE":"wifi and mqtt must be first two services",
     
 "services": [
-    {"name": "mqtt", "module":"svc_mqtt_stub" },
+    {"name": "mqtt", "module":"svc_mqtt" },
     {"name": "i2c0", "module":"svc_i2c", "channel":0 },
     
-    {"name": "log",  "module":"svc_log",   "pub_log":"r01/log" },
+    {"name": "log",  "module":"svc_log",   "pub_log":"local/r01/log" },
     
-    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C", "timeout":30,
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C",
              "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
              "disp_driver":"ssd1306_lcd",
              "subscr_msg":"r01/lcd" },
              
-    {"name": "temp", "module":"svc_dht", "dht_pin":28, "dht22":false,
+    {"name": "temp", "module":"svc_dht", "dht_pin":22, "dht22":false,
              "subscr_upd":"r01/dht/upd",   "pub_upd":"local/r01/dht" },
              
     {"name": "dsp_dht_r01", "module":"svc_pipe",
              "subscr_in":"r01/dht",  "pub_out":"local/r01/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e01'}}]" }
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: r01'}}]" },
              
-    {"name": "trigger", "module":"svc_pub_timer", "pub_wait":30, "sleep_ms":3000,
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", 
+             "pub":"local/r01/menu" },
+             
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r01/menu",
+             "quick": {
+                 "UR":[{"a":"msg", "m":"R01 TEMP"},
+                       {"a":"pub", "p":"local/r01/dht/upd"}], 
+                       
+                 "LR":[{"a":"msg", "m":"R01 SOIL"},
+                       {"a":"pub", "p":"local/r01/soil/upd"}],
+                       
+                 "LL":[{"a":"pub", "p":"local/r01/lcd", "m":["backlight_on"]}]
+                 },
+             "items": [
+                 {"item":" --- SETUP ---", "a":[]},
+                 {"item":"SET DRY", "a":[{"a":"exit"}] },
+                 {"item":"SET WET", "a":[{"a":"exit"}]},
+                 {"item":"SET TEMP", "a":[{"a":"exit"}]},
+                 {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
+             ]}
+
+           
+ ],
+ 
+ "removed": [
+    {"name": "trigger", "module":"svc_pub_timer", "pub_wait":30, "sleep_ms":3000, "init_wait":5,
              "pub_msg":["upd"],
              "pub_topics": ["local/r01/dht/upd"] },
-
+             
+    {"name": "show_gyro", "module":"svc_pipe",
+             "subscr_in":"r01/gyro",  "pub_out":"local/r01/lcd",
+             "format":"['clear',{{'msg':'{payload}'}}]" },
  ]
 }
