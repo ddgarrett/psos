@@ -17,6 +17,7 @@
     {"name": "wifi", "module":"svc_wifi",  "disconnect":false, "set_time":true},
     {"name": "mqtt", "module":"svc_mqtt",  "_broker":"_docker_home_acer", "broker":"hivemq" },
     {"name": "i2c0", "module":"svc_i2c", "channel":0 },
+    {"name": "i2c1", "module":"svc_i2c", "channel":1 },
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e02/log" },
     
@@ -44,14 +45,8 @@
              "subscr_in":"cam02/#",  "pub_out":"local/e02/lcd",
              "format":"['clear',{{'msg':'{payload}'}}]" },
              
-    {"name": "touch4", "module":"svc_touch",   "pin":13, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"LR"},      
-    {"name": "touch7", "module":"svc_touch",   "pin":27, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"UR" },
-    {"name": "touch5", "module":"svc_touch",   "pin":12, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"UL" },
-    {"name": "touch6", "module":"svc_touch",   "pin":14, "threshold":300,
-             "pub_touch":"local/e02/menu", "pub_msg":"LL" },
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c1", "trigger":25,
+             "pub":"local/e02/menu" },
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e02/menu",
              "quick": {
