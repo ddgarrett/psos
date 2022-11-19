@@ -26,7 +26,7 @@ class ModuleService(PsosService):
         
     async def run(self):
         
-        print("in svc_blink.run")
+        print("in cmd_blink.run")
         
         i = self.cnt
         
@@ -39,6 +39,8 @@ class ModuleService(PsosService):
             i -= 1
             if i <= 0:
                 return
+            
+        print("command cmd_blink exiting...")
             
         
             
