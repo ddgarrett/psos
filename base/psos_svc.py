@@ -29,6 +29,12 @@ class PsosService:
     def get_mqtt(self):
         return self.get_svc("mqtt")
 
+    def lock_lcd(self):
+        self.get_service("lcd").set_lock(True)
+        
+    def unlock_lcd(self):
+        self.get_service("lcd").set_lock(False)
+        
     # Reset microcontroller
     # If there is a service named "reset"
     # will use that service.reset() method.
