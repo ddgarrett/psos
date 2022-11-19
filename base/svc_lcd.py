@@ -61,7 +61,7 @@ class ModuleService(PsosService):
         self.to_remain      = self.timeout + 1
         
         self.hg_task_cnt    = 0
-        self.lock           = False
+        self.lock_cnt       = 0
         
         # dictionary to execute commands
         self.cmd_lookup = {
@@ -110,7 +110,11 @@ class ModuleService(PsosService):
             await uasyncio.sleep_ms(1000)
         
     def set_lock(self,v):
-        self.lock = v
+        if v:
+            self.lock_cnt += 1
+        else:
+            if self.lock_cnt > 0:
+                self.lock_cnt -= 1
         
     def get_timeout(self):
         return self.timeout
@@ -148,7 +152,7 @@ class ModuleService(PsosService):
             q = await self._trigger_q.get()
             
             # throw away any queued input while display is locked
-            if not self.lock:
+            if self.lock_cnt <= 0:
                 msg.load_subscr(q)                
                 self.process_msg(msg)
                     
