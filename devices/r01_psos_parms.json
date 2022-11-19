@@ -44,8 +44,15 @@
                  },
              "items": [
                  {"item":" --- SETUP ---", "a":[]},
-                 {"item":"SET DRY", "a":[{"a":"exit"}] },
-                 {"item":"SET WET", "a":[{"a":"exit"}]},
+                 {"item":"BLINK 30", "a":[{"a":"cmd_blink", "cnt":10, "pin":25},{"a":"exit","m":"blinking 30 times..."}] },
+                 {"item":"BLINK  5", "a":[{"a":"cmd_blink", "cnt":5, "pin":25},{"a":"exit"}] },
+                 
+                 {"item":"TEMP",     "a":[{"a":"exit"},
+                                          {"a":"msg", "m":"R01 TEMP"},
+                                          {"a":"pub", "p":"local/r01/dht/upd"}]},
+                                          
+                 {"item":"SET DRY",  "a":[{"a":"exit"}] },
+                 {"item":"SET WET",  "a":[{"a":"exit"}]},
                  {"item":"SET TEMP", "a":[{"a":"exit"}]},
                  {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
              ]}
@@ -60,6 +67,6 @@
              
     {"name": "show_gyro", "module":"svc_pipe",
              "subscr_in":"r01/gyro",  "pub_out":"local/r01/lcd",
-             "format":"['clear',{{'msg':'{payload}'}}]" },
+             "format":"['clear',{{'msg':'{payload}'}}]" }
  ]
 }

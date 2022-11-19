@@ -21,6 +21,7 @@
 """
 
 from psos_svc import PsosService
+from psos_parms import PsosParms
 import uasyncio
 import queue
 
@@ -87,9 +88,9 @@ class ModuleService(PsosService):
             elif cmd == b_down:
                 await self.scroll_menu(cmd)
             elif cmd == b_enter:
-                await self.select_item()
-            elif cmd == b_menu:
                 await self.exit_menu()
+            elif cmd == b_menu:
+                await self.select_item()
             else:
                 print("command ignored:",cmd)
             
@@ -120,23 +121,21 @@ class ModuleService(PsosService):
         item = self.items[self.item_idx]
         if "a" in item:
             actions = item["a"]
-            await self.exec_actions(item["a"],item["item"])                        
+            await self.exec_actions(actions,item["item"])                        
                         
     # execute a list of commands
     # each command consists of an action and additional parameters
-    async def exec_actions(self,act,exit_msg):               
-        for parms in act:
-            if "a" in parms:
-                cmd = parms["a"]
+    async def exec_actions(self,actions,exit_msg):               
+        for action in actions:
+            if "a" in action:
+                cmd = action["a"]
                 
                 # is command one of the builtin commands?
                 if cmd in self.cmd_bi:
-                    await self.cmd_bi[cmd](exit_msg,parms)
+                    await self.cmd_bi[cmd](exit_msg,action)
+                else:
+                    await self.exec_cmd(exit_msg,action)
                     
-            else:
-                # try to look up an external command
-                # TODO: finish this
-                pass
                             
     async def exit_menu(self,m=None):
         self.in_menu = False
@@ -146,12 +145,6 @@ class ModuleService(PsosService):
             m = " "
             
         self.update_lcd(m)
-        
-    def lock_lcd(self):
-        self.lcd.set_lock(True)
-        
-    def unlock_lcd(self):
-        self.lcd.set_lock(False)
         
     def display_menu(self):
         msg = ""
@@ -173,7 +166,39 @@ class ModuleService(PsosService):
     def update_lcd(self,msg):
         msg = SvcMsg(payload=["clear",{"msg":msg}])
         self.lcd.process_msg(msg)
+        
+    # Execute a dynamic command.
+    # Assumes a command is in parms["a"]
+    # and that there is a module named parms["a"].
+    # Commands are another type of service but unlike the
+    # services created during startup, are expected to have a
+    # limited run then exit.
+    async def exec_cmd(self,exit_msg,parms):
+        
+        # use a copy of my parms for new command parms
+        new_parms = self._parms._parms.copy()
+        my_defaults = self._parms._defaults
+        
+        # add exit message and command specific parms to new parms
+        new_parms["exit_msg"]  = exit_msg
+        new_parms["name"]      = parms["a"]
+        new_parms.update(parms)
+        
+        # create the psos parms for the command
+        psos_parms = PsosParms(new_parms,my_defaults)
 
+        # create a new instance of the Command
+        # to implement the command
+        module_name = parms["a"]
+        print("creating command "+module_name)
+        module      = __import__(module_name)
+        command     = module.ModuleService(psos_parms)
+        
+        # start the command running
+        print("... starting "+module_name)
+        uasyncio.create_task(command.run())
+        print("... "+module_name+ " running")
+        
 
      ############### Builtin Commands ################
                     
