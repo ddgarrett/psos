@@ -175,17 +175,12 @@ class ModuleService(PsosService):
     # limited run then exit.
     async def exec_cmd(self,exit_msg,parms):
         
-        # use a copy of my parms for new command parms
-        new_parms = self._parms._parms.copy()
-        my_defaults = self._parms._defaults
-        
-        # add exit message and command specific parms to new parms
-        new_parms["exit_msg"]  = exit_msg
-        new_parms["name"]      = parms["a"]
-        new_parms.update(parms)
+        # add exit message and command name to parms
+        parms["exit_msg"]  = exit_msg
+        parms["name"]      = parms["a"]
         
         # create the psos parms for the command
-        psos_parms = PsosParms(new_parms,my_defaults)
+        psos_parms = PsosParms(parms,self._parms._defaults)
 
         # create a new instance of the Command
         # to implement the command
