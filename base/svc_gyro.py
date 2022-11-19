@@ -69,7 +69,6 @@ class ModuleService(PsosService):
         while True:
             ax=int(round(self.imu.accel.x*90))
             ay=int(round(self.imu.accel.y*90))
-            temp=round((self.imu.temperature* 1.8 + 32),1)
             
             button = state
             tr = self.trigger  # trigger angle to detect tilt
