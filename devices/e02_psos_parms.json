@@ -50,24 +50,24 @@
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e02/menu",
              "quick": {
-                 "UR":[{"a":"msg", "m":"E02 TEMP"},
-                       {"a":"pub", "p":"e02/dht/upd"}], 
+                 "up":[{"cmd":"msg", "msg":"E02 TEMP"},
+                       {"cmd":"pub", "pub":"e02/dht/upd"}], 
                        
-                 "LR":[{"a":"msg", "m":"E02 SOIL"},
-                       {"a":"pub", "p":"e02/soil/upd"}],
+                 "down":[{"cmd":"msg", "msg":"E02 SOIL"},
+                         {"cmd":"pub", "pub":"e02/soil/upd"}],
                        
-                 "LL":[{"a":"pub", "p":"local/e02/lcd", "m":["backlight_on"]}]
+                 "exit":[{"cmd":"pub", "pub":"local/e02/lcd", "msg":["backlight_on"]}]
                  },
              "items": [
-                 {"item":" --- SETUP ---", "a":[]},
-                 {"item":"SET DRY", "a":[{"a":"exit"}] },
-                 {"item":"SET WET", "a":[{"a":"exit"}]},
-                 {"item":"SET TEMP", "a":[{"a":"exit"}]},
-                 {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
-                 {"item":" --- MISC ---", "a":[]},
-                 {"item":"CLICK", "a":[
-                     {"a":"exit"},
-                     {"a":"pub", "p":"cam02/click", "m":"click"} ]}
+                 {"item":" --- SETUP ---", "cmd":[]},
+                 {"item":"SET DRY", "cmds":[{"cmd":"exit"}] },
+                 {"item":"SET WET", "cmds":[{"cmd":"exit"}]},
+                 {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
+                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
+                 {"item":" --- MISC ---", "cmds":[]},
+                 {"item":"CLICK", "cmds":[
+                     {"cmd":"exit"},
+                     {"cmd":"pub", "pub":"cam02/click", "msg":"click"} ]}
              ]}
  ],
  
