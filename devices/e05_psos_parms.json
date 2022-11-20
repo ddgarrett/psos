@@ -41,30 +41,30 @@
              "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
              
     {"name": "touch4", "module":"svc_touch", "pin":13, "threshold":300,
-             "pub_touch":"local/e05/menu", "pub_msg":"UL"},      
+             "pub_touch":"local/e05/menu", "pub_msg":"enter"},      
     {"name": "touch7", "module":"svc_touch",   "pin":27, "threshold":300,
-             "pub_touch":"local/e05/menu", "pub_msg":"LL" },
+             "pub_touch":"local/e05/menu", "pub_msg":"exit" },
     {"name": "touch5", "module":"svc_touch",   "pin":12, "threshold":300,
-             "pub_touch":"local/e05/menu", "pub_msg":"LR" },
+             "pub_touch":"local/e05/menu", "pub_msg":"down" },
     {"name": "touch6", "module":"svc_touch",   "pin":14, "threshold":300,
-             "pub_touch":"local/e05/menu", "pub_msg":"UR" },
+             "pub_touch":"local/e05/menu", "pub_msg":"up" },
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e05/menu",
              "quick": {
-                 "LR":[{"a":"msg", "m":"TEMP & HUMIDITY"},
-                       {"a":"pub","p":"e05/dht/upd"}], 
+                 "down":[{"cmd":"msg", "msg":"TEMP & HUMIDITY"},
+                       {"cmd":"pub", "pub":"e05/dht/upd"}], 
                        
-                 "UR":[{"a":"msg", "m":"SOIL MOISTURE"},
-                       {"a":"pub","p":"e05/soil/upd"}],
+                 "up":[{"cmd":"msg", "msg":"SOIL MOISTURE"},
+                       {"cmd":"pub","pub":"e05/soil/upd"}],
                        
-                 "LL":[{"a":"pub", "p":"local/e05/lcd", "m":["backlight_on"]}]
+                 "exit":[{"cmd":"pub", "pub":"local/e05/lcd", "msg":["backlight_on"]}]
                  },
              "items": [
-                 {"item":" --- SETUP ---", "a":[]},
-                 {"item":"SET DRY", "a":[{"a":"exit"}] },
-                 {"item":"SET WET", "a":[{"a":"exit"}]},
-                 {"item":"SET TEMP", "a":[{"a":"exit"}]},
-                 {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
+                 {"item":" --- SETUP ---", "cmd":[]},
+                 {"item":"SET DRY", "cmds":[{"cmd":"exit"}] },
+                 {"item":"SET WET", "cmds":[{"cmd":"exit"}]},
+                 {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
+                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
              ]}
 
  ]
