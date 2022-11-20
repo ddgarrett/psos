@@ -1,7 +1,7 @@
 """
     Command to Blink Internal LED Service
         
-    Blink internal LED 60 times then exit.
+    Blink internal LED specified times then exit.
     Command version of svc_blink.
     
 """
@@ -26,8 +26,6 @@ class ModuleService(PsosService):
         
     async def run(self):
         
-        print("in cmd_blink.run")
-        
         i = self.cnt
         
         while True:
@@ -39,9 +37,3 @@ class ModuleService(PsosService):
             i -= 1
             if i <= 0:
                 return
-            
-        print("command cmd_blink exiting...")
-            
-        
-            
-            
