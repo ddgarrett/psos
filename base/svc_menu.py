@@ -5,18 +5,13 @@
     and selection of a menu item.
     
     Messages include:
-    1. "menu" - toggles menu mode on and off
+    1. "enter"- enters menu, submenu or executes menu item
     2. "up"   - highlights the menu item above the current
     3. "down" - highlights the menu item below the current
-    4. "enter"- selects the current
+    4. "exit" - exits the current display or turns on the display
     
     When in menu mode the LCD is "locked", preventing it from
     displaying any messages passed via MQTT
-    
-    Parms include:
-    1. sub - topic subscribed to, used to pass menu, up, down and enter messages
-    3. items - list of menu items and messages to be sent when an item is selected
-       [{"item":"Item 1", "topic":"mqtt/topic", "msg":"mqtt message / payload"},...]
     
 """
 
@@ -27,11 +22,11 @@ import queue
 
 from svc_msg import SvcMsg
 
-# menu buttons
-b_menu  = "UL" # upper left button
-b_up    = "UR" # upper right button
-b_down  = "LR" # lower right button
-b_enter = "LL" # lower left button
+# input message values
+m_enter = "enter" # enter menu, submenu, or execute item
+m_up    = "up"    # scroll up list, or execute associated quick command 
+m_down  = "down"  # scroll down list or execute associate quick command
+m_exit  = "exit"  # exit menu or turn on display
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -73,29 +68,26 @@ class ModuleService(PsosService):
     # execute a given command received via MQTT
     async def execute(self,mqtt,msg):
 
-        cmd = msg.get_payload()
+        mp = msg.get_payload()
         
         if not self.in_menu:
-            if cmd == b_menu:
+            if mp == m_enter:
                 await self.init_menu()
             else:
-                if cmd in self.quick:
-                    actions = self.quick[cmd]
-                    await self.exec_actions(actions,"done")
+                if mp in self.quick:
+                    cmd = self.quick[mp]
+                    await self.exec_cmds(cmd,"done")
         else:
-            if cmd == b_up:
-                await self.scroll_menu(cmd)
-            elif cmd == b_down:
-                await self.scroll_menu(cmd)
-            elif cmd == b_enter:
+            if mp == m_up:
+                await self.scroll_menu(mp)
+            elif mp == m_down:
+                await self.scroll_menu(mp)
+            elif mp == m_exit:
                 await self.exit_menu()
-            elif cmd == b_menu:
+            elif mp == m_enter:
                 await self.select_item()
             else:
-                print("command ignored:",cmd)
-            
-
-        # await mqtt.publish(self._pub_topic,out_t)
+                print("message ignored:",mp)
 
     async def init_menu(self):
         self.in_menu = True
@@ -105,8 +97,17 @@ class ModuleService(PsosService):
         self.save_timeout = self.lcd.get_timeout()
         self.lcd.set_timeout(0)
 
+    async def exit_menu(self,msg=None):
+        self.in_menu = False
+        self.unlock_lcd()
+        self.lcd.set_timeout(self.save_timeout)
+        if msg == None:
+            msg = " "
+            
+        self.update_lcd(msg)
+
     async def scroll_menu(self,cmd):
-        if cmd == b_down:
+        if cmd == m_down:
             self.item_idx = self.item_idx + 1
             if self.item_idx >= len(self.items):
                 self.item_idx = 0
@@ -117,35 +118,28 @@ class ModuleService(PsosService):
                 
         self.display_menu()
         
+    # execute commands for currently selected item
     async def select_item(self):
         item = self.items[self.item_idx]
-        if "a" in item:
-            actions = item["a"]
-            await self.exec_actions(actions,item["item"])                        
+        if "cmds" in item:
+            cmds = item["cmds"]
+            await self.exec_cmds(cmds,item["item"])                        
                         
     # execute a list of commands
-    # each command consists of an action and additional parameters
-    async def exec_actions(self,actions,exit_msg):               
-        for action in actions:
-            if "a" in action:
-                cmd = action["a"]
+    # each command consists of a command and additional parameters
+    async def exec_cmds(self,cmds,exit_msg):               
+        for action in cmds:
+            if "cmd" in action:
+                cmd = action["cmd"]
                 
                 # is command one of the builtin commands?
                 if cmd in self.cmd_bi:
                     await self.cmd_bi[cmd](exit_msg,action)
                 else:
                     await self.exec_cmd(exit_msg,action)
-                    
                             
-    async def exit_menu(self,m=None):
-        self.in_menu = False
-        self.unlock_lcd()
-        self.lcd.set_timeout(self.save_timeout)
-        if m == None:
-            m = " "
-            
-        self.update_lcd(m)
         
+    # display a list of menu items
     def display_menu(self):
         msg = ""
         for i in range(4):
@@ -162,14 +156,15 @@ class ModuleService(PsosService):
                 
         self.update_lcd(msg)
                 
-                
+    # display a message after clearing the display
     def update_lcd(self,msg):
         msg = SvcMsg(payload=["clear",{"msg":msg}])
         self.lcd.process_msg(msg)
         
+        
     # Execute a dynamic command.
-    # Assumes a command is in parms["a"]
-    # and that there is a module named parms["a"].
+    # Assumes a command is in parms["cmd"]
+    # and that there is a module named parms["cmd"].
     # Commands are another type of service but unlike the
     # services created during startup, are expected to have a
     # limited run then exit.
@@ -177,14 +172,14 @@ class ModuleService(PsosService):
         
         # add exit message and command name to parms
         parms["exit_msg"]  = exit_msg
-        parms["name"]      = parms["a"]
+        parms["name"]      = parms["cmd"]
         
         # create the psos parms for the command
         psos_parms = PsosParms(parms,self._parms._defaults)
 
         # create a new instance of the Command
         # to implement the command
-        module_name = parms["a"]
+        module_name = parms["cmd"]
         print("creating command "+module_name)
         module      = __import__(module_name)
         command     = module.ModuleService(psos_parms)
@@ -198,26 +193,26 @@ class ModuleService(PsosService):
      ############### Builtin Commands ################
                     
     async def cmd_pub(self,exit_msg,parms):
-        p = ""
-        m = ""
-        if "p" in parms:
-            p = parms["p"]
-        if "m" in parms:
-            m = parms["m"]
+        pub = ""
+        msg = ""
+        if "pub" in parms:
+            pub = parms["pub"]
+        if "msg" in parms:
+            msg = parms["msg"]
             
-        await self.get_mqtt().publish(p,m)
+        await self.get_mqtt().publish(pub,msg)
         
     async def cmd_exit(self,exit_msg,parms):
-        m=exit_msg
-        if "m" in parms:
-            m = parms["m"]
-        await self.exit_menu(m=m)        
+        msg=exit_msg
+        if "msg" in parms:
+            msg = parms["msg"]
+        await self.exit_menu(msg=msg)        
 
     async def cmd_msg(self,exit_msg,parms):
-        m = exit_msg
-        if "m" in parms:
-            m = parms["m"]
-        self.update_lcd(m)        
+        msg = exit_msg
+        if "msg" in parms:
+            msg = parms["msg"]
+        self.update_lcd(msg)        
 
     #########################################
    

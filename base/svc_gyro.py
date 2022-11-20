@@ -2,30 +2,24 @@
     GY-521 MPU-6050 Service Class
     
     Uses a the GY-521 3 Axis Accelerometer Gyroscope Module
-    to emulate four "touch buttons", which with the ESP32 are
-    placed on the four corners of the circuit board:
-    Upper Left (UL), Lower Left (LL),
-    Upper Right (UR) and Lower Left (LL).
+    to generate menu messages including:
     
-    Buttons are triggered when the gyro is tilted right, left or
-    forward, backward:
-    UL = right
-    LL = left
-    UR = forward
-    LR = backward
+    'enter' - tilted to the right
+    'up'    - tilted forward
+    'down'  - tilted back
+    'exit'  - tilted left
+    
     
     This in turn triggers the send of a given message to the specified topics.
     Parms:
-     - pub = default topic to publish button values to
-     - i2c = I2C service to use
+     - pub = default topic to publish commands values to
+     - i2c = I2C service to use for GY-521
      
      Possible future enhancement,
      - allow different topics for each button
      - allow custom message/payload to be sent for each button
      
-     For now, there is a single topic and the message sent is UL, LL, UR or LR.
-    
-    
+     For now, there is a single topic and the message sent is as outlined above.
     
 """
 
@@ -62,42 +56,39 @@ class ModuleService(PsosService):
         
         mqtt = self.get_mqtt()
 
-        state = "--"		# current state
-        new_state = "--"	# new state
-        ns_ticks = 0		# number of times new state detected
+        new_state = "--"  # new state
+        ns_ticks = 0      # number of times new state detected
 
         while True:
             ax=int(round(self.imu.accel.x*90))
             ay=int(round(self.imu.accel.y*90))
             
-            button = state
             tr = self.trigger  # trigger angle to detect tilt
+            
+            # check msg state is stable for 300ms
+            # then send a single msg waiting for it to change again
             if ay < -tr:
-                button = "UL"
+                msg = "enter"
             elif ay > tr:
-                button = "LL"
+                msg = "exit"
             elif ax < -tr:
-                button = "UR"
+                msg = "up"
             elif ax > tr:
-                button = "LR"
+                msg = "down"
             else:
-                button = "--"
-                
+                msg = "--"
 
-            if button == new_state:
+            if msg == new_state:
                 ns_ticks += 1
                 if ns_ticks == 3:
                     # new state has been triggered for
                     # enough time - send a message
-                    state = new_state
-                    # new_state = "--"
-                    # ns_ticks = 0
                     
-                    if state != "--":
+                    if new_state != "--":
                         await self.pub_hourglass(mqtt)
-                        await mqtt.publish(self.pub,state)
+                        await mqtt.publish(self.pub,new_state)
             else:
-                new_state = button
+                new_state = msg
                 ns_ticks = 0
 
                     

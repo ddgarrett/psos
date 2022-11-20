@@ -29,32 +29,32 @@
              "subscr_in":"r01/dht",  "pub_out":"local/r01/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: r01'}}]" },
              
-    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":25,
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":20,
              "pub":"local/r01/menu" },
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r01/menu",
              "quick": {
-                 "UR":[{"a":"msg", "m":"R01 TEMP"},
-                       {"a":"pub", "p":"local/r01/dht/upd"}], 
+                 "up":[{"cmd":"msg", "msg":"R01 TEMP"},
+                       {"cmd":"pub", "pub":"local/r01/dht/upd"}], 
                        
-                 "LR":[{"a":"msg", "m":"R01 SOIL"},
-                       {"a":"pub", "p":"local/r01/soil/upd"}],
+                 "down":[{"cmd":"msg", "msg":"R01 SOIL"},
+                         {"cmd":"pub", "pub":"local/r01/soil/upd"}],
                        
-                 "LL":[{"a":"pub", "p":"local/r01/lcd", "m":["backlight_on"]}]
+                 "exit":[{"cmd":"pub", "pub":"local/r01/lcd", "msg":["backlight_on"]}]
                  },
              "items": [
-                 {"item":" --- SETUP ---", "a":[]},
-                 {"item":"BLINK 30", "a":[{"a":"cmd_blink", "cnt":10, "pin":25},{"a":"exit","m":"blinking 30 times..."}] },
-                 {"item":"BLINK  5", "a":[{"a":"cmd_blink", "cnt":5, "pin":25},{"a":"exit"}] },
+                 {"item":" --- SETUP ---", "cmds":[]},
+                 {"item":"BLINK 10", "cmds":[{"cmd":"cmd_blink", "cnt":10, "pin":25},{"cmd":"exit","msg":"blinking 10 times..."}] },
+                 {"item":"BLINK  5", "cmds":[{"cmd":"cmd_blink", "cnt":5,  "pin":25},{"cmd":"exit"}] },
                  
-                 {"item":"TEMP",     "a":[{"a":"exit"},
-                                          {"a":"msg", "m":"R01 TEMP"},
-                                          {"a":"pub", "p":"local/r01/dht/upd"}]},
+                 {"item":"TEMP",     "cmds":[{"cmd":"exit"},
+                                          {"cmd":"msg", "msg":"R01 TEMP"},
+                                          {"cmd":"pub", "pub":"local/r01/dht/upd"}]},
                                           
-                 {"item":"SET DRY",  "a":[{"a":"exit"}] },
-                 {"item":"SET WET",  "a":[{"a":"exit"}]},
-                 {"item":"SET TEMP", "a":[{"a":"exit"}]},
-                 {"item":"SET HUMIDITY", "a":[{"a":"exit"}]}
+                 {"item":"SET DRY",  "cmds":[{"cmd":"exit"}] },
+                 {"item":"SET WET",  "cmds":[{"cmd":"exit"}]},
+                 {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
+                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
              ]}
 
            
