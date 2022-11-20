@@ -63,7 +63,7 @@
                  {"item":"SET DRY", "cmds":[{"cmd":"exit"}] },
                  {"item":"SET WET", "cmds":[{"cmd":"exit"}]},
                  {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
-                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
+                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]},
                  {"item":" --- MISC ---", "cmds":[]},
                  {"item":"CLICK", "cmds":[
                      {"cmd":"exit"},
@@ -95,7 +95,7 @@
     
     {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"sd/dht_log.txt"},
     {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"sd/log_log.txt"},
-    {"name": "log_all", "module":"svc_log_dat", "subscr_log":"#",     "file_name":"sd/all_log.txt"}
+    {"name": "log_all", "module":"svc_log_dat", "subscr_log":"#",     "file_name":"sd/all_log.txt"},
 
     {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
              "pub_msg":["upd","upd","upd","upd","upd","upd","upd"],
