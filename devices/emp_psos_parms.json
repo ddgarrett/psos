@@ -4,7 +4,7 @@
 
 "defaults": {
     "mqtt_prefix":"emp",
-    "show_hourglass":"lcd",
+    "pub_hourglass":"local/emp/lcd",
     "log_file":"reset_rsn.txt"
     },
     
@@ -31,7 +31,7 @@
     {"name": "touch7", "module":"svc_touch", "pin":27, "threshold":300,
              "pub_touch":"e05/dht/upd" },
     {"name": "touch8", "module":"svc_touch", "pin":33, "threshold":300,
-             "pub_touch":"emp/dht/upd" },
+             "pub_touch":"local/emp/dht/upd" },
     {"name": "touch9", "module":"svc_touch", "pin":32, "threshold":300,
              "pub_touch":"e01/dht/upd" },
              
