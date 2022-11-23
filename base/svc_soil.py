@@ -61,11 +61,12 @@ class ModuleService(PsosService):
             await uasyncio.sleep_ms(100)
             
         raw /= cycle
+        raw = round(raw)
 
-        raw = min(self.dry,raw)
-        raw = max(self.wet,raw)
+        raw_c = min(self.dry,raw)
+        raw_c = max(self.wet,raw_c)
 
-        sm = int(round(((raw - self.dry) / (self.wet - self.dry)) * 100))
-        sm1 = int(round(((raw - self.dry) / (self.wet - self.dry)) * 10))
+        sm = int(round(((raw_c - self.dry) / (self.wet - self.dry)) * 100))
+        sm1 = int(round(((raw_c - self.dry) / (self.wet - self.dry)) * 10))
         
         return {"lvl_100":sm, "lvl_10":sm1, "raw":raw}
