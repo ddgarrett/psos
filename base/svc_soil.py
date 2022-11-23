@@ -16,6 +16,7 @@
 """
 
 from psos_svc import PsosService
+import os
 import uasyncio
 from machine import ADC, Pin
 import queue
@@ -25,21 +26,20 @@ class ModuleService(PsosService):
     
     def __init__(self, parms):
         super().__init__(parms)
-        pin = parms.get_parm("pin",32)
-        print("pin:",pin)
-
-        self.adc = ADC(Pin(pin))
-        attenuation = ADC.ATTN_11DB
-        self.adc.atten(attenuation)
-
-        self.sub = parms.get_parm("sub") # subscribe topic
-        self.q   = queue.Queue()         # q for subscribed messages
-        self.pub = parms.get_parm("pub") # publish topic
         
-        self.dry = parms.get_parm("dry",2525)
-        self.wet = parms.get_parm("wet",1422)
+        self.q = queue.Queue()
+        self.sub = parms.get_parm("sub")
+        self.pub = parms.get_parm("pub")
         
-        print("dry, wet: ",self.dry,self.wet)
+        self.adc = ADC(Pin(self.get_parm("pin")))
+        
+        if os.uname().sysname == "esp32":
+            # configure the ESP32 adc
+            self.adc.atten(ADC.ATTN_11DB)
+
+        self.wet = self.get_parm("wet",25000)
+        self.dry = self.get_parm("dry",58000)
+        self.cycles = self.get_parm("cycles",5)
         
     async def run(self):
         
@@ -48,27 +48,24 @@ class ModuleService(PsosService):
         
         while True:
             data = await self.q.get()
-            await self.send_data(mqtt)
-            
-            
-    # send data via MQTT
-    async def send_data(self,mqtt):
-        
-        # sample 5 times and average,
-        cnt = 5
-        mv = 0
-        while cnt > 0:
-            mv += (self.adc.read_uv() / 1000)
-            cnt = cnt - 1
+            r = await self.get_adc_value()
+            await mqtt.publish(self.pub,r)
+
+    async def get_adc_value(self):
+        cycle=5
+        raw = 0
+
+        for _ in range(cycle):
+            r = self.adc.read_u16()
+            raw += r
             await uasyncio.sleep_ms(100)
             
-        mv = mv/5
+        raw /= cycle
+
+        raw = min(self.dry,raw)
+        raw = max(self.wet,raw)
+
+        sm = int(round(((raw - self.dry) / (self.wet - self.dry)) * 100))
+        sm1 = int(round(((raw - self.dry) / (self.wet - self.dry)) * 10))
         
-        # constrain value
-        mv = min(self.dry,mv)
-        mv = max(self.wet,mv)
-        
-        # map value to 0 to 10 range and publish
-        mv = int(round(((mv - self.dry) / (self.wet - self.dry)) * 10))
-        await mqtt.publish(self.pub,{"mv": mv})
-            
+        return {"lvl_100":sm, "lvl_10":sm1, "raw":raw}

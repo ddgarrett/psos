@@ -6,7 +6,7 @@
     "mqtt_prefix":"e05/",
     "mqtt_name":"office_monitor",
     "mqtt_descr":"e05 - ESP32 Soil Moisture and Temperature Monitor",
-    "_pub_hourglass":"local/e05/lcd" 
+    "_pub_hourglass":"local/e05/lcd"
     },
     
 "NOTE":"wifi and mqtt must be first two services",
@@ -22,20 +22,20 @@
              "disp_driver":"ssd1306_lcd",
              "subscr_msg":"e05/lcd" },
              
-    {"name": "temp", "module":"svc_dht", "dht_pin":5,
+    {"name": "temp", "module":"svc_dht", "dht_pin":33,
              "subscr_upd":"e05/dht/upd",   "pub_upd":"e05/dht" },
     {"name": "dsp_temp_e05", "module":"svc_pipe",
              "subscr_in":"e05/dht",  "pub_out":"e05/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },     
              
-    {"name": "soil",    "module":"svc_soil",   "pin": 32, "dry":2769, "wet":1419, 
+    {"name": "soil",    "module":"svc_soil",   "pin": 32, "dry":45678, "wet":24334,
              "sub":"e05/soil/upd",   "pub":"e05/soil" },
     {"name": "dsp_soil_emp", "module":"svc_pipe",
              "subscr_in":"e05/soil",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Soil Moisture\nLevel: {mv}\nDev: e05'}}]" },
+             "format":"['clear',{{'msg':'Soil Moisture\nLvl: {lvl_10}\nReading: {raw}\nDev: e05'}}]" },
     {"name": "dsp_soil_e02", "module":"svc_pipe",
              "subscr_in":"e05/soil",  "pub_out":"e05/lcd",
-             "format":"['clear',{{'msg':'SOIL MOISTURE\nLEVEL: {mv}\nDEV: e05'}}]" },
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: e05'}}]" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e05/mem/upd",   "pub_upd":"e05/mem" },
