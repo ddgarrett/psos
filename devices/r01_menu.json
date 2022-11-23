@@ -1,0 +1,58 @@
+
+{ 
+    "main": {
+        "quick": {
+            "up":[{"cmd":"msg", "msg":"R01 TEMP"},
+                {"cmd":"pub", "pub":"local/r01/dht/upd"}], 
+                
+            "down":[{"cmd":"msg", "msg":"R01 SOIL"},
+                    {"cmd":"pub", "pub":"local/r01/soil/upd"}],
+                
+            "exit":[{"cmd":"pub", "pub":"local/r01/lcd", "msg":["backlight_on"]}]
+            },
+        "menu": [
+                {"item":"SOIL MOISTURE...",     "cmds":[
+                    {"cmd":"msg", "msg":"R01 SOIL"},
+                    {"cmd":"pub", "pub":"local/r01/soil/upd"},
+                    {"cmd":"exit"}]},
+                {"item":"TEMP...",     "cmds":[
+                    {"cmd":"msg", "msg":"R01 TEMP"},
+                    {"cmd":"pub", "pub":"local/r01/dht/upd"},
+                    {"cmd":"exit"}]},
+                    
+                {"item":"SETUP...", "cmds":[{"cmd":"submenu","name":"setup"}]},
+                {"item":"BLINK...", "cmds":[{"cmd":"submenu","name":"blink"}]}
+            ]
+        },
+             
+    "setup": {
+        "menu":[                                     
+             {"item":"SET DRY",  "cmds":[{"cmd":"submenu","name":"set_dry"}] },
+             {"item":"SET WET",  "cmds":[{"cmd":"exit"}]},
+             {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
+             {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
+        ]},
+
+    "set_dry": {
+        "menu":[                                     
+             {"item":"RUN DRY TEST", "cmds":[{"cmd":"cmd_soil_cal", "svc_soil":"soil"}] },
+             {"item":"SAVE & EXIT",  "cmds":[{"cmd":"exit", "msg":"value saved"}]},
+             {"item":"EXIT NO SAVE", "cmds":[{"cmd":"exit", "msg":"value not saved"}]}
+        ]},
+
+    "blink":{
+        "menu":[
+            {"item":"BLINK  5",  "cmds":[
+                {"cmd":"cmd_blink", "cnt":5,  "pin":25},
+                {"cmd":"exit"}] },
+            {"item":"BLINK  10", "cmds":[
+                {"cmd":"cmd_blink", "cnt":10, "pin":25},
+                {"cmd":"exit"}] },
+            {"item":"BLINK  15", "cmds":[
+                {"cmd":"cmd_blink", "cnt":15, "pin":25},
+                {"cmd":"exit"}] },
+            {"item":"BLINK  20", "cmds":[
+                {"cmd":"cmd_blink", "cnt":20, "pin":25},
+                {"cmd":"exit"}] }
+    ]}
+}

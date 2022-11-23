@@ -23,41 +23,22 @@
              "subscr_msg":"r01/lcd" },
              
     {"name": "temp", "module":"svc_dht", "dht_pin":22, "dht22":false,
-             "subscr_upd":"r01/dht/upd",   "pub_upd":"local/r01/dht" },
-             
+             "subscr_upd":"r01/dht/upd",   "pub_upd":"local/r01/dht" },            
     {"name": "dsp_dht_r01", "module":"svc_pipe",
              "subscr_in":"r01/dht",  "pub_out":"local/r01/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: r01'}}]" },
              
+    {"name": "soil",    "module":"svc_soil",   "pin": 26, "dry":56207, "wet":29367,
+             "sub":"r01/soil/upd",   "pub":"local/r01/soil" },
+    {"name": "dsp_soil", "module":"svc_pipe",
+             "subscr_in":"r01/soil",  "pub_out":"local/r01/lcd",
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: r01'}}]" },
+ 
     {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":20,
              "pub":"local/r01/menu" },
              
-    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r01/menu",
-             "quick": {
-                 "up":[{"cmd":"msg", "msg":"R01 TEMP"},
-                       {"cmd":"pub", "pub":"local/r01/dht/upd"}], 
-                       
-                 "down":[{"cmd":"msg", "msg":"R01 SOIL"},
-                         {"cmd":"pub", "pub":"local/r01/soil/upd"}],
-                       
-                 "exit":[{"cmd":"pub", "pub":"local/r01/lcd", "msg":["backlight_on"]}]
-                 },
-             "items": [
-                 {"item":" --- SETUP ---", "cmds":[]},
-                 {"item":"BLINK 10", "cmds":[{"cmd":"cmd_blink", "cnt":10, "pin":25},{"cmd":"exit","msg":"blinking 10 times..."}] },
-                 {"item":"BLINK  5", "cmds":[{"cmd":"cmd_blink", "cnt":5,  "pin":25},{"cmd":"exit"}] },
-                 
-                 {"item":"TEMP",     "cmds":[{"cmd":"exit"},
-                                          {"cmd":"msg", "msg":"R01 TEMP"},
-                                          {"cmd":"pub", "pub":"local/r01/dht/upd"}]},
-                                          
-                 {"item":"SET DRY",  "cmds":[{"cmd":"exit"}] },
-                 {"item":"SET WET",  "cmds":[{"cmd":"exit"}]},
-                 {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
-                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
-             ]}
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r01/menu", "menu":"r01_menu.json"}
 
-           
  ],
  
  "removed": [
