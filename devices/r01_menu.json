@@ -11,28 +11,13 @@
             "exit":[{"cmd":"pub", "pub":"local/r01/lcd", "msg":["backlight_on"]}]
             },
         "menu": [
-                {"item":"SOIL MOISTURE...",     "cmds":[
-                    {"cmd":"msg", "msg":"R01 SOIL"},
-                    {"cmd":"pub", "pub":"local/r01/soil/upd"},
-                    {"cmd":"exit"}]},
-                {"item":"TEMP...",     "cmds":[
-                    {"cmd":"msg", "msg":"R01 TEMP"},
-                    {"cmd":"pub", "pub":"local/r01/dht/upd"},
-                    {"cmd":"exit"}]},
-                    
-                {"item":"SETUP...", "cmds":[{"cmd":"submenu","name":"setup"}]},
-                {"item":"BLINK...", "cmds":[{"cmd":"submenu","name":"blink"}]}
-            ]
-        },
-             
-    "setup": {
-        "menu":[                                     
              {"item":"SET DRY",  "cmds":[{"cmd":"submenu","name":"set_dry"}] },
              {"item":"SET WET",  "cmds":[{"cmd":"exit"}]},
              {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
              {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
-        ]},
-
+            ]
+        },
+             
     "set_dry": {
         "menu":[                                     
              {"item":"RUN DRY TEST", "cmds":[{"cmd":"cmd_soil_cal", "svc_soil":"soil"}] },
