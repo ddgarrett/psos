@@ -51,6 +51,8 @@ class ModuleService(PsosService):
         i2c = self.get_svc(i2c_svc).get_i2c()
         self.imu = MPU6050(i2c)
         
+        self.lock = False
+        
         
     async def run(self):
         
@@ -60,40 +62,46 @@ class ModuleService(PsosService):
         ns_ticks = 0      # number of times new state detected
 
         while True:
-            ax=int(round(self.imu.accel.x*90))
-            ay=int(round(self.imu.accel.y*90))
-            
-            tr = self.trigger  # trigger angle to detect tilt
-            
-            # check msg state is stable for 300ms
-            # then send a single msg waiting for it to change again
-            if ay < -tr:
-                msg = "enter"
-            elif ay > tr:
-                msg = "exit"
-            elif ax < -tr:
-                msg = "up"
-            elif ax > tr:
-                msg = "down"
-            else:
-                msg = "--"
+            if not self.lock:
+                ax=int(round(self.imu.accel.x*90))
+                ay=int(round(self.imu.accel.y*90))
+                
+                tr = self.trigger  # trigger angle to detect tilt
+                
+                # check msg state is stable for 300ms
+                # then send a single msg waiting for it to change again
+                if ay < -tr:
+                    msg = "enter"
+                elif ay > tr:
+                    msg = "exit"
+                elif ax < -tr:
+                    msg = "up"
+                elif ax > tr:
+                    msg = "down"
+                else:
+                    msg = "--"
 
-            if msg == new_state:
-                ns_ticks += 1
-                if ns_ticks == 3:
-                    # new state has been triggered for
-                    # enough time - send a message
-                    
-                    if new_state != "--":
-                        await self.pub_hourglass(mqtt)
-                        await mqtt.publish(self.pub,new_state)
-            else:
-                new_state = msg
-                ns_ticks = 0
+                if msg == new_state:
+                    ns_ticks += 1
+                    if ns_ticks == 3:
+                        # new state has been triggered for
+                        # enough time - send a message
+                        
+                        if new_state != "--":
+                            await self.pub_hourglass(mqtt)
+                            await mqtt.publish(self.pub,new_state)
+                else:
+                    new_state = msg
+                    ns_ticks = 0
 
                     
             await uasyncio.sleep_ms(100)
 
+    # lock or unlock gryo so another service has control over it
+    def lock_gyro(self,val):
+        self.lock = val
+        
+        
     async def pub_hourglass(self,mqtt):
         if self._pub_hourglass != None:
             await mqtt.publish(self._pub_hourglass,self._hg_msg)
