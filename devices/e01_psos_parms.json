@@ -24,8 +24,6 @@
              
     {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
              "subscr_upd":"e01/dht/upd",   "pub_upd":"e01/dht" },
-    {"name": "touch3", "module":"svc_touch", "pin":15, "threshold":300,
-             "pub_touch":"e01/dht/upd", "pub_hourglass":"local/e01/lcd"},
     {"name": "dsp_temp_e01", "module":"svc_pipe",
              "subscr_in":"e01/dht",  "pub_out":"e01/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e01'}}]" },               
@@ -38,6 +36,11 @@
              
     {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
              "pub_msg":[    "upd",         "upd",        "upd",        "upd"],
-             "pub_topics": ["e01/dht/upd", "emp/dht/upd","e02/dht/upd","e05/dht/upd"] }
+             "pub_topics": ["e01/dht/upd", "emp/dht/upd","e02/dht/upd","e05/dht/upd"] },
+             
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":25,
+             "pub":"local/e01/menu" },
+             
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e01/menu", "menu":"e01_menu.json"}
  ]
 }
