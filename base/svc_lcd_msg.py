@@ -35,10 +35,12 @@ class SvcLcdMsg(SvcMsg):
         
         super().__init__(f,t,payload)
         
+    ''' Don't want to do this? Use superclass method instead?
     def set_payload(self,payload):
         self._payload.append({"payload":payload})
         return self
-        
+    '''
+    
     def clear_screen(self):
         self._payload.append('clear')
         return self
