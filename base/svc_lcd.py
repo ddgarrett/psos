@@ -82,8 +82,9 @@ class ModuleService(PsosService):
             svc_lcd_msg.CMD_BLK_HG      : self.blank_hourglass
         }
         
-        msg = svc_lcd_msg.SvcLcdMsg(payload=["clear",{"msg":"LCD STARTING..."}])
-        self.process_msg(msg)
+        self.lcd_msg = svc_lcd_msg.SvcLcdMsg()
+        self.write_direct(["clear",{"msg":"LCD STARTING..."}])
+
         
         
     # run forever, but only blink backlight if
@@ -144,17 +145,22 @@ class ModuleService(PsosService):
         mqtt = self.get_mqtt()
         await mqtt.subscribe(self._subscr_topic,self._trigger_q)
         
-        # msg = svc_lcd_msg.SvcLcdMsg()
-        msg = svc_lcd_msg.SvcLcdMsg(payload=[{"msg":"\nLCD RUNNING..."}])
-        self.process_msg(msg)
+        # wait for system startup
+        self.write_direct({"msg":"\n"})
+        while not self.get_parm("started",False):
+            self.write_direct({"msg":"."})
+            await uasyncio.sleep_ms(100)           
+            
+        # show system running message
+        self.write_direct(["clear",{"msg":"PSOS RUNNING..."}])
         
         while True:
             q = await self._trigger_q.get()
             
             # throw away any queued input while display is locked
             if self.lock_cnt <= 0:
-                msg.load_subscr(q)                
-                self.process_msg(msg)
+                self.lcd_msg.load_subscr(q)                
+                self.process_msg(self.lcd_msg)
                     
     def process_msg(self, msg):
         
@@ -200,13 +206,16 @@ class ModuleService(PsosService):
             pass
         
     def set_cursor(self, xy):
-        if isinstance(xy,list) and len(xy) == 2:
+        print("in set cursor: ",xy)
+        if (isinstance(xy,list) or isinstance(xy,tuple)) and len(xy) == 2:
             x = xy[0]
             y = xy[1]
             
             if isinstance(x,int) and isinstance(y,int):
                 self.lcd.move_to(x,y)
                 return
+        else:
+            print("unrecognized xy:",xy)
             
         # log error in cursor command?
                 
@@ -238,19 +247,23 @@ class ModuleService(PsosService):
         row = self.lcd_row_cnt-1
         col = self.lcd_col_cnt-1
         
-        self.set_cursor([col,row])
+        self.set_cursor((col,row))
         self.lcd.putstr(utf8_char.SYM_HOUR_GLASS)
         await uasyncio.sleep_ms(int(time* 1000))
         
         # ensure no other hg tasks are running
         self.hg_task_cnt -= 1
         if self.hg_task_cnt == 0:
-            self.set_cursor([col,row])
+            self.set_cursor((col,row))
             self.lcd.putstr(" ")
             
     def blank_hourglass(self):
         row = self.lcd_row_cnt-1
         col = self.lcd_col_cnt-1
         
-        self.set_cursor([col,row])
+        self.set_cursor((col,row))
         self.lcd.putstr(" ")
+        
+    def write_direct(self,payload):
+        self.lcd_msg.set_payload(payload)
+        self.process_msg(self.lcd_msg)

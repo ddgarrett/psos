@@ -40,6 +40,7 @@ async def main(parms):
     # globally accessible service instances
     services = {}
     defaults["services"] = services
+    defaults["started"] = False
     
     print("main: create service objects")
     gc.collect()
@@ -70,6 +71,7 @@ async def main(parms):
         gc.collect()
         
     # pmap = False
+    defaults["started"] = True
     
     while True:
         # nothing to do here, but can't return?
