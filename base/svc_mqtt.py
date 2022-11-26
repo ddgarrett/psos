@@ -20,7 +20,7 @@ import gc
 
 # not present on non-wifi pico
 try:
-    from umqtt.simple import MQTTClient
+    from umqtt_simple import MQTTClient
 except ImportError:
     pass
 
