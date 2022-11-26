@@ -1,0 +1,49 @@
+{
+"name":"PSOS v00.02 - r02 device",
+"main":"psos_main",
+
+"defaults": {
+    "dev":"r02",
+    "log_file":"reset_rsn.txt"
+    },
+    
+"NOTE":"wifi and mqtt must be first two services",
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
+    {"name": "i2c0", "module":"svc_i2c", "channel":0 },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"r02/log" },
+    
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C","timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"r02/lcd" },
+             
+    {"name": "temp", "module":"svc_dht", "dht_pin":22, "dht22":false,
+             "subscr_upd":"r02/dht/upd",   "pub_upd":"r02/dht" },            
+    {"name": "dsp_dht_r02", "module":"svc_pipe",
+             "subscr_in":"r02/dht",  "pub_out":"local/r02/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: r02'}}]" },
+    {"name": "dsp_dht_emp", "module":"svc_pipe",
+             "subscr_in":"r02/dht",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: r02'}}]" },
+             
+    {"name": "soil",    "module":"svc_soil",   "pin": 26, "dry":56207, "wet":29367,
+             "sub":"r02/soil/upd",   "pub":"r02/soil" },
+    {"name": "dsp_soil", "module":"svc_pipe",
+             "subscr_in":"r02/soil",  "pub_out":"r02/lcd",
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: r02'}}]" },
+    {"name": "dsp_soil_emp", "module":"svc_pipe",
+             "subscr_in":"r02/soil",  "pub_out":"emp/lcd",
+             "format":"['clear',{{'msg':'Soil Moisture\nLvl: {lvl_10}\nReading: {raw}\nDev: r02'}}]" },
+             
+ 
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":30,
+             "pub":"local/r02/menu" },
+             
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r02/menu", "menu":"r02_menu.json"}
+
+ ]
+}
