@@ -33,13 +33,19 @@ class ModuleService(PsosService):
         
         self.adc = ADC(Pin(self.get_parm("pin")))
         
-        if os.uname().sysname == "esp32":
+        if self.is_esp32():
             # configure the ESP32 adc
             self.adc.atten(ADC.ATTN_11DB)
 
-        self.wet = self.get_parm("wet",25000)
-        self.dry = self.get_parm("dry",58000)
+        # self.wet = self.get_parm("wet",25000)
+        # self.dry = self.get_parm("dry",58000)
         self.cycles = self.get_parm("cycles",5)
+        
+        self.cust = self.read_cust()
+        if self.cust == None:
+            self.cust = {
+                "wet":self.get_parm("wet",25000),
+                "dry":self.get_parm("dry",58000)}
         
     async def run(self):
         
@@ -52,6 +58,9 @@ class ModuleService(PsosService):
             await mqtt.publish(self.pub,r)
 
     async def get_adc_value(self):
+        dry = self.cust["dry"]
+        wet = self.cust["wet"]
+        
         cycle=5
         raw = 0
 
@@ -63,10 +72,10 @@ class ModuleService(PsosService):
         raw /= cycle
         raw = round(raw)
 
-        raw_c = min(self.dry,raw)
-        raw_c = max(self.wet,raw_c)
+        raw_c = min(dry,raw)
+        raw_c = max(wet,raw_c)
 
-        sm = int(round(((raw_c - self.dry) / (self.wet - self.dry)) * 100))
-        sm1 = int(round(((raw_c - self.dry) / (self.wet - self.dry)) * 10))
+        sm = int(round(((raw_c - dry) / (wet - dry)) * 100))
+        sm1 = int(round(((raw_c - dry) / (wet - dry)) * 10))
         
         return {"lvl_100":sm, "lvl_10":sm1, "raw":raw}

@@ -1,0 +1,4 @@
+{ "device": "r02",
+  "path"  : ["/base/lib","/base"]
+  "cust"  : "/cust",
+  "parms" : "/base/devices"}

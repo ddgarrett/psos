@@ -13,7 +13,8 @@
         "menu": [
              {"item":"SHOW BUBBLE", "cmds":[{"cmd":"cmd_bubble", "svc_gyro":"gyro" }]},
              {"item":"SET DRY",  "cmds":[{"cmd":"submenu","name":"set_dry"}] },
-             {"item":"SET WET",  "cmds":[{"cmd":"exit"}]},
+             {"item":"SET WET",  "cmds":[{"cmd":"submenu","name":"set_wet"}]},
+             {"item":"SET FLAT", "cmds":[{"cmd":"exit"}]},
              {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
              {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]}
             ]
@@ -21,9 +22,16 @@
              
     "set_dry": {
         "menu":[                                     
-             {"item":"RUN DRY TEST", "cmds":[{"cmd":"cmd_soil_cal", "svc_soil":"soil"}] },
-             {"item":"SAVE & EXIT",  "cmds":[{"cmd":"exit", "msg":"value saved"}]},
-             {"item":"EXIT NO SAVE", "cmds":[{"cmd":"exit", "msg":"value not saved"}]}
+             {"item":"RUN DRY TEST",  "cmds":[{"cmd":"cmd_cust_soil", "svc":"soil", "attr":"dry"},{"cmd":"redisplay","wait":7}] },
+             {"item":"SAVE AND EXIT", "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":true}, {"cmd":"back", "wait":2}]},
+             {"item":"EXIT NO SAVE",  "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":false},{"cmd":"back", "wait":2}]}
+        ]},
+        
+    "set_wet": {
+        "menu":[                                     
+             {"item":"RUN WET TEST",  "cmds":[{"cmd":"cmd_cust_soil", "svc":"soil", "attr":"wet"},{"cmd":"redisplay","wait":7}] },
+             {"item":"SAVE AND EXIT", "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":true}, {"cmd":"back", "wait":2}]},
+             {"item":"EXIT NO SAVE",  "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":false},{"cmd":"back", "wait":2}]}
         ]},
 
     "blink":{

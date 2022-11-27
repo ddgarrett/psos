@@ -22,7 +22,7 @@
              "subscr_msg":"r02/lcd" },
              
     {"name": "temp", "module":"svc_dht", "dht_pin":22, "dht22":false,
-             "subscr_upd":"r02/dht/upd",   "pub_upd":"r02/dht" },            
+             "subscr_upd":"r02/dht/upd",   "pub_upd":"r02/dht" },
     {"name": "dsp_dht_r02", "module":"svc_pipe",
              "subscr_in":"r02/dht",  "pub_out":"local/r02/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: r02'}}]" },
@@ -30,10 +30,10 @@
              "subscr_in":"r02/dht",  "pub_out":"emp/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: r02'}}]" },
              
-    {"name": "soil",    "module":"svc_soil",   "pin": 26, "dry":56207, "wet":29367,
+    {"name": "soil", "module":"svc_soil",   "pin": 26, "dry":56207, "wet":29367,
              "sub":"r02/soil/upd",   "pub":"r02/soil" },
     {"name": "dsp_soil", "module":"svc_pipe",
-             "subscr_in":"r02/soil",  "pub_out":"r02/lcd",
+             "subscr_in":"r02/soil",  "pub_out":"local/r02/lcd",
              "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: r02'}}]" },
     {"name": "dsp_soil_emp", "module":"svc_pipe",
              "subscr_in":"r02/soil",  "pub_out":"emp/lcd",
@@ -44,6 +44,13 @@
              "pub":"local/r02/menu" },
              
     {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"r02/menu", "menu":"r02_menu.json"}
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"r02/mem/upd",   "pub_upd":"r02/mem" },
 
- ]
+
+ ],
+ "removed":[
+
+]
 }

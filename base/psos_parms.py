@@ -23,14 +23,10 @@
 
 class PsosParms:
     
-    def __init__(self, parms, default_parms):
+    def __init__(self, parms, default_parms, config):
         self._parms = parms
-        
-        # make sure default parms include a services dictionary
-        if not "services" in default_parms:
-            default_parms["services"] = {}
-            
         self._defaults = default_parms
+        self.config = config
         
 
     def get_parm(self,parm_name, parm_default=None):
@@ -47,6 +43,9 @@ class PsosParms:
             return self._defaults["services"][svc_name]
         
         return None
+    
+    def get_config(self):
+        return self.config
 
 
         

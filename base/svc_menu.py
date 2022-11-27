@@ -20,6 +20,7 @@ from psos_parms import PsosParms
 import uasyncio
 import queue
 import ujson
+from psos_util import filepath
 
 from svc_msg import SvcMsg
 
@@ -38,8 +39,7 @@ class ModuleService(PsosService):
         self.sub = parms.get_parm("sub")
         self.lcd = parms.get_parm("lcd")
         self.menu = parms.get_parm("menu")
-        # self.items = parms.get_parm("items")
-        
+         
         self.q = queue.Queue()
         self.in_menu = False
         self.item_idx = 0
@@ -49,6 +49,8 @@ class ModuleService(PsosService):
         
         # builtin commands defined at the endof this module
         self.cmd_bi = {
+                "redisplay": self.cmd_redisplay,
+                "back": self.cmd_back,
                 "exit": self.cmd_exit,
                 "pub" : self.cmd_pub,
                 "msg" : self.cmd_msg,
@@ -74,7 +76,10 @@ class ModuleService(PsosService):
             await self.execute(mqtt,msg)
             
     def parse_menu(self,fn):
-        # read the paramter file
+        # Read the paramter file.
+        # First translate file name to a file path
+        # based on system configuration file
+        fn = filepath(self.get_config()["parms"],fn)
         with open(fn) as f:
             parms = ujson.load(f)
             f.close()
@@ -218,19 +223,16 @@ class ModuleService(PsosService):
         parms["menu"]      = self
         
         # create the psos parms for the command
-        psos_parms = PsosParms(parms,self._parms._defaults)
+        psos_parms = PsosParms(parms,self._parms._defaults,self.get_config())
 
         # create a new instance of the Command
         # to implement the command
         module_name = parms["cmd"]
-        print("creating command "+module_name)
         module      = __import__(module_name)
         command     = module.ModuleService(psos_parms)
         
         # start the command running
-        print("... starting "+module_name)
         uasyncio.create_task(command.run())
-        print("... "+module_name+ " running")
         
 
      ############### Builtin Commands ################
@@ -245,6 +247,26 @@ class ModuleService(PsosService):
             
         await self.get_mqtt().publish(pub,msg)
         
+    # redisplay current menu
+    async def cmd_redisplay(self,exit_msg,parms):
+        if "wait" in parms:
+            await uasyncio.sleep(parms["wait"])
+            
+        self.display_menu()        
+        
+        
+    # return to previous menu
+    # after waiting optional number of seconds
+    async def cmd_back(self,exit_msg,parms):
+        msg=exit_msg
+        if "msg" in parms:
+            msg = parms["msg"]
+            
+        if "wait" in parms:
+            await uasyncio.sleep(parms["wait"])
+            
+        await self.pop_menu(msg=msg)        
+
     async def cmd_exit(self,exit_msg,parms):
         msg=exit_msg
         if "msg" in parms:

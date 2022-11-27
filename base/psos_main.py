@@ -30,7 +30,7 @@ import psos_util
 import secrets
 
 
-async def main(parms):
+async def main(parms,config):
         
     # globally accessible default parameters
     defaults = {}
@@ -40,7 +40,15 @@ async def main(parms):
     # globally accessible service instances
     services = {}
     defaults["services"] = services
-    defaults["started"] = False
+    defaults["config"]   = config
+    defaults["started"]  = False
+    
+    u = os.uname()
+    defaults["sysname"]  = u.sysname
+    defaults["has_wifi"] = True
+    if u.sysname == "rp2":
+        if not "Pico W" in u.machine:
+            defaults["has_wifi"] = False    
     
     print("main: create service objects")
     gc.collect()
@@ -48,7 +56,7 @@ async def main(parms):
     for svc_parms in parms["services"]:
         
         # create module specific parms object
-        psos_parms = PsosParms(svc_parms,defaults)
+        psos_parms = PsosParms(svc_parms,defaults,config)
         
         # create a new instance of a service
         # and store as a service under specified name
@@ -78,6 +86,7 @@ async def main(parms):
                     
         # allow co-routines to execute
         # print("main: free space "+str(gc.mem_free()))
+        gc.collect()
         await uasyncio.sleep_ms(5000)
         
         '''
