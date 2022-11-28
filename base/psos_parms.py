@@ -28,24 +28,66 @@ class PsosParms:
         self._defaults = default_parms
         self.config = config
         
-
-    def get_parm(self,parm_name, parm_default=None):
-        if parm_name in self._parms:
-            return self._parms[parm_name]
+        try:
+            self.no_fmt = default_parms["no_format"]
+        except KeyError:
+            self.no_fmt = ["format"]        
         
-        if parm_name in self._defaults:
-            return self._defaults[parm_name]
+    def get_parm(self,key,parm_default=None):
+        try:
+            r = self._parms[key]
+            # if '{' in result
+            # and key not in the list of keys to NOT format
+            #  - format the result using defaults
+            if type(r) == str and '{'in r and not key in self.no_fmt:
+                return r.format(**self._defaults)
+            return r
+        except KeyError:
+            pass
+        
+        try:
+            return self._defaults[key]
+        except KeyError:
+            pass
+        
+        try:
+            return self.config[key]
+        except KeyError:
+            pass
         
         return parm_default
-        
+    
+    def set_parm(self,key,value):
+        self._parms[key] = value
+    
     def get_svc(self,svc_name):
-        if svc_name in self._defaults["services"]:
+        try:
             return self._defaults["services"][svc_name]
+        except KeyError:
+            pass
         
         return None
     
     def get_config(self):
         return self.config
 
-
+    # Supports
+    #   a = parms[key]
+    # notation. For default values, use:
+    #   a = parms[(key,default)]
+    # A 2 value tuple with key and default value
+    # where default value returned if key not found.
+    def __getitem__(self, key):
+        if type(key) == tuple and len(key_ == 2):
+            # assume I have a default value
+            return self.get_parm(key[0],key[1])
         
+        return self.get_parm(key)
+    
+    #  supports:  p[key] = value
+    def __setitem__(self, key,value):
+        self.set_parm(key,value)
+        
+    # checks if m is "in" parms
+    def __contains__(self, m):
+        return self.get_parm(m) != None

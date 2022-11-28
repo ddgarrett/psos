@@ -20,7 +20,7 @@ from psos_parms import PsosParms
 import uasyncio
 import queue
 import ujson
-from psos_util import filepath
+import psos_util
 
 from svc_msg import SvcMsg
 
@@ -36,9 +36,9 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
         
-        self.sub = parms.get_parm("sub")
-        self.lcd = parms.get_parm("lcd")
-        self.menu = parms.get_parm("menu")
+        self.sub = parms["sub"] # subscribe topic
+        self.lcd = parms["lcd"] # lcd service name
+        self.menu = parms["menu"]
          
         self.q = queue.Queue()
         self.in_menu = False
@@ -59,7 +59,10 @@ class ModuleService(PsosService):
 
     async def run(self):
         
-        self.menu = self.parse_menu(self.menu)
+        if type(self.menu) == str:
+            c = self._parms.get_config()
+            self.menu = psos_util.load_parms(c,self.menu)
+            
         main = self.menu["main"]
         self.quick = main["quick"]
         self.items = main["menu"]
@@ -74,18 +77,6 @@ class ModuleService(PsosService):
             data = await self.q.get()
             msg.load_subscr(data)
             await self.execute(mqtt,msg)
-            
-    def parse_menu(self,fn):
-        # Read the paramter file.
-        # First translate file name to a file path
-        # based on system configuration file
-        fn = filepath(self.get_config()["parms"],fn)
-        with open(fn) as f:
-            parms = ujson.load(f)
-            f.close()
-            return parms
-        
-        return None
         
     # execute a given command received via MQTT
     async def execute(self,mqtt,msg):
@@ -177,13 +168,16 @@ class ModuleService(PsosService):
     async def exec_cmds(self,cmds,exit_msg):               
         for action in cmds:
             if "cmd" in action:
+                # create the psos parms for the command
+                parms = PsosParms(action,self.get_defaults(),self.get_config())
+                
                 cmd = action["cmd"]
                 
                 # is command one of the builtin commands?
                 if cmd in self.cmd_bi:
-                    await self.cmd_bi[cmd](exit_msg,action)
+                    await self.cmd_bi[cmd](exit_msg,parms)
                 else:
-                    await self.exec_cmd(exit_msg,action)
+                    await self.exec_cmd(exit_msg,parms)
                             
         
     # display a list of menu items
@@ -223,13 +217,14 @@ class ModuleService(PsosService):
         parms["menu"]      = self
         
         # create the psos parms for the command
-        psos_parms = PsosParms(parms,self._parms._defaults,self.get_config())
+        # NOW passed a PsosParms object in parms
+        # psos_parms = PsosParms(parms,self._parms._defaults,self.get_config())
 
         # create a new instance of the Command
         # to implement the command
         module_name = parms["cmd"]
         module      = __import__(module_name)
-        command     = module.ModuleService(psos_parms)
+        command     = module.ModuleService(parms)
         
         # start the command running
         uasyncio.create_task(command.run())

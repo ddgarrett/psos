@@ -49,6 +49,9 @@ class PsosService:
         return self.get_parm("has_wifi")
         
     
+    def get_defaults(self):
+        return self._parms._defaults
+    
     def get_config(self):
         return self._parms.get_config()
     

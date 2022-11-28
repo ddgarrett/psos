@@ -2,10 +2,10 @@
 { 
     "main": {
         "quick": {
-            "up":[{"cmd":"msg", "msg":"R02 TEMP"},
+            "up":[{"cmd":"msg", "msg":"TEMPERATURE"},
                 {"cmd":"pub", "pub":"local/{dev}/dht/upd"}], 
                 
-            "down":[{"cmd":"msg", "msg":"R02 SOIL"},
+            "down":[{"cmd":"msg", "msg":"SOIL MOISTURE"},
                     {"cmd":"pub", "pub":"local/{dev}/soil/upd"}],
                 
             "exit":[{"cmd":"pub", "pub":"local/{dev}/lcd", "msg":["backlight_on"]}]

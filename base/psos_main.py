@@ -53,7 +53,16 @@ async def main(parms,config):
     print("main: create service objects")
     gc.collect()
     
-    for svc_parms in parms["services"]:
+    # if services is a string
+    # read the file by that name
+    svc = parms["services"]
+    
+    if type(svc) == str:
+        if '{' in svc:
+            svc = svc.format(**defaults)
+        svc = psos_util.load_parms(config,svc)
+    
+    for svc_parms in svc:
         
         # create module specific parms object
         psos_parms = PsosParms(svc_parms,defaults,config)
