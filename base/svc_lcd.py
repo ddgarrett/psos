@@ -206,7 +206,6 @@ class ModuleService(PsosService):
             pass
         
     def set_cursor(self, xy):
-        print("in set cursor: ",xy)
         if (isinstance(xy,list) or isinstance(xy,tuple)) and len(xy) == 2:
             x = xy[0]
             y = xy[1]
