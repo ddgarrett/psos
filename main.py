@@ -8,15 +8,30 @@ import ujson
 import uasyncio
 import gc
 import sys
-import psos_util
+
+# load a json file
+# here because we can't use the psos_util
+# until after loading config.json
+def load_json(fn):
+    # read the paramter file
+    with open(fn) as f:
+        parms = ujson.load(f)
+        f.close()
+        return parms
+    
+    return None
 
 # read main configuration file
-config = psos_util.load_json("config.json")
+config = load_json("config.json")
 print("boot: config",config)
 
 # extend module search path
 if "path" in config:
     sys.path.extend(config["path"]) 
+
+# now that we have path configured
+# we can import psos_util
+import psos_util
 
 # read parms for a given device
 # from root directory if it's there
