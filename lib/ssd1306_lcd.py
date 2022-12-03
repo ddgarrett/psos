@@ -104,7 +104,9 @@ class I2cLcd(SSD1306_I2C):
             for b2 in range(7):
                 px = px + 1
                 if bp[b2] == "1":
-                    self.pixel(px,py,1)            
+                    self.pixel(px,py,1)
+                else:
+                    self.pixel(px,py,0)
         
         
     def move_to(self,x,y):

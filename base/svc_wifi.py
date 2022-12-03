@@ -28,7 +28,8 @@ class ModuleService(PsosService):
                 print("disconnecting from " + str(old))
                 self._station.disconnect()
                 time.sleep_ms(50) # wait for disconnect
-                
+        
+        '''
         # version 2 - connect to wifi during startup
         
         self.connect_wifi()
@@ -37,7 +38,9 @@ class ModuleService(PsosService):
             print(".",end="")
             retry = retry - 1
             if retry <= 0:
-                self.reset("unable to connect to wifi")
+                # self.reset("unable to connect to wifi")
+                print("unable to connect to wifi")
+                return
             time.sleep_ms(500)
             
         if self.get_parm("set_time",False):
@@ -50,7 +53,47 @@ class ModuleService(PsosService):
                 
             if retry <= 0:
                 print("unable to set time")
+        '''
         
+        
+    async def run(self):
+        await self.reconnect_wifi()
+        
+        while True:
+            if not self.wifi_connected():
+                # self.reset("wifi connection lost")
+                await self.reconnect_wifi()
+                
+            await uasyncio.sleep_ms(1000)
+    
+    async def reconnect_wifi(self):
+        
+        self.connect_wifi()
+        retry = 60 # try for max 30 seconds
+        while not self.wifi_connected():
+            print(".",end="")
+            retry = retry - 1
+            if retry <= 0:
+                # self.reset("unable to connect to wifi")
+                print("unable to connect to wifi")
+                
+                # wait 5 seconds before retrying
+                await uasyncio.sleep_ms(5000)
+                return
+            await uasyncio.sleep_ms(500)
+            
+        print("connected to wifi... setting time")
+        if self.get_parm("set_time",False):
+            retry = 3
+            while retry > 0:
+                if self.set_time():
+                    break
+                else:
+                    retry = retry - 1
+                
+            if retry <= 0:
+                print("unable to set time")
+
     def set_time(self):
         try:
             ntptime.settime()
@@ -58,22 +101,6 @@ class ModuleService(PsosService):
         except Exception as e:
             return False
         
-        
-    async def run(self):
-        
-        lcd = self.get_parm("lcd")
-        if lcd != None:
-            lcd = self.get_svc(lcd)
-        if lcd != None:
-            lcd.set_sym(utf8_char.SYM_WIFI)
-        
-        while True:
-            if not self.wifi_connected():
-                self.reset("wifi connection lost")
-                
-            await uasyncio.sleep_ms(1000)
-    
-    
     def connect_wifi(self):
         
         if not self._station.active():

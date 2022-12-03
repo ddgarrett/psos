@@ -134,8 +134,9 @@ class ModuleService(PsosService):
     # set symbol displayed in lower right
     # called directly by other services
     def set_sym(self,s):
-        self.sym = s
-        self.blank_hourglass()
+        if self.sym != s:
+            self.sym = s
+            self.blank_hourglass()
         
     def get_timeout(self):
         return self.timeout
