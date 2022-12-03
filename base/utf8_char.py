@@ -29,7 +29,10 @@ KEY_VOLUME_DOWN       = "🔉"
 
 KEY_DEGREES_SYMBOL    = "°"
 
-SYM_HOUR_GLASS            = "⌛"
+SYM_HOUR_GLASS        = "⌛"
+SYM_WIFI              = "📶"
+SYM_EX_OUT            = "✗"
+CHR_NULL              = "\x00"
 
 
 # Keys that scroll up and down between apps
@@ -119,7 +122,28 @@ CUSTOM_CHARACTERS = {
         0b01010,
         0b10001,
         0b11111
+    ],
+    
+    SYM_EX_OUT :[
+        0b10001,
+        0b10001,
+        0b01010,
+        0b01010,
+        0b00100,
+        0b01010,
+        0b11011,
+        0b10001
+    ],
+        
+    SYM_WIFI:[
+        0b00001,
+        0b00001,
+        0b00001,
+        0b00101,
+        0b00101,
+        0b10101,
+        0b10101,
+        0b10101
     ]
-
 }
 

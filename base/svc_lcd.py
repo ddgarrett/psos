@@ -61,6 +61,7 @@ class ModuleService(PsosService):
         self.to_remain      = self.timeout + 1
         
         self.hg_task_cnt    = 0
+        self.sym            = parms.get_parm("sym","✗")
         self.lock_cnt       = 0
         
         # dictionary to execute commands
@@ -81,6 +82,17 @@ class ModuleService(PsosService):
             
             svc_lcd_msg.CMD_BLK_HG      : self.blank_hourglass
         }
+        
+        # Add any custom characters
+        # Any custom characters must have a byte array
+        # defined in utf8_char.py in the dictionary CUSTOM_CHARACTERS
+        custom_char = self.get_parm("custom_char","")
+        for char in custom_char:
+            if char in utf8_char.CUSTOM_CHARACTERS:
+                b_array = utf8_char.CUSTOM_CHARACTERS[char]
+                self.lcd.def_special_char(char,b_array)
+            else:
+                print("customer char not found: ",char)
         
         self.lcd_msg = svc_lcd_msg.SvcLcdMsg()
         self.write_direct(["clear",{"msg":"LCD STARTING..."}])
@@ -110,12 +122,20 @@ class ModuleService(PsosService):
                      
             await uasyncio.sleep_ms(1000)
         
+    # called directly from other services to
+    # lock or unlock use of this device
     def set_lock(self,v):
         if v:
             self.lock_cnt += 1
         else:
             if self.lock_cnt > 0:
                 self.lock_cnt -= 1
+    
+    # set symbol displayed in lower right
+    # called directly by other services
+    def set_sym(self,s):
+        self.sym = s
+        self.blank_hourglass()
         
     def get_timeout(self):
         return self.timeout
@@ -124,15 +144,6 @@ class ModuleService(PsosService):
         self.timeout = v
         
     async def run(self):
-        # Add any custom characters
-        # Any custom characters must have a byte array
-        # defined in utf8_char.py in the dictionary CUSTOM_CHARACTERS
-        custom_char = self.get_parm("custom_char","")
-        for char in custom_char:
-            if char in utf8_char.CUSTOM_CHARACTERS:
-                b_array = utf8_char.CUSTOM_CHARACTERS[char]
-                self.lcd.def_special_char(char,b_array)
-
         # Start the blink coroutine.
         # It won't do anything until blink_interval is set
         self.blink_task = uasyncio.create_task(self.blink_lcd())
@@ -235,6 +246,7 @@ class ModuleService(PsosService):
         self.lcd.blink_cursor_off()
         self.lcd.hide_cursor()
         self.blink_interval = 0
+        self.blank_hourglass()
         
         
     # display the hourglass symbole for given period of time
@@ -243,25 +255,30 @@ class ModuleService(PsosService):
         self.hg_task = uasyncio.create_task(self.dsp_hg_tsk(time))
         
     async def dsp_hg_tsk(self,time):
+        x = self.lcd.x
+        y = self.lcd.y
         row = self.lcd_row_cnt-1
         col = self.lcd_col_cnt-1
         
         self.set_cursor((col,row))
         self.lcd.putstr(utf8_char.SYM_HOUR_GLASS)
+        self.set_cursor((x,y))
         await uasyncio.sleep_ms(int(time* 1000))
         
         # ensure no other hg tasks are running
         self.hg_task_cnt -= 1
         if self.hg_task_cnt == 0:
-            self.set_cursor((col,row))
-            self.lcd.putstr(" ")
+            self.blank_hourglass()
             
     def blank_hourglass(self):
+        x = self.lcd.x
+        y = self.lcd.y
         row = self.lcd_row_cnt-1
         col = self.lcd_col_cnt-1
         
         self.set_cursor((col,row))
-        self.lcd.putstr(" ")
+        self.lcd.putstr(self.sym)
+        self.set_cursor((x,y))
         
     def write_direct(self,payload):
         self.lcd_msg.set_payload(payload)

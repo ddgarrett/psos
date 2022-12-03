@@ -12,6 +12,7 @@ import secrets
 import network
 import time
 import ntptime  # uses special version in lib
+import utf8_char
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -59,6 +60,12 @@ class ModuleService(PsosService):
         
         
     async def run(self):
+        
+        lcd = self.get_parm("lcd")
+        if lcd != None:
+            lcd = self.get_svc(lcd)
+        if lcd != None:
+            lcd.set_sym(utf8_char.SYM_WIFI)
         
         while True:
             if not self.wifi_connected():
