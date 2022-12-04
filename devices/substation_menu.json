@@ -11,7 +11,9 @@
             "exit":[{"cmd":"pub", "pub":"local/{dev}/lcd", "msg":["backlight_on"]}]
             },
         "menu": [
-             {"item":"SHOW BUBBLE", "cmds":[{"cmd":"cmd_bubble", "svc_gyro":"gyro" }]},
+             {"item":"SHOW BUBBLE", "cmds":[
+                 {"cmd":"cmd_bubble", "svc_gyro":"gyro" },
+                 {"cmd":"exit", "msg":"exited bubble"}]},
              {"item":"SET DRY",  "cmds":[{"cmd":"submenu","name":"set_dry"}] },
              {"item":"SET WET",  "cmds":[{"cmd":"submenu","name":"set_wet"}]},
              {"item":"SET FLAT", "cmds":[{"cmd":"exit"}]},
