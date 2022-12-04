@@ -21,42 +21,16 @@ class ModuleService(PsosService):
         super().__init__(parms)
         
         self._station = network.WLAN(network.STA_IF)
-    
+        
         if self.get_parm("disconnect",True):
             if self._station.active() and self._station.isconnected():
                 old = self._station.ifconfig()
                 print("disconnecting from " + str(old))
                 self._station.disconnect()
-                time.sleep_ms(50) # wait for disconnect
-        
-        '''
-        # version 2 - connect to wifi during startup
-        
-        self.connect_wifi()
-        retry = 60 # try for max 30 seconds, then reset
-        while not self.wifi_connected():
-            print(".",end="")
-            retry = retry - 1
-            if retry <= 0:
-                # self.reset("unable to connect to wifi")
-                print("unable to connect to wifi")
-                return
-            time.sleep_ms(500)
-            
-        if self.get_parm("set_time",False):
-            retry = 3
-            while retry > 0:
-                if self.set_time():
-                    break
-                else:
-                    retry = retry - 1
-                
-            if retry <= 0:
-                print("unable to set time")
-        '''
-        
+                time.sleep_ms(50) # wait for disconnect        
         
     async def run(self):
+        
         await self.reconnect_wifi()
         
         while True:
@@ -67,33 +41,37 @@ class ModuleService(PsosService):
             await uasyncio.sleep_ms(1000)
     
     async def reconnect_wifi(self):
-        
+        self.display_lcd_msg("WiFi connect...")
         self.connect_wifi()
         retry = 60 # try for max 30 seconds
         while not self.wifi_connected():
             print(".",end="")
             retry = retry - 1
             if retry <= 0:
-                # self.reset("unable to connect to wifi")
-                print("unable to connect to wifi")
+                self.reset("unable to connect to wifi")
+                #print("unable to connect to wifi")
                 
                 # wait 5 seconds before retrying
-                await uasyncio.sleep_ms(5000)
-                return
+                # await uasyncio.sleep_ms(5000)
+                # return
             await uasyncio.sleep_ms(500)
             
-        print("connected to wifi... setting time")
-        if self.get_parm("set_time",False):
+        if self.get_parm("set_time",True):
             retry = 3
             while retry > 0:
+                self.display_lcd_msg("Setting time...")
                 if self.set_time():
                     break
                 else:
                     retry = retry - 1
-                
+                    await uasyncio.sleep_ms(1000)
+                    
             if retry <= 0:
+                self.display_lcd_msg("Time not set")
                 print("unable to set time")
-
+            else:
+                self.display_lcd_msg(self.get_dt().replace("\t","\n"))
+                
     def set_time(self):
         try:
             ntptime.settime()
@@ -102,11 +80,10 @@ class ModuleService(PsosService):
             return False
         
     def connect_wifi(self):
-        
         if not self._station.active():
             self._station.active(True)
     
-        if not self.wifi_connected():
+        if not self._station.isconnected():
             wifi_network = self.get_parm("wifi",None)
             
             if wifi_network == None:
@@ -128,6 +105,10 @@ class ModuleService(PsosService):
             print("already connected: " + str(self._station.ifconfig()))
         
     def wifi_connected(self):
+        if self.is_rp2():
+            return (self._station.isconnected() and
+                    self._station.status() == 3)
+            
         return self._station.isconnected()
     
     # Scan wifi network then compare to
@@ -145,9 +126,3 @@ class ModuleService(PsosService):
                 
         print("no known wifi networks found")
         return None
-        
-        
-        
-
-
-

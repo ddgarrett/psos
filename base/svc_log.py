@@ -13,20 +13,17 @@ class ModuleService(PsosService):
     
     def __init__(self, parms):
         super().__init__(parms)
-        # self._pub_topic = parms.get_parm("pub_log","log")
+        self.pub = parms.get_parm("pub_log","log")
         
+    async def run(self):
+        self.mqtt = self.get_mqtt()
+    
     async def log_msg(self,name,msg):
-        
-        mqtt = self.get_mqtt()
         
         log_msg = name + ": " + msg
         
-        if mqtt == None:
+        if self.mqtt == None:
             print(log_msg)
         else:
             # await mqtt.publish(self._pub_topic,log_msg)
-            await mqtt.publish(self.get_parm("pub_log","log"),log_msg)
-
-        
-        
-
+            await self.mqtt.publish(self.pub,log_msg)

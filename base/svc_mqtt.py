@@ -55,10 +55,6 @@ class ModuleService(PsosService):
             
     async def run(self):
 
-        self.lcd = self.get_parm("lcd")
-        if self.lcd != None:
-            self.lcd = self.get_svc(self.lcd)
-
         ping_wait = 0
         
         while True:
@@ -80,22 +76,22 @@ class ModuleService(PsosService):
             else:
                 self._client = None
                 
-                if self.lcd != None:
-                    self.lcd.set_sym(utf8_char.SYM_EX_OUT)
+                # NOTE: below also populations self.svc_lcd
+                if self.svc_lcd != None:
+                    self.svc_lcd.set_sym(utf8_char.SYM_EX_OUT)
                     
                 # not connected
                 # try connecting if we have connected wifi
                 if self.wifi != None and self.wifi.wifi_connected():
-                    if self.lcd != None:
-                        self.lcd.write_direct(["clear",{"msg":"Connecting MQTT"}])
+                    self.display_lcd_msg("MQTT connect...") 
                         
                     print("connecting to MQTT")
                     await self._retry_connect_mqtt()
                         
                     if self._client != None:
-                        if self.lcd != None:
-                            self.lcd.set_sym(utf8_char.SYM_WIFI)
-                            self.lcd.write_direct(["clear",{"msg":"MQTT Connected"}])
+                        if self.svc_lcd != None:
+                            self.svc_lcd.set_sym(utf8_char.SYM_WIFI)
+                            self.display_lcd_msg("MQTT connected")
                             
                         await self.resubscribe()
                                              

@@ -49,8 +49,7 @@ class ModuleService(PsosService):
         # modify class to support different displays in addition to LCD1602
         # *** in particular, supports the SSD1306 OLED emulating an LCD1602
         # *** for SSD1306 use "disp_class":"ssd1306_lcd" in psos_parms.json
-        # self.lcd = I2cLcd(i2c, i2c_addr, self.lcd_row_cnt, self.lcd_col_cnt)
-        mod_name = self.get_parm("disp_driver","pico_i2c_lcd")
+        mod_name = self.get_parm("disp_driver","pico_i2c_lcd") # default to LCD1602
         module = __import__(mod_name)
         self.lcd = module.I2cLcd(i2c,i2c_addr,self.lcd_row_cnt, self.lcd_col_cnt)
         
@@ -93,11 +92,10 @@ class ModuleService(PsosService):
                 self.lcd.def_special_char(char,b_array)
             else:
                 print("customer char not found: ",char)
-        
+                
         self.lcd_msg = svc_lcd_msg.SvcLcdMsg()
-        self.write_direct(["clear",{"msg":"LCD STARTING..."}])
-
-        
+        self.svc_lcd = self
+        self.display_lcd_msg("LCD initialized")
         
     # run forever, but only blink backlight if
     # blink_interval > 0
@@ -156,15 +154,6 @@ class ModuleService(PsosService):
         # subscribe to topic and wait for messages
         mqtt = self.get_mqtt()
         await mqtt.subscribe(self._subscr_topic,self._trigger_q)
-        
-        # wait for system startup
-        self.write_direct({"msg":"\n"})
-        while not self.get_parm("started",False):
-            self.write_direct({"msg":"."})
-            await uasyncio.sleep_ms(100)           
-            
-        # show system running message
-        self.write_direct(["clear",{"msg":"PSOS RUNNING..."}])
         
         while True:
             q = await self._trigger_q.get()

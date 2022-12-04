@@ -60,8 +60,9 @@ class ModuleService(PsosService):
             
         # get time adjusted to local timezone
         # format time as mm/dd/yyyy hh:mm:ss
-        t = time.localtime(time.mktime(time.localtime()) - 7*3600)
-        out['dt'] = "{1}/{2}/{0}\t{3}:{4:02d}:{5:02d}".format(*t)
+        # t = time.localtime(time.mktime(time.localtime()) - 7*3600)
+        # out['dt'] = "{1}/{2}/{0}\t{3}:{4:02d}:{5:02d}".format(*t)
+        out['dt'] = self.get_dt()
         
         # open data file for appending
         f = open(self._file_name,"a")

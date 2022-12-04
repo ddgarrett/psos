@@ -19,21 +19,18 @@ class ModuleService(PsosService):
         svc_gyro  = self.get_parm("svc_gyro")
         self.gyro = self.get_svc(svc_gyro)
         
-        lcd = self.get_parm("lcd")
-        self.lcd = self.get_svc(lcd)
-        
     async def run(self):
-        lcd_timeout = self.lcd.get_timeout()
-        self.lcd.set_timeout(0)
+        lcd_timeout = self.svc_lcd.get_timeout()
+        self.svc_lcd.set_timeout(0)
         
         self.gyro.lock_gyro(True)
-        self.lcd.clear_screen()
+        self.svc_lcd.clear_screen()
 
         oled_width = 128
         oled_height = 64
         
         # oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
-        oled = self.lcd.lcd
+        oled = self.svc_lcd.lcd
         graphics = gfx.GFX(oled_width, oled_height, oled.pixel, vline=oled.vline, hline=oled.hline)
 
         self.o = oled
@@ -62,7 +59,7 @@ class ModuleService(PsosService):
             
             if c[2] < 0:
                 self.gyro.lock_gyro(False)
-                self.lcd.set_timeout(lcd_timeout)
+                self.svc_lcd.set_timeout(lcd_timeout)
                 self.menu.update_lcd("Exited Bubble")
                 await uasyncio.sleep_ms(3000)
                 self.menu.update_lcd(" ")

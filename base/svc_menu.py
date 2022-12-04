@@ -37,7 +37,6 @@ class ModuleService(PsosService):
         super().__init__(parms)
         
         self.sub = parms["sub"] # subscribe topic
-        self.lcd = parms["lcd"] # lcd service name
         self.menu = parms["menu"]
          
         self.q = queue.Queue()
@@ -59,6 +58,8 @@ class ModuleService(PsosService):
 
     async def run(self):
         
+        self.get_svc_lcd() # make sure we have this.svc_lcd set
+        
         if type(self.menu) == str:
             c = self._parms.get_config()
             self.menu = psos_util.load_parms(c,self.menu)
@@ -70,8 +71,6 @@ class ModuleService(PsosService):
         mqtt = self.get_mqtt()
         await mqtt.subscribe(self.sub,self.q)
         msg = SvcMsg()
-        
-        self.lcd = self.get_svc(self.lcd)
         
         while True:
             data = await self.q.get()
@@ -108,8 +107,8 @@ class ModuleService(PsosService):
         self.item_idx = 0
         self.lock_lcd()
         self.display_menu()
-        self.save_timeout = self.lcd.get_timeout()
-        self.lcd.set_timeout(0)
+        self.save_timeout = self.svc_lcd.get_timeout()
+        self.svc_lcd.set_timeout(0)
 
     async def exit_menu(self,msg=None):
         
@@ -124,7 +123,7 @@ class ModuleService(PsosService):
         self.in_menu  = False
         self.item_idx = 0
         self.unlock_lcd()
-        self.lcd.set_timeout(self.save_timeout)
+        self.svc_lcd.set_timeout(self.save_timeout)
         if msg == None:
             msg = " "
             
@@ -200,7 +199,7 @@ class ModuleService(PsosService):
     # display a message after clearing the display
     def update_lcd(self,msg):
         msg = SvcMsg(payload=["clear",{"msg":msg}])
-        self.lcd.process_msg(msg)
+        self.svc_lcd.process_msg(msg)
         
         
     # Execute a dynamic command.
@@ -225,6 +224,8 @@ class ModuleService(PsosService):
         module_name = parms["cmd"]
         module      = __import__(module_name)
         command     = module.ModuleService(parms)
+        
+        command.svc_lcd = self.svc_lcd
         
         # start the command running
         uasyncio.create_task(command.run())

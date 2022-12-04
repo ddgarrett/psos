@@ -18,8 +18,10 @@ class PsosService:
     def __init__(self, parms):
         self._parms   = parms
         self._name    = self.get_parm("name")
+        self.svc_lcd  = None
         self.cust     = None
         self.new_cust = None
+        self.tz       = self.get_parm("tz",-8)
         
     # get a parameter value
     # return default if parameter not specified
@@ -34,11 +36,31 @@ class PsosService:
     def get_mqtt(self):
         return self.get_svc("mqtt")
 
+    def get_svc_lcd(self):
+        if self.svc_lcd == None:
+            lcd = self.get_parm("lcd","lcd")
+            self.svc_lcd = self.get_svc(lcd)
+            
+        return self.svc_lcd
+            
     def lock_lcd(self):
-        self.get_svc("lcd").set_lock(True)
-        
+        self.get_svc_lcd().set_lock(True)
     def unlock_lcd(self):
-        self.get_svc("lcd").set_lock(False)
+        self.get_svc_lcd().set_lock(False)
+        
+    # complete payload such as:  ["clear",{"msg":"some message"}]
+    def display_lcd_payload(self,payload):
+        self.get_svc_lcd()
+            
+        if self.svc_lcd != None:
+            self.svc_lcd.write_direct(payload)
+            
+    # just a text message that clears the screen
+    # before the message is displayed.
+    # example: self.display_lcd_msg("some message")
+    # becomes: self.display_lcd_payload(["clear",{"msg":"some message"}])
+    def display_lcd_msg(self,msg):
+        self.display_lcd_payload(["clear",{"msg":msg}])
         
     # methods that define type of device and capabilities
     def is_esp32(self):
@@ -48,6 +70,10 @@ class PsosService:
     def has_wifi(self):
         return self.get_parm("has_wifi")
         
+    # get formatted date and time
+    def get_dt(self):
+        t = time.localtime(time.mktime(time.localtime())+self.tz*3600)
+        return "{1}/{2}/{0}\t{3}:{4:02d}:{5:02d}".format(*t)
     
     def get_defaults(self):
         return self._parms._defaults
@@ -109,9 +135,13 @@ class PsosService:
     def reset(self,rsn=None):
         
         if rsn != None:
+            self.display_lcd_msg("restarting:\n"+rsn)
+            
             fname = self.get_parm("log_file",None)
             if fname != None:
                 f = open(fname,"a")
+                f.write(self.get_dt())
+                f.write('\t')
                 f.write(rsn)
                 f.write('\n')
                 f.close()
@@ -132,7 +162,7 @@ class PsosService:
     # TODO: add device as prefix to message?
     async def log(self,msg):
         log = self.get_svc("log")
-        lcd = self.get_svc("lcd")
+        # lcd = self.get_svc("lcd")
          
         if log != None:
             await log.log_msg(self._name,msg)
