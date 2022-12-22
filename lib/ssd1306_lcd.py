@@ -18,6 +18,7 @@
 '''
 
 from ssd1306 import SSD1306_I2C
+import gfx
 
 class I2cLcd(SSD1306_I2C):
     
@@ -37,6 +38,8 @@ class I2cLcd(SSD1306_I2C):
         self.y = 0
         
         self.spc = {} # special character mapping
+        
+        self.gfx = gfx.GFX(width, height, self.pixel, vline=self.vline, hline=self.hline)
         
     def show_cursor(self):
         pass
@@ -74,13 +77,12 @@ class I2cLcd(SSD1306_I2C):
                 self.x = -1
                 
             if self.x < self.col_cnt and self.y < self.row_cnt:
-                # TODO: write out special character bit map
+                # blank out character
+                w = self.col_width
+                h = self.row_height
+                self.gfx.fill_rect(self.x*w,self.y*h,w,h,0)
+                
                 if c in self.spc:
-                    '''
-                    px = self.x * self.col_width
-                    py = self.y * self.row_height
-                    super().text("*",px,py)
-                    '''
                     self.write_bits(self.spc[c])
                 else:
                     px = self.x * self.col_width
@@ -105,8 +107,8 @@ class I2cLcd(SSD1306_I2C):
                 px = px + 1
                 if bp[b2] == "1":
                     self.pixel(px,py,1)
-                else:
-                    self.pixel(px,py,0)
+                # else:
+                #    self.pixel(px,py,0)
         
         
     def move_to(self,x,y):

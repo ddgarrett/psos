@@ -31,13 +31,14 @@ class ModuleService(PsosService):
         
         # oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
         oled = self.svc_lcd.lcd
-        graphics = gfx.GFX(oled_width, oled_height, oled.pixel, vline=oled.vline, hline=oled.hline)
+        # graphics = gfx.GFX(oled_width, oled_height, oled.pixel, vline=oled.vline, hline=oled.hline)
 
         self.o = oled
-        self.g = graphics
+        self.g = oled.gfx # graphics
         
         # initialize values and display
-        c = await self.get_coord()
+        # c = await self.get_coord()
+        c = await self.gyro.poll_gyro()
         self.last_c = (1000,1000,1000)
         await self.show_coord_labels()
 
@@ -49,7 +50,8 @@ class ModuleService(PsosService):
             await self.draw_frame()
             
             # get current x,y,z and display
-            c = await self.get_coord()
+            # c = await self.get_coord()
+            c = await self.gyro.poll_gyro()
             await self.draw_bubble(c,1)
             await self.show_coord(c)
             
@@ -66,6 +68,7 @@ class ModuleService(PsosService):
                 return
 
     
+    '''
     # return coordinates of gyro
     async def get_coord(self):
         ax = ay = az = 0
@@ -83,7 +86,8 @@ class ModuleService(PsosService):
         az=int(round(az/5*90))
         
         return (ax,ay,az)
-
+    '''
+    
     # draw frame enclosing bubble
     async def draw_frame(self):
         self.g.circle(32,32,31,1)
@@ -135,8 +139,8 @@ class ModuleService(PsosService):
                 # erase just the numbers
                 # row height: 16,
                 # col width: 8
-                self.g.fill_rect(96,0+i*16,8*5,16,0)
+                # self.g.fill_rect(96,0+i*16,8*5,16,0)
                     
                 self.o.move_to(12,i)
-                self.o.putstr("{:d}".format(c[i]))
+                self.o.putstr("{:d}     ".format(c[i]))
     
