@@ -40,9 +40,7 @@ class ModuleService(PsosService):
         super().__init__(parms)    
         
         self._client = None
-        self._subscriptions = []
-        
-        self.wifi = self.get_svc("wifi")        
+        self._subscriptions = []       
             
     def mqtt_callback(self,topic,msg):
         t = to_str(topic)
@@ -54,8 +52,14 @@ class ModuleService(PsosService):
             subscr.put_match(t_split,t,m)
             
     async def run(self):
-
+                
+        self.wifi = self.get_svc("wifi") 
         ping_wait = 0
+        
+        # NOTE: below populates self.svc_lcd
+        self.get_svc_lcd()
+        if self.svc_lcd != None:
+            self.svc_lcd.set_sym(utf8_char.SYM_EX_OUT)
         
         while True:
             if (self._client != None and
@@ -75,13 +79,9 @@ class ModuleService(PsosService):
                     
             else:
                 self._client = None
-                
-                # NOTE: below also populations self.svc_lcd
-                if self.svc_lcd != None:
-                    self.svc_lcd.set_sym(utf8_char.SYM_EX_OUT)
                     
                 # not connected
-                # try connecting if we have connected wifi
+                # try connecting if we have wifi
                 if self.wifi != None and self.wifi.wifi_connected():
                     self.display_lcd_msg("MQTT connect...") 
                         
@@ -97,7 +97,8 @@ class ModuleService(PsosService):
                                              
             await uasyncio.sleep_ms(100)
             
-    async def _retry_connect_mqtt(self,try_cnt=3):
+    async def _retry_connect_mqtt(self,try_cnt=1):
+        err = ""
         while try_cnt > 0:
             try:
                 # try to reduce ENOMEM on reconnects
@@ -107,19 +108,18 @@ class ModuleService(PsosService):
                 self._client = self._connect_mqtt()
                 print("connected to mqtt")
                 break
-            except errno.ENOMEM:
-                self.reset("ENOMEM")
             except Exception as e:
-              print("error connecting to MQTT: " + str(e))
+              err = str(e)
+              print("error connecting to MQTT: " + err)
               try_cnt = try_cnt - 1
 
                
             await uasyncio.sleep_ms(300)
             
-        '''
+
         if try_cnt <= 0:
-            self.reset("unable to connect to MQTT")
-        '''
+            self.reset("unable to connect to MQTT: "+ err)
+
         
         
     def _connect_mqtt(self):

@@ -35,8 +35,10 @@ class ModuleService(PsosService):
         
         while True:
             if not self.wifi_connected():
-                # self.reset("wifi connection lost")
-                await self.reconnect_wifi()
+                self.reset("wifi connection lost")
+                # possible rp2 bug causing ENOMEM error
+                # after a certain number of reconnects?
+                # await self.reconnect_wifi()
                 
             await uasyncio.sleep_ms(1000)
     
