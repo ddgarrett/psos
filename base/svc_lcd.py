@@ -95,7 +95,7 @@ class ModuleService(PsosService):
                 
         self.lcd_msg = svc_lcd_msg.SvcLcdMsg()
         self.svc_lcd = self
-        self.display_lcd_msg("LCD initialized")
+        # self.display_lcd_msg("LCD initialized")
         
     # run forever, but only blink backlight if
     # blink_interval > 0

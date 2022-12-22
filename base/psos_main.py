@@ -50,7 +50,7 @@ async def main(parms,config):
         if not "Pico W" in u.machine:
             defaults["has_wifi"] = False    
     
-    print("main: create service objects")
+    print("main: init services")
     gc.collect()
     
     # if services is a string
@@ -61,6 +61,11 @@ async def main(parms,config):
         if '{' in svc:
             svc = svc.format(**defaults)
         svc = psos_util.load_parms(config,svc)
+    
+    lcd_name = None
+    lcd_svc  = None
+    if "lcd" in defaults:
+        lcd_name = defaults["lcd"]
     
     for svc_parms in svc:
         
@@ -76,10 +81,18 @@ async def main(parms,config):
         module = __import__(module_name)
         services[name] =  module.ModuleService(psos_parms)
         
+        if lcd_name != None and name == lcd_name:
+            lcd_svc = services[name]
+            lcd_svc.display_lcd_msg("Init Svc...")
+            
+        
         gc.collect()
         
         
-    print("main: starting services")
+    print("main: run services")
+    if lcd_svc != None:
+        lcd_svc.display_lcd_msg("Run Svc...")
+        
     for svc_parms in parms["services"]:
         name = svc_parms["name"]
         svc  = services[name]
@@ -89,6 +102,9 @@ async def main(parms,config):
         
     # pmap = False
     defaults["started"] = True
+    
+    if lcd_svc != None:
+        lcd_svc.display_lcd_msg("Running...")
     
     while True:
         # nothing to do here, but can't return?
