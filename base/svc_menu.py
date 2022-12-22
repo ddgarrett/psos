@@ -228,8 +228,9 @@ class ModuleService(PsosService):
         command.svc_lcd = self.svc_lcd
         
         # start the command running
-        uasyncio.create_task(command.run())
-        
+        # uasyncio.create_task(command.run())
+        # await execution of command instead of starting it?
+        await command.run()  
 
      ############### Builtin Commands ################
                     
