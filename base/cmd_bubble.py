@@ -20,26 +20,15 @@ class ModuleService(PsosService):
         self.gyro = self.get_svc(svc_gyro)
         
     async def run(self):
-        lcd_timeout = self.svc_lcd.get_timeout()
-        self.svc_lcd.set_timeout(0)
-        
         self.gyro.lock_gyro(True)
         self.svc_lcd.clear_screen()
 
-        oled_width = 128
-        oled_height = 64
-        
-        # oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
-        oled = self.svc_lcd.lcd
-        # graphics = gfx.GFX(oled_width, oled_height, oled.pixel, vline=oled.vline, hline=oled.hline)
-
-        self.o = oled
-        self.g = oled.gfx # graphics
+        self.o = self.svc_lcd.lcd
+        self.g = self.svc_lcd.lcd.gfx # graphics
         
         # initialize values and display
-        # c = await self.get_coord()
         c = await self.gyro.poll_gyro()
-        self.last_c = (1000,1000,1000)
+        self.last_c = [1000,1000,1000]
         await self.show_coord_labels()
 
         while True:
@@ -50,43 +39,15 @@ class ModuleService(PsosService):
             await self.draw_frame()
             
             # get current x,y,z and display
-            # c = await self.get_coord()
             c = await self.gyro.poll_gyro()
             await self.draw_bubble(c,1)
             await self.show_coord(c)
             
             self.o.show()
             
-            self.last_c = c
-            
             if c[2] < 0:
                 self.gyro.lock_gyro(False)
-                self.svc_lcd.set_timeout(lcd_timeout)
-                self.menu.update_lcd("Exited Bubble")
-                await uasyncio.sleep_ms(3000)
-                self.menu.update_lcd(" ")
                 return
-
-    
-    '''
-    # return coordinates of gyro
-    async def get_coord(self):
-        ax = ay = az = 0
-        imu = self.gyro.imu
-        
-        # take average of 5 readings
-        for i in range(5):
-            ax+=imu.accel.x
-            ay+=imu.accel.y
-            az+=imu.accel.z
-            await uasyncio.sleep_ms(100)
-            
-        ax=int(round(ax/5*90))
-        ay=int(round(ay/5*90))
-        az=int(round(az/5*90))
-        
-        return (ax,ay,az)
-    '''
     
     # draw frame enclosing bubble
     async def draw_frame(self):
@@ -135,12 +96,7 @@ class ModuleService(PsosService):
     async def show_coord(self,c):
         for i in range(3):
             if self.last_c[i] != c[i]:
-                    
-                # erase just the numbers
-                # row height: 16,
-                # col width: 8
-                # self.g.fill_rect(96,0+i*16,8*5,16,0)
-                    
+                self.last_c[i] = c[i]
                 self.o.move_to(12,i)
                 self.o.putstr("{:d}     ".format(c[i]))
     

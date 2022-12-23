@@ -34,8 +34,6 @@ class ModuleService(PsosService):
         self.ws = neopixel.NeoPixel(machine.Pin(0),8)
         
     async def run(self):
-        lcd_timeout = self.svc_lcd.get_timeout()
-        self.svc_lcd.set_timeout(0)
         self.gyro.lock_gyro(True)
         
         self.o = self.svc_lcd.lcd
@@ -54,9 +52,7 @@ class ModuleService(PsosService):
             
             if msg == "over":
                 self.gyro.lock_gyro(False)
-                self.svc_lcd.set_timeout(lcd_timeout)
                 self.neo_rgb(0,0,0)
-                self.menu.update_lcd(" ")
                 return
             
             if msg == "right":
