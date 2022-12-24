@@ -22,6 +22,7 @@ class PsosService:
         self.cust     = None
         self.new_cust = None
         self.tz       = self.get_parm("tz",-8)
+        self.dev      = self.get_parm("dev","?")
         
     # get a parameter value
     # return default if parameter not specified

@@ -42,7 +42,8 @@ class ModuleService(PsosService):
     async def send_data(self,mqtt):
         msg = {
             'disk_free' : self.df(),
-            'mem_free'  : self.free() }
+            'mem_free'  : self.free(),
+            'dev'       : self.dev }
         
         await mqtt.publish(self.get_parm("pub_upd"),msg)
 

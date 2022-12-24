@@ -62,7 +62,7 @@ class ModuleService(PsosService):
             await uasyncio.sleep_ms(500)
             
         # no data after 3 tries
-        await mqtt.publish(self.get_parm("pub_upd"),{"temp": "starting...", "hum": "...", "dev":self.get_parm("dev")})
+        await mqtt.publish(self.get_parm("pub_upd"),{"temp": "starting...", "hum": "...", "dev":self.dev})
             
             
     # read data from DHT device
@@ -77,7 +77,7 @@ class ModuleService(PsosService):
             temp = ('{0:3.0f}'.format(temp))
             hum =  ('{0:3.0f}'.format(hum))
             
-            msg = {"temp": temp, "hum": hum, "dev":self.get_parm("dev")}
+            msg = {"temp": temp, "hum": hum, "dev":self.dev}
                         
             return msg
     

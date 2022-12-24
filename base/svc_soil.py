@@ -78,4 +78,4 @@ class ModuleService(PsosService):
         sm = int(round(((raw_c - dry) / (wet - dry)) * 100))
         sm1 = int(round(((raw_c - dry) / (wet - dry)) * 10))
         
-        return {"lvl_100":sm, "lvl_10":sm1, "raw":raw, "dev":self.get_parm("dev")}
+        return {"lvl_100":sm, "lvl_10":sm1, "raw":raw, "dev":self.dev}
