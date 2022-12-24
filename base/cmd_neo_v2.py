@@ -11,6 +11,7 @@ import uasyncio
 import sys
 
 import machine
+import neopixel
 import hsv_to_rgb
 
 # All initialization classes are named ModuleService
@@ -25,12 +26,13 @@ class ModuleService(PsosService):
         self.gyro = self.get_svc(gyro)
         
         # rp2 bug workaround
-        import rp2
-        rp2.PIO(0).remove_program()
+        if self.is_rp2():
+            import rp2
+            rp2.PIO(0).remove_program()
         
         # use neopixel instead of WS2812 to work on ESP32
         # as well as rp pico
-        import neopixel
+        pin = self.get_parm("pin",0)
         self.ws = neopixel.NeoPixel(machine.Pin(0),8)
         
         # task that rolls neopixel colors
