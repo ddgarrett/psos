@@ -126,8 +126,8 @@ class ModuleService(PsosService):
     # ret_flat = return state if flat (default is False)
     #
     # The defaults, ticks=2,st="--",c=5, will return a result
-    # with any reading other than flat in a minimum of 375ms,
-    # averaging 5 25ms readings which remain consistent 3 times.
+    # with any reading other than flat in a minimum of 225ms,
+    # averaging 3 25ms readings which remain consistent 3 times.
     #
     # Returns a state as: 
     # "over" gyro tipped over (upside down)
@@ -137,7 +137,7 @@ class ModuleService(PsosService):
     # "right" gyro tipped right (clockwise)
     # "--"  gyro flat
     #
-    async def poll_chg(self,ticks=3,st="--",c=5,ret_flat=False):
+    async def poll_chg(self,ticks=3,st="--",c=3,ret_flat=False):
         tr = self.trigger
         ns_ticks = 0      # number of times new state detected
         new_state = st
@@ -166,7 +166,7 @@ class ModuleService(PsosService):
 
             if msg == new_state:
                 ns_ticks += 1
-                if ns_ticks == ticks:
+                if ns_ticks >= ticks:
                     # new state has been triggered for
                     # enough time - send a message
                     
