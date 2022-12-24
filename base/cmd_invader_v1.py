@@ -267,7 +267,7 @@ class ModuleService(PsosService):
         ax = min(maxx,ax)    # constrain ax to -40 to +40 range
         ax = max(minx,ax)
         
-        if az < 0:
+        if az < self.gyro.tr_z:
             return None
         
         return ax

@@ -18,6 +18,7 @@ class ModuleService(PsosService):
         
         svc_gyro  = self.get_parm("svc_gyro")
         self.gyro = self.get_svc(svc_gyro)
+
         
     async def run(self):
         self.gyro.lock_gyro(True)
@@ -45,7 +46,7 @@ class ModuleService(PsosService):
             
             self.o.show()
             
-            if c[2] < 0:
+            if c[2] < self.gyro.tr_z:
                 self.gyro.lock_gyro(False)
                 return
     

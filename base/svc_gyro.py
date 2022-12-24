@@ -45,6 +45,7 @@ class ModuleService(PsosService):
             self._hg_msg = SvcLcdMsg().dsp_hg().dumps()
             
         self.trigger = self.get_parm("trigger",25)
+        self.tr_z    = self.get_parm("tr_z",-90)
         self.pub = self.get_parm("pub",None)
         
         i2c_svc = parms.get_parm("i2c")
@@ -150,7 +151,7 @@ class ModuleService(PsosService):
             
             # check msg state is stable for 300ms
             # then send a single msg waiting for it to change again
-            if az < 0:
+            if az < self.tr_z:
                 msg = "over"
             elif ay < -tr:
                 msg = "right"
