@@ -27,6 +27,8 @@ Maybe
 I'm not gonna\\nsay anything\\nanymore, that's\\nit
 Stupid
 What a pain\\nin the ass
+Inquiring minds\\nwant to know
+What a stupid\\nquestion
 Love you
 Stop bothering\\nme'''
         
@@ -59,10 +61,13 @@ Stop bothering\\nme'''
                 
             # check for "over" message in next 3 seconds
             i = 0
-            while i <= 8:
+            while i <= 16:
                 i += 1
                 r,msg = await self.gyro.poll_chg(ret_flat=True)
                 if msg == "over":
-                    self.gyro.lock_gyro(False)
-                    return
+                    if i < 6:
+                        self.gyro.lock_gyro(False)
+                        return
+                    else:
+                        break
     
