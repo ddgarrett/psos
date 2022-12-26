@@ -1,15 +1,11 @@
 """
     Command to Test Pixel Invader Converted to a Command.
     
-    Note that once the run() method is called, it does not relinquish
-    control until the gryo is tipped over. This is because it only pauses
-    1ms between screen refreshes.
-    
 """
 
 from psos_svc import PsosService
 import uasyncio
-from time import sleep
+# from time import sleep
 import framebuf
 import random
 
@@ -137,7 +133,8 @@ class ModuleService(PsosService):
         # Finally update the oled display so the image & text is displayed
         oled.show()
 
-        sleep(2)
+        # sleep(2)
+        await uasyncio.sleep_ms(2_000)
 
         addy = 3 #pixels of movement per turn on aliens
 
@@ -259,7 +256,8 @@ class ModuleService(PsosService):
                           
             oled.show()
             
-            sleep(0.001)
+            # sleep(0.001)
+            await uasyncio.sleep_ms(1)
             
     def measure_x(self,minx=-40,maxx=40):
         ax=int(round(self.gyro.imu.accel.x*90))
