@@ -133,3 +133,8 @@ class I2cLcd(LcdApi):
         else:
             super().putchar(char)
             
+    def get_cursor(self):
+        return(self.cursor_x,self.cursor_x)
+    
+
+            

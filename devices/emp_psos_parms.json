@@ -3,9 +3,14 @@
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"emp",
-    "pub_hourglass":"local/emp/lcd",
-    "log_file":"reset_rsn.txt"
+    "dev"  :"emp",
+    "base" :"emp",
+    "lcd"  :"lcd",
+    "menu" :"base_station_menu.json",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8,
+    "pub_hourglass":"local/emp/lcd"
     },
     
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
@@ -17,7 +22,7 @@
     {"name": "log",  "module":"svc_log",   "pub_log":"emp/log" },
     
     {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x27", "timeout":10,
-             "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⏴⏵⏶⏷⌛",
+             "lcd_col_cnt":20, "lcd_row_cnt":4, "custom_char":"°⌛✗📶",
              "subscr_msg":"emp/lcd" },
              
     {"name": "temp", "module":"svc_dht", "dht_pin":5,

@@ -245,8 +245,7 @@ class ModuleService(PsosService):
         self.hg_task = uasyncio.create_task(self.dsp_hg_tsk(time))
         
     async def dsp_hg_tsk(self,time):
-        x = self.lcd.x
-        y = self.lcd.y
+        x,y = self.lcd.get_cursor()
         row = self.lcd_row_cnt-1
         col = self.lcd_col_cnt-1
         
@@ -261,8 +260,7 @@ class ModuleService(PsosService):
             self.blank_hourglass()
             
     def blank_hourglass(self):
-        x = self.lcd.x
-        y = self.lcd.y
+        x,y = self.lcd.get_cursor()
         row = self.lcd_row_cnt-1
         col = self.lcd_col_cnt-1
         

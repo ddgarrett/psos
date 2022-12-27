@@ -115,6 +115,9 @@ class I2cLcd(SSD1306_I2C):
         self.x = x
         self.y = y
     
+    def get_cursor(self):
+        return(self.x,self.y)
+    
     def clear(self):
         super().fill(0)
         super().show()
