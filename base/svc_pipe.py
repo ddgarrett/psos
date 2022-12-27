@@ -46,8 +46,6 @@ class ModuleService(PsosService):
 
         out = msg.get_payload()
         
-        print(type(out))
-        
         if type(out) != dict:
             out = {}
 
