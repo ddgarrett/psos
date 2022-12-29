@@ -62,7 +62,7 @@ def sync_file(local,git,dir=""):
     sha = git["sha"]
     if local["sha"] == sha:
         print("no change in file",local["name"])
-        return false
+        return False
     
     local["sha"] = sha
     fn = local["name"]
