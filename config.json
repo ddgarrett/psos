@@ -1,4 +1,4 @@
-{ "device": "r02",
-  "path"  : ["/base/lib","/base"]
+{ "device": "r02t",
+  "path"  : ["/lib","/base"],
   "cust"  : "/cust",
-  "parms" : "/base/devices"}
+  "parms" : "/devices"}
