@@ -1,4 +1,4 @@
-# PSOS
+# PSOS - test change
 Publish / Subscribe OS (PSOS) is a framework that supports incremental development of complex microcontroller systems using simple MicroPython modules. Key features include:
 - Simple to learn and use
 - Easily extensible through simple to develop reusable modules
