@@ -9,16 +9,15 @@
     generated manifest.json is then checked into the repo. Remote devices
     can then run their update process.
 
-    Remote devices read the generated manifest.json file and use it to sync
-    with their local copy of manifest.json. Their local copy of manifest.json 
-    is compared to the repo version of manifest.json by svc_git.py.
+    Remote devices read the generated manifest.json file. The local copy 
+    of manifest.json is compared to the repo version of manifest.json 
+    by svc_git.py:
       - Update files where the sha value has changed
       - Delete files which are not in the repo manifest.json file
       - Add files which are in the repo manifest but not in the local copy
 
     Once that is completed, the remote device replaces the local copy
     of the manifest.json file with the repo version.
-
 '''
 
 import requests
@@ -41,15 +40,6 @@ parms = {
     "repo" : "psos"
 }
     
-# returns sha of refs/heads/main
-# future: specify which "ref" to sync with?
-def get_repo_sha():
-    uri = "{uri}/{user}/{repo}/git/refs/heads/main".format(**parms)
-    r = requests.get(uri,headers=headers)
-    c = r.json()
-    r.close()
-    return c["object"]["sha"]
-
 # read a github manifest file for a directory
 def get_github_manifest(dir):
     parms["dir"] = dir
@@ -135,13 +125,6 @@ def update(fn):
     print("checking repo changes")
     local = load_json(fn)
     
-    sha = get_repo_sha()
-    if sha == local["sha"]:
-        print("no changes to repo")
-        return None
-
-    local["sha"] = sha
-
     # get github manifest for root directory
     # and convert to a dictionary
     git = get_github_manifest("")
