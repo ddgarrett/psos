@@ -1,10 +1,8 @@
-{ "sha":"none"
-
-  "obj":[
+{ "obj":[
     {"name":"main.py", 
      "sha":"none"
     },
-    {"name":"github_sync.py", 
+    {"name":"manifest.json", 
      "sha":"none"
     },
     {"name":"base", 

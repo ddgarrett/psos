@@ -1,32 +1,282 @@
-{ "sha":"none",
-
-  "obj":[
-    {"name":"main.py", 
-     "sha":"none"
-    },
-    {"name":"manifest.json", 
-     "sha":"none"
-    },
-    {"name":"base", 
-     "sha":"none",
-     "files":[
-         {"name":"cmd_ask_es.py",
-          "sha":"sha_here"}
-      ]
-    },
-    {"name":"devices", 
-     "sha":"none",
-     "files": [
-         {"name":"devices_file_name",
-          "sha":"sha_here"}
-      ]
-    },
-    {"name":"lib", 
-     "sha":"none",
-     "files": [
-         {"name":"devices_file_name",
-          "sha":"sha_here"}
-      ]
-    }
-  ]
+{
+    "obj": [
+        {
+            "name": "main.py",
+            "sha": "439d367af85cc9e3f7237b830d2aec6c81a9adf3"
+        },
+        {
+            "name": "manifest.json",
+            "sha": "2e913c23d376797dfcb6d794cc7ad8c95a1b4efe"
+        },
+        {
+            "files": [
+                {
+                    "name": "cmd_ask_es.py",
+                    "sha": "d80560b43f0a441a4bbd22ff22d5160425930338"
+                },
+                {
+                    "name": "cmd_blink.py",
+                    "sha": "b1db0f743d2637d726d9c0fe544146b1ac8036d1"
+                },
+                {
+                    "name": "cmd_bubble.py",
+                    "sha": "65beab125a92acb320e69535d0f002ac4147bd80"
+                },
+                {
+                    "name": "cmd_cust_soil.py",
+                    "sha": "82e918fc51e350496247ec188035c38f5d6e70f4"
+                },
+                {
+                    "name": "cmd_exit_cust.py",
+                    "sha": "72ca4d5372bd8fd110661f7a7178c257a506d077"
+                },
+                {
+                    "name": "cmd_invader_v1.py",
+                    "sha": "f2732bb55b95f0842fbf88b3c82a62bb32729a88"
+                },
+                {
+                    "name": "cmd_neo_v1.py",
+                    "sha": "1f0ac46fd6ba464000e01b949bc8a6ebff23685e"
+                },
+                {
+                    "name": "cmd_neo_v2.py",
+                    "sha": "827edc75a002954ddc4213f59c39c7d12a1fe067"
+                },
+                {
+                    "name": "hivemq_root_ca.py",
+                    "sha": "5057c88b7131d3e239d0ef7c4d33ce0d31424baf"
+                },
+                {
+                    "name": "psos_main.py",
+                    "sha": "f646c98f512ce605e22ba3ddf6ea40aaa39c45db"
+                },
+                {
+                    "name": "psos_parms.py",
+                    "sha": "8a79b1f91424318aa3149ba6a87da191bdb248ec"
+                },
+                {
+                    "name": "psos_subscription.py",
+                    "sha": "7e03f489acc07812e41afe284352809d72993afe"
+                },
+                {
+                    "name": "psos_svc.py",
+                    "sha": "1b606b39a0d9475ff9f7f26d0193296c37b5337d"
+                },
+                {
+                    "name": "psos_util.py",
+                    "sha": "1e65bc860b82381e78cdabd3d57df6c787b60926"
+                },
+                {
+                    "name": "svc_blink.py",
+                    "sha": "951e3a0e5dad5f3e0f1450e7f59ae0643aeaccbb"
+                },
+                {
+                    "name": "svc_dht.py",
+                    "sha": "44bdc9aaadee0854a61dc5140847500e4f0b2b4f"
+                },
+                {
+                    "name": "svc_gyro.py",
+                    "sha": "29111ad185e0dfa29421817d9f77ee4bd2886dc6"
+                },
+                {
+                    "name": "svc_i2c.py",
+                    "sha": "c725d0a64075ab67aadcd095f6b6699b715481a4"
+                },
+                {
+                    "name": "svc_i2c_scan.py",
+                    "sha": "0bd626490998f40f09446feeb4b986d391f033ca"
+                },
+                {
+                    "name": "svc_lcd.py",
+                    "sha": "363d9b8f90c3a5b10d27225f32eccf92276e69c1"
+                },
+                {
+                    "name": "svc_lcd_msg.py",
+                    "sha": "a0f54983d7592ee9288e0165cedcf4bb2caffb29"
+                },
+                {
+                    "name": "svc_log.py",
+                    "sha": "c3ecc8353ae9e40416786ea4e40d5a3c8c60ee0d"
+                },
+                {
+                    "name": "svc_log_dat.py",
+                    "sha": "1475ca35a4bb6a4562e240f630da73119f6326e5"
+                },
+                {
+                    "name": "svc_mem_use.py",
+                    "sha": "29f5f6b855d609ffad6c421b2f660ae1a6bccc8f"
+                },
+                {
+                    "name": "svc_menu.py",
+                    "sha": "18e57e05c5b07e86a8deea305ed5d9ce60727839"
+                },
+                {
+                    "name": "svc_mqtt.py",
+                    "sha": "471528a930cb90e2ba5e09587de95ebb75721612"
+                },
+                {
+                    "name": "svc_mqtt_proxy_client.py",
+                    "sha": "3d609b85e0c9430acfdfea41599be7235e4bee18"
+                },
+                {
+                    "name": "svc_mqtt_proxy_server.py",
+                    "sha": "1fee99e5e894c51d1bdfc9872694bc2a6593a2f3"
+                },
+                {
+                    "name": "svc_msg.py",
+                    "sha": "b1dd87abf456bf54029c29979ed3722bce17c7d9"
+                },
+                {
+                    "name": "svc_pipe.py",
+                    "sha": "c18faa2d6714a95657796e82665f831b80f44cc5"
+                },
+                {
+                    "name": "svc_pub_timer.py",
+                    "sha": "a0275fb10b7865103885bc35b277a5ad87af1743"
+                },
+                {
+                    "name": "svc_reset_esp8266.py",
+                    "sha": "e53779be1302e8a7a71c7a73449519ed6aa0f174"
+                },
+                {
+                    "name": "svc_sd_card.py",
+                    "sha": "5181606618c97975b3ca35464e3bea26ae7b279e"
+                },
+                {
+                    "name": "svc_soil.py",
+                    "sha": "7103c0ac557249eb7127690fd323d012ad710a08"
+                },
+                {
+                    "name": "svc_touch.py",
+                    "sha": "7dd12dfd22e49ccf4000eaa42a936dd8e9ba2ee2"
+                },
+                {
+                    "name": "svc_wifi.py",
+                    "sha": "475059c45a1a4849e2352d62a5eca76343515917"
+                },
+                {
+                    "name": "utf8_char.py",
+                    "sha": "ad8c28ac7f479fe577c690a0179169c022d11441"
+                }
+            ],
+            "name": "base",
+            "sha": "6f17d8f8ace4e4da86da53352e6dc8679d4a4fce"
+        },
+        {
+            "files": [
+                {
+                    "name": "c01_psos_parms.json",
+                    "sha": "7f492e66d3c88f806d77365ac601f541d2cbad09"
+                },
+                {
+                    "name": "d01_psos_parms.json",
+                    "sha": "0c685ed3e42f5b0d84addba0a7f41190646f39e6"
+                },
+                {
+                    "name": "d02_psos_parms.json",
+                    "sha": "7ad0b79a432939838a377eb41d5c662e5832bffa"
+                },
+                {
+                    "name": "d03_psos_parms.json",
+                    "sha": "cdbed75d7724e0ec1a88c27ad8138212d5e3716c"
+                },
+                {
+                    "name": "e01_menu.json",
+                    "sha": "5119d444d644bc4d797948f0922d4a2d22edf926"
+                },
+                {
+                    "name": "e01_psos_parms.json",
+                    "sha": "02deefbcc25d2f478f9b2170487cb9e61cef2224"
+                },
+                {
+                    "name": "e02_psos_parms.json",
+                    "sha": "e54ff3003eb9a0dd65ecabdf6dc2f590881d32b5"
+                },
+                {
+                    "name": "e04_psos_parms.json",
+                    "sha": "e5ed4d9c0d6b72b52d04bf333388c45aa91edc29"
+                },
+                {
+                    "name": "e05_psos_parms.json",
+                    "sha": "a68516cb72210a348e4f422de7da4d6831e041bc"
+                },
+                {
+                    "name": "emp_psos_parms.json",
+                    "sha": "283b900cd24c95e8af17fa56a2ba463a0cca299f"
+                },
+                {
+                    "name": "r01_menu.json",
+                    "sha": "48da2193e6d7a07c2d1f3818b743c319ad84fcb0"
+                },
+                {
+                    "name": "r01_psos_parms.json",
+                    "sha": "9bbc2ab517631709ed612083156e4be6b8771d13"
+                },
+                {
+                    "name": "r02_psos_parms.json",
+                    "sha": "832ddab4dc084f10604dcbcb02f9fcd603688f89"
+                },
+                {
+                    "name": "substation_menu.json",
+                    "sha": "8e23f852c99e683e33c78af1e7b41a07ac03fdbc"
+                }
+            ],
+            "name": "devices",
+            "sha": "d40fe46587180cfecca8aa5fe08d1e2d06a329a2"
+        },
+        {
+            "files": [
+                {
+                    "name": "gfx.py",
+                    "sha": "c5a8e9fce0930ef37cce691f7553142bd8f04f93"
+                },
+                {
+                    "name": "hsv_to_rgb.py",
+                    "sha": "b26ebef707086a67e244939369edda35a5fec4e0"
+                },
+                {
+                    "name": "imu.py",
+                    "sha": "6143109d28b724f519a04815dd6b77ad95f7c870"
+                },
+                {
+                    "name": "lcd1602.py",
+                    "sha": "3c13cfa9e0d0adbe922f31fc024e90b81477dcb4"
+                },
+                {
+                    "name": "lcd_api.py",
+                    "sha": "aff07614045905538bfe72c967a97f91e66694c0"
+                },
+                {
+                    "name": "pico_i2c_lcd.py",
+                    "sha": "780224e70ce0272ebaecae9884f38c148d4ca581"
+                },
+                {
+                    "name": "queue.py",
+                    "sha": "f5ce7f818e7a0b3533da3af039ecedb1392927a5"
+                },
+                {
+                    "name": "sdcard.py",
+                    "sha": "1f9bed94d291bb47e8cc1f11adf04c4c5db3098a"
+                },
+                {
+                    "name": "ssd1306.py",
+                    "sha": "592d183805951f0c48e87dcbc1621bcaf61f6113"
+                },
+                {
+                    "name": "ssd1306_lcd.py",
+                    "sha": "f24ef7489f625785814b51b985c08b2f69daf09b"
+                },
+                {
+                    "name": "umqtt_simple.py",
+                    "sha": "2b269473babfc3c62d70cf48b2aa8d2ed55cf699"
+                },
+                {
+                    "name": "vector3d.py",
+                    "sha": "86c1c60d077620c3dd18c00d2aa24b7fdfd83189"
+                }
+            ],
+            "name": "lib",
+            "sha": "47d6a23b75d0867d2ca9f2304aed59d377f83766"
+        }
+    ]
 }
