@@ -1,0 +1,32 @@
+{ "sha":"none",
+
+  "obj":[
+    {"name":"main.py", 
+     "sha":"none"
+    },
+    {"name":"manifest.json", 
+     "sha":"none"
+    },
+    {"name":"base", 
+     "sha":"none",
+     "files":[
+         {"name":"cmd_ask_es.py",
+          "sha":"sha_here"}
+      ]
+    },
+    {"name":"devices", 
+     "sha":"none",
+     "files": [
+         {"name":"devices_file_name",
+          "sha":"sha_here"}
+      ]
+    },
+    {"name":"lib", 
+     "sha":"none",
+     "files": [
+         {"name":"devices_file_name",
+          "sha":"sha_here"}
+      ]
+    }
+  ]
+}
