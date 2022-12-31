@@ -1,4 +1,5 @@
-{ "obj":[
+{ "sha":"none",
+  "obj":[
     {"name":"main.py", 
      "sha":"none"
     },

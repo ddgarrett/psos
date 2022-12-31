@@ -25,7 +25,7 @@ import requests
 import json
 import sys
 
-sys.path.extend(["D:\documents\projects\psos\lib","D:\documents\projects\psos\\base"])
+sys.path.extend([".\lib",".\\base"])
 
 import secrets
 
@@ -36,14 +36,24 @@ headers = {
 }
 
 parms = {
+    "uri"  : "https://api.github.com/repos",
     "user" : "ddgarrett",
     "repo" : "psos"
 }
     
+# returns sha of refs/heads/main
+# future: specify which "ref" to sync with?
+def get_repo_sha():
+    uri = "{uri}/{user}/{repo}/git/refs/heads/main".format(**parms)
+    r = requests.get(uri,headers=headers)
+    c = r.json()
+    r.close()
+    return c["object"]["sha"]
+
 # read a github manifest file for a directory
 def get_github_manifest(dir):
     parms["dir"] = dir
-    uri = "https://api.github.com/repos/{user}/{repo}/contents/{dir}".format(**parms)
+    uri = "{uri}/{user}/{repo}/contents/{dir}".format(**parms)
     r = requests.get(uri,headers=headers)
     c = r.json()
     r.close()
@@ -125,6 +135,13 @@ def update(fn):
     print("checking repo changes")
     local = load_json(fn)
     
+    sha = get_repo_sha()
+    if sha == local["sha"]:
+        print("no changes to repo")
+        return None
+
+    local["sha"] = sha
+
     # get github manifest for root directory
     # and convert to a dictionary
     git = get_github_manifest("")
@@ -139,10 +156,6 @@ def update(fn):
         else:
             sha = git_obj["sha"]
             fn  = git_obj["name"]
-            if fn == "manifest.json":
-                if sha == local_obj["sha"]:
-                    print("no changes to manifest")
-                    return None
 
             if local_obj["sha"] != sha:
                 print("update",fn)
@@ -156,8 +169,4 @@ new_manifest = update(fn)
 
 if new_manifest != None :
     save_json(fn,new_manifest)
-
-
-
-
-
+    
