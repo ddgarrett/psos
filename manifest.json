@@ -6,13 +6,13 @@
         },
         {
             "name": "manifest.json",
-            "sha": "d0cbb34a385e3d4d7bd6b24794ba84234a6821bf"
+            "sha": "f939aa0b8d335aa6c333c06ffd3056b0f6f3d4b8"
         },
         {
             "files": [
                 {
                     "name": "cmd_ask_es.py",
-                    "sha": "d80560b43f0a441a4bbd22ff22d5160425930338"
+                    "sha": "8dff96c49b7b1f03b6993bfff3d6b9cad0241264"
                 },
                 {
                     "name": "cmd_blink.py",
@@ -160,7 +160,7 @@
                 }
             ],
             "name": "base",
-            "sha": "6f17d8f8ace4e4da86da53352e6dc8679d4a4fce"
+            "sha": "9c33f6b5502ae3f0fe4afe089aaad05d92e61851"
         },
         {
             "files": [
