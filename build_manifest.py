@@ -62,7 +62,7 @@ def load_json(fn):
 def save_json(fn,o):
     with open(fn, "w") as f:
         # json.dump(o, f, sort_keys=True, indent=4)
-        json.dump(o, f, sort_keys=True)
+        json.dump(o, f, sort_keys=True, indent=0)
         
 # convert a list to a dictionary
 def cnv_list_to_dict(lst,key):
