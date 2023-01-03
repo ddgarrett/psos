@@ -41,15 +41,15 @@
              "pub_touch":"e01/dht/upd" },
              
     {"name": "dsp_temp", "module":"svc_pipe",
-             "subscr_in":"emp/dht",  "pub_out":"emp/lcd",
+             "subscr_in":"emp/dht",  "pub_out":"local/emp/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: emp'}}]" },     
 
     {"name": "dsp_e02", "module":"svc_pipe",
-             "subscr_in":"e02/dht",  "pub_out":"emp/lcd",
+             "subscr_in":"e02/dht",  "pub_out":"local/emp/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e02'}}]" },
 
     {"name": "dsp_e05", "module":"svc_pipe",
-             "subscr_in":"e05/dht",  "pub_out":"emp/lcd",
+             "subscr_in":"e05/dht",  "pub_out":"local/emp/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: e05'}}]" }
 
 
