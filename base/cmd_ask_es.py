@@ -31,7 +31,7 @@ Inquiring minds\\nwant to know
 What a stupid\\nquestion
 Love you
 Stop bothering\\nme
-Who want\\nto know?'''
+Who wants\\nto know?'''
         
         self.a = a.split('\n')
         for i in range(len(self.a)):
