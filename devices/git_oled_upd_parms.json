@@ -1,0 +1,29 @@
+{
+"name":"PSOS v00.02 - Test Svc Git",
+"main":"psos_main",
+
+"defaults": {
+    "dev"  :"{device}",
+    "base" :"emp",
+    "lcd"  :"lcd",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8
+    },
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
+    {"name": "i2c0", "module":"svc_i2c", "channel":0 },
+
+    {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
+    
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C","timeout":1000,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛✗📶", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"{dev}/lcd" },
+
+    {"name": "git", "module":"svc_git_upd", "test":true}
+
+ ]
+}

@@ -1,0 +1,64 @@
+{
+"name":"PSOS v00.03 - Test Pico W with Neopixel",
+"main":"psos_main",
+
+"defaults": {
+    "dev"  :"{device}",
+    "base" :"emp",
+    "lcd"  :"lcd",
+    "gyro" :"gyro",
+    "menu" :"neo_test_menu.json",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8
+    },
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
+    {"name": "i2c0", "module":"svc_i2c", "channel":0 },
+
+    {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
+    
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C","timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛✗📶", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"{dev}/lcd" },
+             
+    {"name": "git", "module":"svc_git_rst", 
+             "upd_parms":"git_oled_upd_parms.json", 
+             "sub":"{dev}/git/upd" }
+             
+    {"name": "temp", "module":"svc_dht", "dht_pin":22, "dht22":false,
+             "subscr_upd":"{dev}/dht/upd",   "pub_upd":"{dev}/dht" },
+    {"name": "dsp_dht", "module":"svc_pipe",
+             "subscr_in":"{dev}/dht",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: {dev}'}}]" },
+              
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":30,
+             "pub":"local/{dev}/menu" },
+             
+    {"name": "menu", "module":"svc_menu", "sub":"{dev}/menu", "menu":"{menu}"},
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },           
+    {"name": "dsp_mem", "module":"svc_pipe",
+             "subscr_in":"{dev}/mem",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'FREE MEM & DSK\nM: {mem_free}\nD: {disk_free}\nDEV: {dev}'}}]" },  
+
+
+ ],
+ "removed":[
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    
+    {"name": "sd_card", "module":"svc_sd_card", "mount_pt":"/sd", 
+             "slot":1, "sck":10, "mosi":11, "miso":12, "cs":13, "baud":1000000,
+             "subscr_upd":"{dev}/sd/upd",  "pub_upd":"{dev}/sd" },
+
+    {"name": "git", "module":"svc_git",
+             "sub":"{dev}/git/upd",   "pub":"{dev}/git" }
+             
+
+
+]
+}

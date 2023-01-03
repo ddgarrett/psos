@@ -1,0 +1,61 @@
+
+{ 
+    "main": {
+        "quick": {
+            "down":[{"cmd":"msg", "msg":"MEMORY"},
+                {"cmd":"pub", "pub":"local/{dev}/mem/upd"}], 
+                
+            "up":[{"cmd":"msg", "msg":"TEMPERATURE"},
+                {"cmd":"pub", "pub":"local/{dev}/dht/upd"}],
+                
+            "exit":[{"cmd":"pub", "pub":"local/{dev}/lcd", "msg":["backlight_on"]}]
+            },
+        "menu": [
+             {"item":"Ask Elizabeth", "cmds":[
+                 {"cmd":"cmd_ask_es", "gyro":"gyro" },
+                 {"cmd":"exit", "msg":"exited Ask Liz"}]},
+             {"item":"SP INVADERS", "cmds":[
+                 {"cmd":"cmd_invader_v1", "gyro":"gyro", "lowres":false },
+                 {"cmd":"exit", "msg":"exited SP Inv"}]},
+             {"item":"SHOW NEOPIXEL 1", "cmds":[
+                 {"cmd":"cmd_neo_v1", "gyro":"gyro", "pin":0 },
+                 {"cmd":"exit", "msg":"exited neopixel"}]},
+             {"item":"SHOW NEOPIXEL 2", "cmds":[
+                 {"cmd":"cmd_neo_v2", "gyro":"gyro", "pin":0 },
+                 {"cmd":"exit", "msg":"exited neopixel"}]},
+             {"item":"SHOW BUBBLE", "cmds":[
+                 {"cmd":"cmd_bubble", "svc_gyro":"gyro" },
+                 {"cmd":"exit", "msg":"exited bubble"}]}
+            ]
+        },
+             
+    "set_dry": {
+        "menu":[                                     
+             {"item":"RUN DRY TEST",  "cmds":[{"cmd":"cmd_cust_soil", "svc":"soil", "attr":"dry"},{"cmd":"redisplay","wait":7}] },
+             {"item":"SAVE AND EXIT", "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":true}, {"cmd":"back", "wait":2}]},
+             {"item":"EXIT NO SAVE",  "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":false},{"cmd":"back", "wait":2}]}
+        ]},
+        
+    "set_wet": {
+        "menu":[                                     
+             {"item":"RUN WET TEST",  "cmds":[{"cmd":"cmd_cust_soil", "svc":"soil", "attr":"wet"},{"cmd":"redisplay","wait":7}] },
+             {"item":"SAVE AND EXIT", "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":true}, {"cmd":"back", "wait":2}]},
+             {"item":"EXIT NO SAVE",  "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":false},{"cmd":"back", "wait":2}]}
+        ]},
+
+    "blink":{
+        "menu":[
+            {"item":"BLINK  5",  "cmds":[
+                {"cmd":"cmd_blink", "cnt":5,  "pin":25},
+                {"cmd":"exit"}] },
+            {"item":"BLINK  10", "cmds":[
+                {"cmd":"cmd_blink", "cnt":10, "pin":25},
+                {"cmd":"exit"}] },
+            {"item":"BLINK  15", "cmds":[
+                {"cmd":"cmd_blink", "cnt":15, "pin":25},
+                {"cmd":"exit"}] },
+            {"item":"BLINK  20", "cmds":[
+                {"cmd":"cmd_blink", "cnt":20, "pin":25},
+                {"cmd":"exit"}] }
+    ]}
+}

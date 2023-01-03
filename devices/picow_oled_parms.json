@@ -1,0 +1,62 @@
+{
+"name":"PSOS v00.03 - Pico W OLED Generic Device",
+"main":"psos_main",
+
+"defaults": {
+    "dev"  :"{device}",
+    "base" :"emp",
+    "lcd"  :"lcd",
+    "gyro" :"gyro",
+    "menu" :"substation_menu.json",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8
+    },
+    
+"NOTE":"wifi and mqtt must be first two services",
+    
+"services": [
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
+    {"name": "i2c0", "module":"svc_i2c", "channel":0 },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
+    
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C","timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛✗📶", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"{dev}/lcd" },
+             
+    {"name": "temp", "module":"svc_dht", "dht_pin":22, "dht22":false,
+             "subscr_upd":"{dev}/dht/upd",   "pub_upd":"{dev}/dht" },
+    {"name": "dsp_dht", "module":"svc_pipe",
+             "subscr_in":"{dev}/dht",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: {dev}'}}]" },
+    {"name": "dsp_dht_base", "module":"svc_pipe",
+             "subscr_in":"{dev}/dht",  "pub_out":"{base}/lcd",
+             "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: {dev}'}}]" },
+             
+    {"name": "soil", "module":"svc_soil",   "pin": 26, "dry":56207, "wet":29367,
+             "sub":"{dev}/soil/upd",   "pub":"{dev}/soil" },
+    {"name": "dsp_soil", "module":"svc_pipe",
+             "subscr_in":"{dev}/soil",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: {dev}'}}]" },
+    {"name": "dsp_soil_base", "module":"svc_pipe",
+             "subscr_in":"{dev}/soil",  "pub_out":"{base}/lcd",
+             "format":"['clear',{{'msg':'Soil Moisture\nLvl: {lvl_10}\nReading: {raw}\nDev: {dev}'}}]" },
+             
+ 
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":30,
+             "pub":"local/{dev}/menu" },
+             
+    {"name": "menu", "module":"svc_menu", "sub":"{dev}/menu", "menu":"{menu}"},
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" }
+
+
+ ],
+ "removed":[
+    {"name": "wifi", "module":"svc_wifi", "disconnect":true}
+
+]
+}
