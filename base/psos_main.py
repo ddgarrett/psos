@@ -37,6 +37,10 @@ async def main(parms,config):
     if "defaults" in parms:
         defaults = parms["defaults"]
     
+    # perform a one time conversion of any {...} in
+    # defaults using config valus
+    psos_util.format_defaults(defaults,config)
+    
     # globally accessible service instances
     services = {}
     defaults["services"] = services

@@ -34,7 +34,7 @@ def format_defaults(defaults,config):
         no_fmt = ["format"]
         
     for k,v in defaults.items():
-        v = defaults
+        # v = defaults
         if type(v) == str and '{' in v and not v in no_fmt:
             defaults[k] = v.format(**config)
         

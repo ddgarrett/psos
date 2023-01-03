@@ -1,4 +1,1 @@
-{ "device": "r02t",
-  "path"  : ["/lib","/base"],
-  "cust"  : "/cust",
-  "parms" : "/devices"}
+{"cust": "/cust", "device": "r02", "parms": "/devices", "fn_parms": "picow_test_parms.json", "path": ["/lib", "/base"]}

@@ -36,7 +36,8 @@ import psos_util
 # read parms for a given device
 # from root directory if it's there
 # otherwise read from config specified parms directory
-pfn = config["device"]+"_psos_parms.json"
+# pfn = config["device"]+"_psos_parms.json"
+pfn = config["fn_parms"]
 parms = psos_util.load_parms(config,pfn)
 
 # start main
