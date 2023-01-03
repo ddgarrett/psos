@@ -153,6 +153,9 @@ class ModuleService(PsosService):
         
         # subscribe to topic and wait for messages
         mqtt = self.get_mqtt()
+        if mqtt == None:
+            return
+        
         await mqtt.subscribe(self._subscr_topic,self._trigger_q)
         
         while True:
