@@ -13,151 +13,151 @@
    "sha": "9c33f6b5502ae3f0fe4afe089aaad05d92e61851",
    "files": [
     {
-     "file": "cmd_ask_es.py",
+     "name": "cmd_ask_es.py",
      "sha": "8dff96c49b7b1f03b6993bfff3d6b9cad0241264"
     },
     {
-     "file": "cmd_blink.py",
+     "name": "cmd_blink.py",
      "sha": "b1db0f743d2637d726d9c0fe544146b1ac8036d1"
     },
     {
-     "file": "cmd_bubble.py",
+     "name": "cmd_bubble.py",
      "sha": "65beab125a92acb320e69535d0f002ac4147bd80"
     },
     {
-     "file": "cmd_cust_soil.py",
+     "name": "cmd_cust_soil.py",
      "sha": "82e918fc51e350496247ec188035c38f5d6e70f4"
     },
     {
-     "file": "cmd_exit_cust.py",
+     "name": "cmd_exit_cust.py",
      "sha": "72ca4d5372bd8fd110661f7a7178c257a506d077"
     },
     {
-     "file": "cmd_invader_v1.py",
+     "name": "cmd_invader_v1.py",
      "sha": "f2732bb55b95f0842fbf88b3c82a62bb32729a88"
     },
     {
-     "file": "cmd_neo_v1.py",
+     "name": "cmd_neo_v1.py",
      "sha": "1f0ac46fd6ba464000e01b949bc8a6ebff23685e"
     },
     {
-     "file": "cmd_neo_v2.py",
+     "name": "cmd_neo_v2.py",
      "sha": "827edc75a002954ddc4213f59c39c7d12a1fe067"
     },
     {
-     "file": "hivemq_root_ca.py",
+     "name": "hivemq_root_ca.py",
      "sha": "5057c88b7131d3e239d0ef7c4d33ce0d31424baf"
     },
     {
-     "file": "psos_main.py",
+     "name": "psos_main.py",
      "sha": "f646c98f512ce605e22ba3ddf6ea40aaa39c45db"
     },
     {
-     "file": "psos_parms.py",
+     "name": "psos_parms.py",
      "sha": "8a79b1f91424318aa3149ba6a87da191bdb248ec"
     },
     {
-     "file": "psos_subscription.py",
+     "name": "psos_subscription.py",
      "sha": "7e03f489acc07812e41afe284352809d72993afe"
     },
     {
-     "file": "psos_svc.py",
+     "name": "psos_svc.py",
      "sha": "1b606b39a0d9475ff9f7f26d0193296c37b5337d"
     },
     {
-     "file": "psos_util.py",
+     "name": "psos_util.py",
      "sha": "1e65bc860b82381e78cdabd3d57df6c787b60926"
     },
     {
-     "file": "svc_blink.py",
+     "name": "svc_blink.py",
      "sha": "951e3a0e5dad5f3e0f1450e7f59ae0643aeaccbb"
     },
     {
-     "file": "svc_dht.py",
+     "name": "svc_dht.py",
      "sha": "44bdc9aaadee0854a61dc5140847500e4f0b2b4f"
     },
     {
-     "file": "svc_gyro.py",
+     "name": "svc_gyro.py",
      "sha": "29111ad185e0dfa29421817d9f77ee4bd2886dc6"
     },
     {
-     "file": "svc_i2c.py",
+     "name": "svc_i2c.py",
      "sha": "c725d0a64075ab67aadcd095f6b6699b715481a4"
     },
     {
-     "file": "svc_i2c_scan.py",
+     "name": "svc_i2c_scan.py",
      "sha": "0bd626490998f40f09446feeb4b986d391f033ca"
     },
     {
-     "file": "svc_lcd.py",
+     "name": "svc_lcd.py",
      "sha": "363d9b8f90c3a5b10d27225f32eccf92276e69c1"
     },
     {
-     "file": "svc_lcd_msg.py",
+     "name": "svc_lcd_msg.py",
      "sha": "a0f54983d7592ee9288e0165cedcf4bb2caffb29"
     },
     {
-     "file": "svc_log.py",
+     "name": "svc_log.py",
      "sha": "c3ecc8353ae9e40416786ea4e40d5a3c8c60ee0d"
     },
     {
-     "file": "svc_log_dat.py",
+     "name": "svc_log_dat.py",
      "sha": "1475ca35a4bb6a4562e240f630da73119f6326e5"
     },
     {
-     "file": "svc_mem_use.py",
+     "name": "svc_mem_use.py",
      "sha": "29f5f6b855d609ffad6c421b2f660ae1a6bccc8f"
     },
     {
-     "file": "svc_menu.py",
+     "name": "svc_menu.py",
      "sha": "18e57e05c5b07e86a8deea305ed5d9ce60727839"
     },
     {
-     "file": "svc_mqtt.py",
+     "name": "svc_mqtt.py",
      "sha": "471528a930cb90e2ba5e09587de95ebb75721612"
     },
     {
-     "file": "svc_mqtt_proxy_client.py",
+     "name": "svc_mqtt_proxy_client.py",
      "sha": "3d609b85e0c9430acfdfea41599be7235e4bee18"
     },
     {
-     "file": "svc_mqtt_proxy_server.py",
+     "name": "svc_mqtt_proxy_server.py",
      "sha": "1fee99e5e894c51d1bdfc9872694bc2a6593a2f3"
     },
     {
-     "file": "svc_msg.py",
+     "name": "svc_msg.py",
      "sha": "b1dd87abf456bf54029c29979ed3722bce17c7d9"
     },
     {
-     "file": "svc_pipe.py",
+     "name": "svc_pipe.py",
      "sha": "c18faa2d6714a95657796e82665f831b80f44cc5"
     },
     {
-     "file": "svc_pub_timer.py",
+     "name": "svc_pub_timer.py",
      "sha": "a0275fb10b7865103885bc35b277a5ad87af1743"
     },
     {
-     "file": "svc_reset_esp8266.py",
+     "name": "svc_reset_esp8266.py",
      "sha": "e53779be1302e8a7a71c7a73449519ed6aa0f174"
     },
     {
-     "file": "svc_sd_card.py",
+     "name": "svc_sd_card.py",
      "sha": "5181606618c97975b3ca35464e3bea26ae7b279e"
     },
     {
-     "file": "svc_soil.py",
+     "name": "svc_soil.py",
      "sha": "7103c0ac557249eb7127690fd323d012ad710a08"
     },
     {
-     "file": "svc_touch.py",
+     "name": "svc_touch.py",
      "sha": "7dd12dfd22e49ccf4000eaa42a936dd8e9ba2ee2"
     },
     {
-     "file": "svc_wifi.py",
+     "name": "svc_wifi.py",
      "sha": "475059c45a1a4849e2352d62a5eca76343515917"
     },
     {
-     "file": "utf8_char.py",
+     "name": "utf8_char.py",
      "sha": "ad8c28ac7f479fe577c690a0179169c022d11441"
     }
    ]
@@ -167,59 +167,59 @@
    "sha": "d40fe46587180cfecca8aa5fe08d1e2d06a329a2",
    "files": [
     {
-     "file": "c01_psos_parms.json",
+     "name": "c01_psos_parms.json",
      "sha": "7f492e66d3c88f806d77365ac601f541d2cbad09"
     },
     {
-     "file": "d01_psos_parms.json",
+     "name": "d01_psos_parms.json",
      "sha": "0c685ed3e42f5b0d84addba0a7f41190646f39e6"
     },
     {
-     "file": "d02_psos_parms.json",
+     "name": "d02_psos_parms.json",
      "sha": "7ad0b79a432939838a377eb41d5c662e5832bffa"
     },
     {
-     "file": "d03_psos_parms.json",
+     "name": "d03_psos_parms.json",
      "sha": "cdbed75d7724e0ec1a88c27ad8138212d5e3716c"
     },
     {
-     "file": "e01_menu.json",
+     "name": "e01_menu.json",
      "sha": "5119d444d644bc4d797948f0922d4a2d22edf926"
     },
     {
-     "file": "e01_psos_parms.json",
+     "name": "e01_psos_parms.json",
      "sha": "02deefbcc25d2f478f9b2170487cb9e61cef2224"
     },
     {
-     "file": "e02_psos_parms.json",
+     "name": "e02_psos_parms.json",
      "sha": "e54ff3003eb9a0dd65ecabdf6dc2f590881d32b5"
     },
     {
-     "file": "e04_psos_parms.json",
+     "name": "e04_psos_parms.json",
      "sha": "e5ed4d9c0d6b72b52d04bf333388c45aa91edc29"
     },
     {
-     "file": "e05_psos_parms.json",
+     "name": "e05_psos_parms.json",
      "sha": "a68516cb72210a348e4f422de7da4d6831e041bc"
     },
     {
-     "file": "emp_psos_parms.json",
+     "name": "emp_psos_parms.json",
      "sha": "283b900cd24c95e8af17fa56a2ba463a0cca299f"
     },
     {
-     "file": "r01_menu.json",
+     "name": "r01_menu.json",
      "sha": "48da2193e6d7a07c2d1f3818b743c319ad84fcb0"
     },
     {
-     "file": "r01_psos_parms.json",
+     "name": "r01_psos_parms.json",
      "sha": "9bbc2ab517631709ed612083156e4be6b8771d13"
     },
     {
-     "file": "r02_psos_parms.json",
+     "name": "r02_psos_parms.json",
      "sha": "832ddab4dc084f10604dcbcb02f9fcd603688f89"
     },
     {
-     "file": "substation_menu.json",
+     "name": "substation_menu.json",
      "sha": "8e23f852c99e683e33c78af1e7b41a07ac03fdbc"
     }
    ]
@@ -229,51 +229,51 @@
    "sha": "47d6a23b75d0867d2ca9f2304aed59d377f83766",
    "files": [
     {
-     "file": "gfx.py",
+     "name": "gfx.py",
      "sha": "c5a8e9fce0930ef37cce691f7553142bd8f04f93"
     },
     {
-     "file": "hsv_to_rgb.py",
+     "name": "hsv_to_rgb.py",
      "sha": "b26ebef707086a67e244939369edda35a5fec4e0"
     },
     {
-     "file": "imu.py",
+     "name": "imu.py",
      "sha": "6143109d28b724f519a04815dd6b77ad95f7c870"
     },
     {
-     "file": "lcd1602.py",
+     "name": "lcd1602.py",
      "sha": "3c13cfa9e0d0adbe922f31fc024e90b81477dcb4"
     },
     {
-     "file": "lcd_api.py",
+     "name": "lcd_api.py",
      "sha": "aff07614045905538bfe72c967a97f91e66694c0"
     },
     {
-     "file": "pico_i2c_lcd.py",
+     "name": "pico_i2c_lcd.py",
      "sha": "780224e70ce0272ebaecae9884f38c148d4ca581"
     },
     {
-     "file": "queue.py",
+     "name": "queue.py",
      "sha": "f5ce7f818e7a0b3533da3af039ecedb1392927a5"
     },
     {
-     "file": "sdcard.py",
+     "name": "sdcard.py",
      "sha": "1f9bed94d291bb47e8cc1f11adf04c4c5db3098a"
     },
     {
-     "file": "ssd1306.py",
+     "name": "ssd1306.py",
      "sha": "592d183805951f0c48e87dcbc1621bcaf61f6113"
     },
     {
-     "file": "ssd1306_lcd.py",
+     "name": "ssd1306_lcd.py",
      "sha": "f24ef7489f625785814b51b985c08b2f69daf09b"
     },
     {
-     "file": "umqtt_simple.py",
+     "name": "umqtt_simple.py",
      "sha": "2b269473babfc3c62d70cf48b2aa8d2ed55cf699"
     },
     {
-     "file": "vector3d.py",
+     "name": "vector3d.py",
      "sha": "86c1c60d077620c3dd18c00d2aa24b7fdfd83189"
     }
    ]

@@ -84,7 +84,7 @@ def rebuild_dir(name):
     
     for obj in git:
         if obj["type"] == "file":
-            e = {"file": obj["name"],
+            e = {"name": obj["name"],
                  "sha" : obj["sha"] }
             files.append(e)
 
