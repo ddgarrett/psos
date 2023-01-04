@@ -2,19 +2,19 @@
  "obj": [
   {
    "name": "main.py",
-   "sha": "439d367af85cc9e3f7237b830d2aec6c81a9adf3"
+   "sha": "d3c9c1ed6379262f84acc38a805b258e142701db"
   },
   {
    "name": "manifest.json",
-   "sha": "71f075e260777a0a0857200afac57af694fa297e"
+   "sha": "b6be95c4d30d888383cf86fe56e9c12f5e2add30"
   },
   {
    "name": "base",
-   "sha": "9c33f6b5502ae3f0fe4afe089aaad05d92e61851",
+   "sha": "4cec4e5427cba1cc61837df82f9573616a478689",
    "files": [
     {
      "name": "cmd_ask_es.py",
-     "sha": "8dff96c49b7b1f03b6993bfff3d6b9cad0241264"
+     "sha": "65ab8f5f287293581fc2dd85f72f18f5f89c21af"
     },
     {
      "name": "cmd_blink.py",
@@ -50,7 +50,7 @@
     },
     {
      "name": "psos_main.py",
-     "sha": "f646c98f512ce605e22ba3ddf6ea40aaa39c45db"
+     "sha": "4ddcb8937d5ddcc0e9642cd42f2a80b5620c78d4"
     },
     {
      "name": "psos_parms.py",
@@ -66,7 +66,7 @@
     },
     {
      "name": "psos_util.py",
-     "sha": "1e65bc860b82381e78cdabd3d57df6c787b60926"
+     "sha": "48c852c906cb443a24f20a5f2a89bd2fbe1d480b"
     },
     {
      "name": "svc_blink.py",
@@ -75,6 +75,14 @@
     {
      "name": "svc_dht.py",
      "sha": "44bdc9aaadee0854a61dc5140847500e4f0b2b4f"
+    },
+    {
+     "name": "svc_git_rst.py",
+     "sha": "bf56a16ca3ff1833ac460f54e3ef1579dd52169e"
+    },
+    {
+     "name": "svc_git_upd.py",
+     "sha": "f6005cf0ad1b29539e1ef50f969d452ac50bc2f2"
     },
     {
      "name": "svc_gyro.py",
@@ -90,7 +98,7 @@
     },
     {
      "name": "svc_lcd.py",
-     "sha": "363d9b8f90c3a5b10d27225f32eccf92276e69c1"
+     "sha": "c2ea151b7f5d2050d2d4cc57393bcb22721b3838"
     },
     {
      "name": "svc_lcd_msg.py",
@@ -164,7 +172,7 @@
   },
   {
    "name": "devices",
-   "sha": "d40fe46587180cfecca8aa5fe08d1e2d06a329a2",
+   "sha": "ecd8cc4b275c9ad334c2c6e4314b360708077097",
    "files": [
     {
      "name": "c01_psos_parms.json",
@@ -204,7 +212,23 @@
     },
     {
      "name": "emp_psos_parms.json",
-     "sha": "283b900cd24c95e8af17fa56a2ba463a0cca299f"
+     "sha": "6ae35aaecdc6f1699bea829f44b22bdcf49f5804"
+    },
+    {
+     "name": "git_oled_upd_parms.json",
+     "sha": "22f9fef1ce2d755f8f7ab898a48f192173b658fd"
+    },
+    {
+     "name": "neo_test_menu.json",
+     "sha": "6ff06f110a553980af578abaf35abd6aca82e2f1"
+    },
+    {
+     "name": "picow_oled_parms.json",
+     "sha": "1df7db2a5f3cb84c0939d1e493c60fcda93c174b"
+    },
+    {
+     "name": "picow_test_parms.json",
+     "sha": "132e0f695cabb9ba41dc067d8d9495c89b48ef2a"
     },
     {
      "name": "r01_menu.json",
@@ -221,6 +245,10 @@
     {
      "name": "substation_menu.json",
      "sha": "8e23f852c99e683e33c78af1e7b41a07ac03fdbc"
+    },
+    {
+     "name": "upd_oled_psos_parms.json",
+     "sha": "7e6c0ca9384a3cb2a3fd59a82f05b85944532313"
     }
    ]
   },
