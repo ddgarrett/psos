@@ -2,9 +2,6 @@
     {"name":"main.py", 
      "sha":"none"
     },
-    {"name":"manifest.json", 
-     "sha":"none"
-    },
     {"name":"base", 
      "sha":"none",
      "files":[

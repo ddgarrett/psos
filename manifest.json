@@ -5,10 +5,6 @@
    "sha": "d3c9c1ed6379262f84acc38a805b258e142701db"
   },
   {
-   "name": "manifest.json",
-   "sha": "b6be95c4d30d888383cf86fe56e9c12f5e2add30"
-  },
-  {
    "name": "base",
    "sha": "4cec4e5427cba1cc61837df82f9573616a478689",
    "files": [
