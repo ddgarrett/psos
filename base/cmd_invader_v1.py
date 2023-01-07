@@ -1,5 +1,5 @@
 """
-    Command to Test Pixel Invader Converted to a Command.
+    Command to Test Pixel Invader Converted to a Command. 
     
 """
 
