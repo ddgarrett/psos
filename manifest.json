@@ -6,7 +6,7 @@
   },
   {
    "name": "base",
-   "sha": "4cec4e5427cba1cc61837df82f9573616a478689",
+   "sha": "d0b87bb9b42a00cf414ecddcd923c5a9728f9dc6",
    "files": [
     {
      "name": "cmd_ask_es.py",
@@ -30,7 +30,7 @@
     },
     {
      "name": "cmd_invader_v1.py",
-     "sha": "f2732bb55b95f0842fbf88b3c82a62bb32729a88"
+     "sha": "dbbaddc37f7cccad3cc6497802755a1b11263c89"
     },
     {
      "name": "cmd_neo_v1.py",
