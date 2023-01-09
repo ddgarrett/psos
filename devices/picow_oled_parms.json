@@ -35,6 +35,10 @@
              "subscr_in":"{dev}/dht",  "pub_out":"{base}/lcd",
              "format":"['clear',{{'msg':'Temp: {temp}°\nHumidity: {hum}%\nDev: {dev}'}}]" },
              
+    {"name": "git", "module":"svc_git_rst", 
+             "upd_parms":"git_oled_upd_parms.json", 
+             "sub":"{dev}/git/upd" }
+             
     {"name": "soil", "module":"svc_soil",   "pin": 26, "dry":56207, "wet":29367,
              "sub":"{dev}/soil/upd",   "pub":"{dev}/soil" },
     {"name": "dsp_soil", "module":"svc_pipe",
