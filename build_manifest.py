@@ -7,11 +7,11 @@
 
     This program is run after updates are made to the github repo. The
     generated manifest.json is then checked into the repo. Remote devices
-    can then run their update process.
+    can then run their update process using the sha of that manifest.json file.
 
     Remote devices read the generated manifest.json file. The local copy 
     of manifest.json is compared to the repo version of manifest.json 
-    by svc_git.py:
+    by svc_git_upd.py:
       - Update files where the sha value has changed
       - Delete files which are not in the repo manifest.json file
       - Add files which are in the repo manifest but not in the local copy
