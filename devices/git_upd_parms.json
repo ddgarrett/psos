@@ -1,0 +1,20 @@
+{
+"name":"PSOS v00.03 - Git Update",
+"main":"psos_main",
+
+"defaults": {
+    "dev"  :"{device}",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8
+    },
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt_log"},
+    {"name": "log",  "module":"svc_log", "pub_log":"{dev}/log" },
+    
+    {"name": "git", "module":"svc_git_upd", "repo":"ddgarrett/psos", "test":true}
+
+ ]
+}
