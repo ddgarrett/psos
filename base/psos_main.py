@@ -28,7 +28,7 @@ import machine
 import os
 import psos_util
 import secrets
-#import micropython
+import micropython
 
 
 async def main(parms,config):
@@ -71,6 +71,13 @@ async def main(parms,config):
     lcd_svc  = None
     if "lcd" in defaults:
         lcd_name = defaults["lcd"]
+        
+    # import all modules first to reduce fragmentation (a bit)
+    for svc_parms in svc:       
+        module_name = svc_parms["module"]
+        # print("... " + module_name)
+        module = __import__(module_name)
+        gc.collect()
     
     for svc_parms in svc:
         
@@ -105,7 +112,7 @@ async def main(parms,config):
         uasyncio.create_task(svc.run())
         gc.collect()
         
-    #pmap = False
+    pmap = False
     defaults["started"] = True
     
     if lcd_svc != None:
