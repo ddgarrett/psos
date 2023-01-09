@@ -6,7 +6,7 @@
   },
   {
    "name": "base",
-   "sha": "e0335b6db013d44a7a0c799da07467326597e970",
+   "sha": "1ec92f402f78bfc9b61f3c9d8b09ec389debc6fb",
    "files": [
     {
      "name": "cmd_ask_es.py",
@@ -46,7 +46,7 @@
     },
     {
      "name": "psos_main.py",
-     "sha": "ec39add9ac8feed9e26ffb453d50729159d794fb"
+     "sha": "b8e1f1bba226ab8ec9fd9cb072b057ead27ba170"
     },
     {
      "name": "psos_parms.py",
@@ -74,11 +74,11 @@
     },
     {
      "name": "svc_git_rst.py",
-     "sha": "bf56a16ca3ff1833ac460f54e3ef1579dd52169e"
+     "sha": "6017faf6a1bbb934c50a0af36f4a191d3353564e"
     },
     {
      "name": "svc_git_upd.py",
-     "sha": "f6005cf0ad1b29539e1ef50f969d452ac50bc2f2"
+     "sha": "0e30da70b74ea38a52bb99beb8d7a5079ede9edd"
     },
     {
      "name": "svc_gyro.py",
@@ -110,7 +110,7 @@
     },
     {
      "name": "svc_mem_use.py",
-     "sha": "29f5f6b855d609ffad6c421b2f660ae1a6bccc8f"
+     "sha": "65c57150a32e086410527885fefb24446ff8d26d"
     },
     {
      "name": "svc_menu.py",
@@ -119,6 +119,10 @@
     {
      "name": "svc_mqtt.py",
      "sha": "471528a930cb90e2ba5e09587de95ebb75721612"
+    },
+    {
+     "name": "svc_mqtt_log.py",
+     "sha": "6e08d744077e80a0d58874fa1654c64c2ae45384"
     },
     {
      "name": "svc_mqtt_proxy_client.py",
@@ -168,7 +172,7 @@
   },
   {
    "name": "devices",
-   "sha": "ecd8cc4b275c9ad334c2c6e4314b360708077097",
+   "sha": "392d15c84cb21cec2b5a24fb6e43a8ab333175a5",
    "files": [
     {
      "name": "c01_psos_parms.json",
@@ -212,7 +216,11 @@
     },
     {
      "name": "git_oled_upd_parms.json",
-     "sha": "22f9fef1ce2d755f8f7ab898a48f192173b658fd"
+     "sha": "053461b6c6dc9550425cd82ecf0de66120afea1e"
+    },
+    {
+     "name": "git_upd_parms.json",
+     "sha": "3b93a9c895b4f752001dfdb7174ae03696d4a16e"
     },
     {
      "name": "neo_test_menu.json",
@@ -220,7 +228,7 @@
     },
     {
      "name": "picow_oled_parms.json",
-     "sha": "1df7db2a5f3cb84c0939d1e493c60fcda93c174b"
+     "sha": "86d28c200f70b5ae199c54a471b69f29f2a84b81"
     },
     {
      "name": "picow_test_parms.json",
@@ -250,7 +258,7 @@
   },
   {
    "name": "lib",
-   "sha": "47d6a23b75d0867d2ca9f2304aed59d377f83766",
+   "sha": "ab115ecc490a91678dd3d4c30130041ee6d02889",
    "files": [
     {
      "name": "gfx.py",
@@ -299,6 +307,10 @@
     {
      "name": "vector3d.py",
      "sha": "86c1c60d077620c3dd18c00d2aa24b7fdfd83189"
+    },
+    {
+     "name": "ws2812.py",
+     "sha": "af3c3cec5c48e20519f13c3158c70e30118548b8"
     }
    ]
   }
