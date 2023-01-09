@@ -1,1 +1,8 @@
-{"cust": "/cust", "device": "r02", "parms": "/devices", "fn_parms": "picow_test_parms.json", "path": ["/lib", "/base"]}
+{"cust": "/cust", 
+"device": "r02", 
+"parms": "/devices",
+"path": ["/lib", "/base"],
+"fn_parms": "picow_test_parms.json", 
+"repo":"ddgarrett/psos",
+"sha" :"45445cf251343cba28eca38ff71481cae4028c48"
+}
