@@ -1,0 +1,7 @@
+{"cust": "/cust", 
+"device": "r02", 
+"parms": "/devices",
+"path": ["/lib", "/base"],
+"fn_parms": "picow_test_parms.json", 
+"sha" :"xxxxx"
+}
