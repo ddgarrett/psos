@@ -29,14 +29,14 @@
     {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
              "subscr_upd":"e02/dht/upd",   "pub_upd":"e02/dht" },
     {"name": "dsp_dht", "module":"svc_pipe",
-             "subscr_in":"e02/dht",  "pub_out":"e02/lcd",
+             "subscr_in":"e02/dht",  "pub_out":"local/e02/lcd",
              "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e02'}}]" },
 
-    {"name": "soil", "module":"svc_soil",   "pin": 32, "_dry":2769, "_wet":1419, 
+    {"name": "soil", "module":"svc_soil",   "pin": 32, "dry":56118, "wet":27223, 
              "sub":"e02/soil/upd",   "pub":"e02/soil" },
     {"name": "dsp_soil", "module":"svc_pipe",
-             "subscr_in":"e02/soil",  "pub_out":"e02/lcd",
-             "format":"['clear',{{'msg':'SOIL MOISTURE\nLEVEL: {mv}\nDEV: e05'}}]" },
+             "subscr_in":"e02/soil",  "pub_out":"local/e02/lcd",
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: e02'}}]" },
              
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"e02/mem/upd",   "pub_upd":"e02/mem" },
@@ -67,8 +67,24 @@
                  {"item":" --- MISC ---", "cmds":[]},
                  {"item":"CLICK", "cmds":[
                      {"cmd":"exit"},
-                     {"cmd":"pub", "pub":"cam02/click", "msg":"click"} ]}
-             ]}
+                     {"cmd":"pub", "pub":"cam02/click", "msg":"click"} ]},
+                 {"item":"TEMPS...", "cmds":[{"cmd":"menu","name":"menu_temp"}]}
+             ]},
+             
+    {"name": "menu_temp", "module":"svc_submenu",
+            "items":[
+                {"item":" --- TEMP ---", "cmd":[]},
+                {"item":"EMP-OFFICE",   "cmds":[
+                    {"cmd":"exit"},
+                    {"cmd":"pub", "pub":"emp/dht/upd"}]},
+                {"item":"E01-BEDROOM",   "cmds":[
+                    {"cmd":"exit"},
+                    {"cmd":"pub", "pub":"e01/dht/upd"}]},
+                {"item":"E02-VARIES",   "cmds":[
+                    {"cmd":"exit"},
+                    {"cmd":"pub", "pub":"e01/dht/upd"}]}
+    ]}
+       
  ],
  
  "removed":[
