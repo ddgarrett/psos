@@ -29,7 +29,7 @@ class ModuleService(PsosService):
         super().__init__(parms)
         self.q = queue.Queue()
         self.sub       = self.get_parm("sub",None)
-        self.upd_parms = self.get_parm("upd_parms","git_oled_upd_parms.json")
+        self.upd_parms = self.get_parm("upd_parms","git_upd_parms.json")
   
     
     async def run(self):
@@ -37,23 +37,27 @@ class ModuleService(PsosService):
         await mqtt.subscribe(self.sub,self.q)
         
         while True:
-            await self.q.get()
-            await self.prep_upd()
+            d = await self.q.get()
+            await self.prep_upd(d[2])
             await self.log("restarting for git pull")
             self.reset(rsn="git pull")
                    
     # prepare for restart that runs an update
     # simpy update config to use different parms
-    async def prep_upd(self):
+    async def prep_upd(self,sha):
         config = self.get_parm("config")
-        # config["o_device"] = config["device"]
-        # config["device"] = self.upd_dev
+        
         config["o_fn_parms"] = config["fn_parms"]
         config["fn_parms"]   = self.upd_parms
+        
+        config["upd_sha"] = sha
+        
         self.save_json("config.json",config)
     
     # save object o to file named "fn"
     def save_json(self,fn,o):
         with open(fn, "w") as f:
             ujson.dump(o, f)
+            f.close()
+
 
