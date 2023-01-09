@@ -28,6 +28,7 @@ import machine
 import os
 import psos_util
 import secrets
+#import micropython
 
 
 async def main(parms,config):
@@ -104,7 +105,7 @@ async def main(parms,config):
         uasyncio.create_task(svc.run())
         gc.collect()
         
-    # pmap = False
+    #pmap = False
     defaults["started"] = True
     
     if lcd_svc != None:
