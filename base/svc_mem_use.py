@@ -15,6 +15,8 @@ import queue
 import os
 import gc
 
+from micropython import mem_info
+
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
     
@@ -35,7 +37,13 @@ class ModuleService(PsosService):
         
         while True:
             data = await self._trigger_q.get()
+
             await self.send_data(mqtt)
+            
+            if data[2] == "print":
+                print("memory: ",gc.mem_free())
+                mem_info(1)
+                
             
             
     # send data via MQTT after receiving a update request
