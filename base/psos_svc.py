@@ -29,6 +29,8 @@ class PsosService:
         self.tz       = self.get_parm("tz",-8)
         self.dev      = self.get_parm("dev","?")
         
+        self.lcd_pl   = ("clear",{"msg":None})
+        
     # get a parameter value
     # return default if parameter not specified
     def get_parm(self,name,default=None):
@@ -66,7 +68,9 @@ class PsosService:
     # example: self.display_lcd_msg("some message")
     # becomes: self.display_lcd_payload(["clear",{"msg":"some message"}])
     def display_lcd_msg(self,msg):
-        self.display_lcd_payload(["clear",{"msg":msg}])
+        # self.display_lcd_payload(["clear",{"msg":msg}])
+        self.lcd_pl[1]["msg"] = msg
+        self.display_lcd_payload(self.lcd_pl)
         gc.collect()
         
     # methods that define type of device and capabilities

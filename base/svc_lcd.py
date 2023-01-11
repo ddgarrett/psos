@@ -30,13 +30,15 @@ import svc_lcd_msg
 import queue
 import uasyncio
 
+import gc
+
 # All services classes are named ModuleService
 class ModuleService(PsosService):
 
     def __init__(self, parms):
         super().__init__(parms)
         
-        self._subscr_topic = parms.get_parm("subscr_msg")
+        #self._subscr_topic = parms.get_parm("subscr_msg")
         self._trigger_q = queue.Queue()
         
         i2c_svc = parms.get_parm("i2c")
@@ -156,7 +158,7 @@ class ModuleService(PsosService):
         if mqtt == None:
             return
         
-        await mqtt.subscribe(self._subscr_topic,self._trigger_q)
+        await mqtt.subscribe(self.get_parm("subscr_msg"),self._trigger_q)
         
         while True:
             q = await self._trigger_q.get()
@@ -176,7 +178,7 @@ class ModuleService(PsosService):
             
         payload = msg.get_payload()
         
-        if isinstance(payload,list):
+        if isinstance(payload,list) or isinstance(payload,tuple):
             for command in payload:
                 self.process_command(command)
         else:
@@ -208,6 +210,8 @@ class ModuleService(PsosService):
         else:
             # log error in command type?
             pass
+        
+        gc.collect()
         
     def set_cursor(self, xy):
         if (isinstance(xy,list) or isinstance(xy,tuple)) and len(xy) == 2:

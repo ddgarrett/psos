@@ -98,8 +98,8 @@ async def main(parms,config):
         module = __import__(module_name)
         services[name] =  module.ModuleService(psos_parms)
         
-        
         if lcd_name != None and name == lcd_name:
+            gc.collect()
             lcd_svc = services[name]
             lcd_svc.display_lcd_msg("Init Svc...")     
         

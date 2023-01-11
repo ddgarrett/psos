@@ -198,8 +198,8 @@ class ModuleService(PsosService):
                 
     # display a message after clearing the display
     def update_lcd(self,msg):
-        msg = SvcMsg(payload=["clear",{"msg":msg}])
-        self.svc_lcd.process_msg(msg)
+        # msg = SvcMsg(payload=["clear",{"msg":msg}])
+        self.display_lcd_msg(msg)
         
         
     # Execute a dynamic command.

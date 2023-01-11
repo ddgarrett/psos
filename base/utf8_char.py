@@ -4,6 +4,7 @@
     Currently used primarily for IR Remote transmitter keypads.
 
 """
+
 KEY_FAST_FORWARD      = "⏩"
 KEY_REWIND_FAST_BACK  = "⏪"
 KEY_FAST_INCREASE     = "⏫"
@@ -34,7 +35,7 @@ SYM_WIFI              = "📶"
 SYM_EX_OUT            = "✗"
 CHR_NULL              = "\x00"
 
-
+'''
 # Keys that scroll up and down between apps
 KEYS_NAVIGATE = [KEY_INCREASE, KEY_DECREASE]
 
@@ -54,10 +55,10 @@ KEYS_NON_ZERO_NUMERIC = [
     KEY_REVERSE_BACK,
     KEY_FORWARD_NEXT_PLAY,
     KEY_OK]
-
+'''
 
 CUSTOM_CHARACTERS = {
-    KEY_DEGREES_SYMBOL : [
+    KEY_DEGREES_SYMBOL : (
         0b01100,
         0b10010,
         0b10010,
@@ -66,9 +67,9 @@ CUSTOM_CHARACTERS = {
         0b00000,
         0b00000,
         0b00000
-    ],
+    ),
     
-    KEY_REVERSE_BACK : [
+    KEY_REVERSE_BACK : (
         0b00010,
         0b00110,
         0b01110,
@@ -77,9 +78,9 @@ CUSTOM_CHARACTERS = {
         0b00110,
         0b00010,
         0b00000
-    ],
+    ),
 
-    KEY_FORWARD_NEXT_PLAY : [
+    KEY_FORWARD_NEXT_PLAY : (
         0b01000,
         0b01100,
         0b01110,
@@ -88,9 +89,9 @@ CUSTOM_CHARACTERS = {
         0b01100,
         0b01000,
         0b00000
-    ],
+    ),
     
-    KEY_INCREASE : [
+    KEY_INCREASE : (
         0b00000,
         0b00000,
         0b00100,
@@ -99,9 +100,9 @@ CUSTOM_CHARACTERS = {
         0b00000,
         0b00000,
         0b00000
-    ],
+    ),
 
-    KEY_DECREASE : [
+    KEY_DECREASE : (
         0b00000,
         0b00000,
         0b11111,    
@@ -110,10 +111,9 @@ CUSTOM_CHARACTERS = {
         0b00000,
         0b00000,
         0b00000 
-    ],
+    ),
     
-    SYM_HOUR_GLASS :[
-        
+    SYM_HOUR_GLASS :(
         0b11111,
         0b11111,
         0b01110,
@@ -122,9 +122,9 @@ CUSTOM_CHARACTERS = {
         0b01010,
         0b10001,
         0b11111
-    ],
+    ),
     
-    SYM_EX_OUT :[
+    SYM_EX_OUT :(
         0b10001,
         0b10001,
         0b01010,
@@ -133,9 +133,9 @@ CUSTOM_CHARACTERS = {
         0b01010,
         0b11011,
         0b10001
-    ],
+    ),
         
-    SYM_WIFI:[
+    SYM_WIFI:(
         0b00001,
         0b00001,
         0b00001,
@@ -144,6 +144,6 @@ CUSTOM_CHARACTERS = {
         0b10101,
         0b10101,
         0b10101
-    ]
+    )
 }
 
