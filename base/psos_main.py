@@ -41,6 +41,7 @@ async def main(parms,config):
     # perform a one time conversion of any {...} in
     # defaults using config valus
     psos_util.format_defaults(defaults,config)
+    gc.collect()
     
     # globally accessible service instances
     services = {}
@@ -71,16 +72,20 @@ async def main(parms,config):
     lcd_svc  = None
     if "lcd" in defaults:
         lcd_name = defaults["lcd"]
-        
+    
+    '''
     # import all modules first to reduce fragmentation (a bit)
     for svc_parms in svc:       
-        module_name = svc_parms["module"]
+        # module_name = svc_parms["module"]
         # print("... " + module_name)
-        module = __import__(module_name)
+        services[svc_parms["name"]] = __import__(svc_parms["module"])
         gc.collect()
+    '''
     
     for svc_parms in svc:
         
+        gc.collect()
+
         # create module specific parms object
         psos_parms = PsosParms(svc_parms,defaults,config)
         
@@ -89,28 +94,26 @@ async def main(parms,config):
         name = svc_parms["name"]
         module_name = svc_parms["module"]
         
-        print("... " + name)
+        print("... ",name)
         module = __import__(module_name)
         services[name] =  module.ModuleService(psos_parms)
         
+        
         if lcd_name != None and name == lcd_name:
             lcd_svc = services[name]
-            lcd_svc.display_lcd_msg("Init Svc...")
-            
-        
-        gc.collect()
-        
+            lcd_svc.display_lcd_msg("Init Svc...")     
         
     print("main: run services")
     if lcd_svc != None:
         lcd_svc.display_lcd_msg("Run Svc...")
         
     for svc_parms in parms["services"]:
+        gc.collect()
         name = svc_parms["name"]
         svc  = services[name]
-        
+        # print("... " + name)
         uasyncio.create_task(svc.run())
-        gc.collect()
+
         
     pmap = False
     defaults["started"] = True
@@ -126,10 +129,10 @@ async def main(parms,config):
         gc.collect()
         await uasyncio.sleep_ms(5000)
         
-        '''
+        
         if not pmap:
             gc.collect()
             print("memory: ",gc.mem_free())
             pmap = True
             micropython.mem_info(1)
-        '''
+        

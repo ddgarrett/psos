@@ -12,6 +12,7 @@ import machine
 import time
 
 import psos_util
+import gc
 
 class PsosService:
     
@@ -19,8 +20,12 @@ class PsosService:
         self._parms   = parms
         self._name    = self.get_parm("name")
         self.svc_lcd  = None
+        
+        '''  moved to psos_cust Customization class
         self.cust     = None
         self.new_cust = None
+        '''
+        
         self.tz       = self.get_parm("tz",-8)
         self.dev      = self.get_parm("dev","?")
         
@@ -51,10 +56,10 @@ class PsosService:
         
     # complete payload such as:  ["clear",{"msg":"some message"}]
     def display_lcd_payload(self,payload):
-        self.get_svc_lcd()
+        lcd = self.get_svc_lcd()
             
-        if self.svc_lcd != None:
-            self.svc_lcd.write_direct(payload)
+        if lcd != None:
+            lcd.write_direct(payload)
             
     # just a text message that clears the screen
     # before the message is displayed.
@@ -62,6 +67,7 @@ class PsosService:
     # becomes: self.display_lcd_payload(["clear",{"msg":"some message"}])
     def display_lcd_msg(self,msg):
         self.display_lcd_payload(["clear",{"msg":msg}])
+        gc.collect()
         
     # methods that define type of device and capabilities
     def is_esp32(self):
@@ -81,53 +87,7 @@ class PsosService:
     
     def get_config(self):
         return self._parms.get_config()
-    
-    def get_cust(self):
-        return self.cust
-    def begin_new_cust(self):
-        self.new_cust = self.cust.copy()
-    def save_new_cust(self):
-        if self.new_cust != None:
-            self.cust = self.new_cust
-            self.save_cust()
-            self.new_cust = None
-    def discard_new_cust(self):
-        self.new_cust = None
-        
-    
-    # Get and save the customization file for this service.
-    # Each service has it's own cust file in the /cust/ directory
-    def read_cust(self):
-        try:
-            fn   = self._name+"_cust.json"
-            path = self.get_config()["cust"]
-            fn   = psos_util.filepath(path,fn)
-            if fn == None:
-                return None
-            
-            with open(fn) as f:
-                c = ujson.load(f)
-                f.close()
-                return c
-        except:
-           return None
-           
-    def save_cust(self):
-        try:
-            fn   = self._name+"_cust.json"
-            path = self.get_config()["cust"]
-            fn   = psos_util.filepath(path,fn)
-            
-            if fn == None:
-                fn = path + "/" + self._name+"_cust.json"
-                
-            with open(fn,"w") as f:
-                ujson.dump(self.cust,f)
-                f.close()
-                return True
-        except OSError:  # open failed
-           return False
-           
+               
            
     # Reset microcontroller
     # If there is a service named "reset"
@@ -136,7 +96,7 @@ class PsosService:
     def reset(self,rsn=None):
         
         if rsn != None:
-            self.display_lcd_msg("restarting:\n"+rsn)
+            self.display_lcd_msg(str(rsn))
             
             fname = self.get_parm("log_file",None)
             if fname != None:
@@ -160,15 +120,13 @@ class PsosService:
 
     # if a log service has been defined
     # write a message to the log
-    # TODO: add device as prefix to message?
     async def log(self,msg):
         log = self.get_svc("log")
-        # lcd = self.get_svc("lcd")
          
         if log != None:
             await log.log_msg(self._name,msg)
         else:
-            print(self._name + ": " + msg)
+            print(self._name,":",str(msg))
     
     # default run method - just return
     async def run(self):

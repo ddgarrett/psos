@@ -13,6 +13,7 @@ import network
 import time
 import ntptime  # uses special version in lib
 import utf8_char
+import gc
 
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
@@ -25,9 +26,11 @@ class ModuleService(PsosService):
         if self.get_parm("disconnect",True):
             if self._station.active() and self._station.isconnected():
                 old = self._station.ifconfig()
-                print("disconnecting from " + str(old))
+                print("disconnecting from ",str(old))
                 self._station.disconnect()
-                time.sleep_ms(50) # wait for disconnect        
+                time.sleep_ms(50) # wait for disconnect
+                
+        gc.collect()
         
     async def run(self):
         
@@ -58,6 +61,8 @@ class ModuleService(PsosService):
                 # return
             await uasyncio.sleep_ms(500)
             
+        await uasyncio.sleep_ms(0)
+        
         if self.get_parm("set_time",True):
             retry = 3
             while retry > 0:
@@ -66,7 +71,7 @@ class ModuleService(PsosService):
                     break
                 else:
                     retry = retry - 1
-                    await uasyncio.sleep_ms(1000)
+                    await uasyncio.sleep_ms(500)
                     
             if retry <= 0:
                 self.display_lcd_msg("Time not set")
