@@ -2,7 +2,7 @@
 # In .gitignore and therefore never sent to repo.
 
 # MQTT certificates
-from hivemq_root_ca import hivemq_root_ca
+# from hivemq_root_ca import hivemq_root_ca
 
 # wifi network connection priority
 wifi_priority = ["wifi_esp","wifi_pixel","wifi_home"]
@@ -50,7 +50,7 @@ mqtt =  {
         'port'   : 8883,
         'username' : 'xxxxx',
         'password' : 'xxxxx',
-        'ca_cert'  : hivemq_root_ca
+        'ca_cert'  : 'hivemq'
         },
 }
 
