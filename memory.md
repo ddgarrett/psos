@@ -1,5 +1,7 @@
 ### Memory requirements on ESP32:
     
+Examples using e02 esp32
+
 #### WiFi
 memory:  91216 (19,952 - but includes startup, etc.)
 stack: 1664 out of 15360
@@ -73,7 +75,21 @@ GC: total: 111168, used: 83632, free: 27536
  No. of 1-blocks: 1346, 2-blocks: 216, max blk sz: 282, max free sz: 1242
 
 #### Display Soil
-memory:  26208 (1,328)
+memory:  26000 (1,536)
 stack: 1664 out of 15360
-GC: total: 111168, used: 84960, free: 26208
- No. of 1-blocks: 1388, 2-blocks: 221, max blk sz: 282, max free sz: 1108
+GC: total: 111168, used: 85168, free: 26000
+ No. of 1-blocks: 1393, 2-blocks: 222, max blk sz: 282, max free sz: 1095
+ 
+**NOTE** some slight changes had been made
+
+#### Git Restart
+memory:  23424 (2,576)
+stack: 1664 out of 15360
+GC: total: 111168, used: 87744, free: 23424
+ No. of 1-blocks: 1459, 2-blocks: 230, max blk sz: 282, max free sz: 875
+
+#### Reset (general reset)
+memory:  22096 (1,328)
+stack: 1664 out of 15360
+GC: total: 111168, used: 89280, free: 21888
+ No. of 1-blocks: 1498, 2-blocks: 237, max blk sz: 282, max free sz: 747
