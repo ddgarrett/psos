@@ -34,21 +34,5 @@
              {"item":"RUN WET TEST",  "cmds":[{"cmd":"cmd_cust_soil", "svc":"soil", "attr":"wet"},{"cmd":"redisplay","wait":7}] },
              {"item":"SAVE AND EXIT", "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":true}, {"cmd":"back", "wait":2}]},
              {"item":"EXIT NO SAVE",  "cmds":[{"cmd":"cmd_exit_cust", "svc":"soil", "save":false},{"cmd":"back", "wait":2}]}
-        ]},
-
-    "blink":{
-        "menu":[
-            {"item":"BLINK  5",  "cmds":[
-                {"cmd":"cmd_blink", "cnt":5,  "pin":25},
-                {"cmd":"exit"}] },
-            {"item":"BLINK  10", "cmds":[
-                {"cmd":"cmd_blink", "cnt":10, "pin":25},
-                {"cmd":"exit"}] },
-            {"item":"BLINK  15", "cmds":[
-                {"cmd":"cmd_blink", "cnt":15, "pin":25},
-                {"cmd":"exit"}] },
-            {"item":"BLINK  20", "cmds":[
-                {"cmd":"cmd_blink", "cnt":20, "pin":25},
-                {"cmd":"exit"}] }
-    ]}
+        ]}
 }
