@@ -37,6 +37,11 @@ class ModuleService(PsosService):
     
     async def run(self):
         
+        # wait for wifi
+        wifi    = self.get_svc("wifi")
+        while not wifi.wifi_connected():
+            pass
+        
         mqtt = self.get_mqtt()
 
         self.restore_config() # in case we crash
