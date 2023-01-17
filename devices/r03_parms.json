@@ -1,0 +1,27 @@
+{
+"name":"PSOS v00.03 - r03 device with 3.5' LCD",
+"main":"psos_main",
+
+"defaults": {
+    "dev"  :"{device}",
+    "base" :"emp",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8
+    },
+    
+"NOTE":"wifi and mqtt must be first two services",
+    
+"services": [
+    {"name": "wifi", "module":"svc_wifi", "disconnect":false},
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
+    
+    {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
+    
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
+             
+    {"name": "test", "module":"svc_test_lcd", "sub":"{dev}/lcd/upd"  }
+
+ ]
+}
