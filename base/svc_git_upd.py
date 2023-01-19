@@ -131,7 +131,7 @@ class ModuleService(PsosService):
             fn = local_file["name"]
             if not fn in git_mani:
                 self.display_lcd_msg("delete file\n"+directory+"/"+fn)
-                self.log("delete file "+directory+"/"+fn)
+                await self.log("delete file "+directory+"/"+fn)
                 self.updates = True
                 self.delete_file(directory+"/"+fn)
             else:
