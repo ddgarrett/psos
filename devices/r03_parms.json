@@ -16,12 +16,21 @@
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
     
+    {"name": "spi1",  "module":"svc_spi", "slot":1},
+    
     {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
     
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
              
-    {"name": "test", "module":"svc_test_lcd", "sub":"{dev}/lcd/upd"  }
+    {"name": "dsp", "module":"svc_mqtt_dsp", "sub":"#", "spi":"spi1",
+             "sub_free":"{dev}/dsp/free", "max_log":200}
 
- ]
+ ],
+ 
+"removed": [
+    {"name": "test", "module":"svc_test_lcd", "sub":"{dev}/lcd/upd"  },
+
+
+]
 }
