@@ -38,8 +38,12 @@ class ModuleService(PsosService):
         self.locked = False
         
     async def lock(self):
+        i = 0
         while self.locked:
             await uasyncio.sleep_ms(330)
+            i = i + 1
+            if i > 45:
+                raise Exception('waited too long for spi lock') 
             
         self.locked = True
         

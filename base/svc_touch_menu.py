@@ -1,6 +1,6 @@
 '''
-    Display MQTT Messages
-
+    Display Touch Menu
+    
 '''
 
 from psos_svc import PsosService
@@ -61,8 +61,8 @@ class ModuleService(PsosService):
 
         # self.lcd = LCD(self.spi_svc,panel_width,panel_height)
                 
-        self.mqtt_log = [""]*20
-        self.curr_pos = 0
+        # self.mqtt_log = [""]*20
+        # self.curr_pos = 0
         
         # self.lcd_locked = False
         
@@ -84,14 +84,19 @@ class ModuleService(PsosService):
         
         
     async def run(self):
+        '''
         q    = queue.Queue()
         msg  = SvcMsg()
         mqtt = self.get_mqtt()
         
+        
         await mqtt.subscribe("#",q)
+        '''
+        await self.chk_menu()
         
         # self.menu_task = uasyncio.create_task(self.chk_menu())
         
+        '''
         while True:
             data = await q.get()
             try:
@@ -126,11 +131,6 @@ class ModuleService(PsosService):
         msg = "{0}:{1:02d}:{2:02d} {3} {4}".format(*t)
         self.mqtt_log.append(msg)
         
-        '''  TODO: allow other services to take over display
-        if self.svc_dsp.curr_svc != self._name:
-            return
-        '''
-        
         await self.svc_dsp.lock()
         self.lcd = self.svc_dsp.lcd
         
@@ -153,8 +153,12 @@ class ModuleService(PsosService):
         self.svc_dsp.unlock()
         # self.spi_svc.unlock()
         # self.lcd_locked = False
-                
+        '''
+        
     async def chk_menu(self):
+        await self.svc_dsp.lock()
+        self.lcd = self.svc_dsp.lcd
+        
         for i in range(3):
             self.lcd.fill(clr.BLACK)
             self.lcd.rect(0,0,160,80,clr.CYAN)
@@ -163,18 +167,21 @@ class ModuleService(PsosService):
             
             self.lcd.show_pg(i,3)
             
+        self.svc_dsp.unlock()
+        
         while True:
             await self.get_touch()
             await uasyncio.sleep_ms(330)
                         
     async def get_touch(self):
-        pt_xy = self.svc_touch.touch_get()
+        pt_xy = await self.svc_touch.get_touch()
         
-        if pt_x_y == None:
+        if pt_xy == None:
             return
         
         x_pt = pt_xy[0]
         y_pt = pt_xy[1]
+        
         '''
         # todo: make these a parm and customization value
         x_min = 385  # x = 0
@@ -222,6 +229,9 @@ class ModuleService(PsosService):
             if panel_pt_y >= 40:
               btn = btn+6
               
+                        
+            await self.svc_dsp.lock()
+
             await self.blink_btn(panel_x,panel_y,panel_pt_x,panel_pt_y)
 
 
@@ -243,6 +253,11 @@ class ModuleService(PsosService):
             self.lcd.text(m4,6*8,4*16,clr.YELLOW)
             
             self.lcd.show_pg(1,3)
+            
+                        
+            self.svc_dsp.unlock()
+
+            
             
         # self.spi_svc.unlock()
         # self.lcd_locked = False

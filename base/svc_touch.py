@@ -1,89 +1,80 @@
-"""
-    Touch Sensor Service Class
+'''
+    LCD Touch Handler
     
-    Send a sensor touched message when capacitance of
-    a specified touch sensor drops below a given value.
-    Only send message when sensor goes from not touched
-    to touched.
-    
-    JSON specifies touch sensor threshold and topic to
-    send message under.
-    
-"""
+    Determines x,y co-ordinate of a touch on the LCD
+
+'''
 
 from psos_svc import PsosService
 import uasyncio
 import queue
+import time
 
-from machine import Pin, TouchPad
-from svc_lcd_msg import SvcLcdMsg
+from svc_msg import SvcMsg
+import psos_util
 
+from lcd_touch import Touch
+
+lcd_width = const(480)
+lcd_height = const(320)
+
+panel_width = const(160)
+panel_height = const(80)
+
+col_cnt = lcd_width/panel_width   # number of panel columns
+row_cnt = lcd_height/panel_height # number of panel rows
+
+char_width = const(8)
+char_height = const(16)
+
+panel_row_chr_cnt = panel_width/char_width
+panel_col_chr_cnt = panel_height/char_height
+    
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
     
     def __init__(self, parms):
         super().__init__(parms)
-        
-        # topic to send LCD hourglass message under
-        self._pub_hourglass = parms.get_parm("pub_hourglass",None)
-        self._hg_msg = None
-        
-        if self._pub_hourglass != None :
-            self._hg_msg = SvcLcdMsg().dsp_hg().dumps()
-        
-        # topic to send message under
-        self._pub_touch = parms.get_parm("pub_touch")
-        self.pti = 0  # index for list of _pub_touch IF it is a list
-        
-        # message to send
-        self.pub_msg = parms.get_parm("pub_msg")
-        
-        # touch sensor pin and threshold
-        self._t_pin       = parms.get_parm("pin",15)
-        self._t_threshold = parms.get_parm("threshold",300)
-        
-        # init sensor
-        self._touch = TouchPad(Pin(self._t_pin))
-        
-    async def run(self):
-        
-        mqtt = self.get_mqtt()
-        touched = False
-        r = 1000
-        
-        print("starting touch sensor "+self._name)
-        
-        while True:
-            try:
-                r = self._touch.read()
-            except Exception as e:
-                print("touchpad error: ",e)
-            
-            # sensor being touched?
-            if r < self._t_threshold:
-                if not touched:
-                    await self.pub_hourglass(mqtt)
-                    
-                    msg = r
-                    if self.pub_msg != None:
-                        msg = self.pub_msg
-                    
-                    if type(self._pub_touch) == list:
-                        await mqtt.publish(self._pub_touch[self.pti],msg)
-                        self.pti += 1
-                        if self.pti >= len(self._pub_touch):
-                            self.pti = 0
-                    else:
-                        await mqtt.publish(self._pub_touch,msg)
-                            
-                    touched = True
-            else:
-                touched = False
-                    
-            await uasyncio.sleep_ms(100)
 
-    async def pub_hourglass(self,mqtt):
+        spi_svc = parms.get_parm("spi")
+        self.spi_svc = self.get_svc(spi_svc)
+        # spi = self.spi_svc.get_spi()
+
+        self.touch = Touch(self.spi_svc,panel_width,panel_height)
         
-        if self._pub_hourglass != None:
-            await mqtt.publish(self._pub_hourglass,self._hg_msg)
-    
+        # todo: make these a parm and customization value
+        self.x_min = 385  # x = 0
+        self.x_max = 3809 # x=480
+        self.x_range = self.x_max - self.x_min
+        
+        self.y_min = 451  # y=320
+        self.y_max = 3504 # y=0
+        self.y_range = self.y_max - self.y_min
+
+                
+    # Return the x,y coordinates of a touch.
+    # If no touch, return None
+    async def get_touch(self):
+        
+        # may have to wait for a lock on the SPI
+        get = await self.touch.get_touch()
+        
+        # print(get)
+        if get != None and get[0] != 0 and get[1] != 0:
+            # await self.spi_svc.lock() # self.lcd_locked = True
+            
+            # self.lcd.write_cmd(0x20) # invert
+            x = get[0]
+            x = min(self.x_max,x)
+            x = max(self.x_min,x)
+            x_pt = round((x-self.x_min)/self.x_range*480)
+            
+            y = get[1]
+            y = min(self.y_max,y)
+            y = max(self.y_min,y)
+            y_pt = round((1-(y-self.y_min)/self.y_range)*320)
+            
+            return(x_pt,y_pt)
+            
+        return None
+

@@ -23,8 +23,18 @@
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
              
-    {"name": "dsp", "module":"svc_mqtt_dsp", "sub":"#", "spi":"spi1",
-             "sub_free":"{dev}/dsp/free", "max_log":200}
+    {"name": "dsp", "module":"svc_dsp", "spi":"spi1" },
+
+    {"name": "touch", "module":"svc_touch", "spi":"spi1" },
+
+    {"name": "dsp_mqtt", "module":"svc_mqtt_dsp",
+             "svc_dsp":"dsp", "svc_touch":"touch",
+             "sub":"#", "sub_free":"{dev}/dsp/free", "max_log":200 },
+             
+    {"name": "menu", "module":"svc_touch_menu",
+             "svc_dsp":"dsp", "svc_touch":"touch"}
+             
+     
 
  ],
  

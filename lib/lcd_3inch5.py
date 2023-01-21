@@ -26,9 +26,9 @@ from machine import Pin,SPI,PWM
 import framebuf
 import time
 import os
-from micropython import const
 import micropython
 import gc
+import uasyncio
 
 from gfx import GFX
 
@@ -49,7 +49,7 @@ TP_IRQ   = const(17)
 
 class LCD(framebuf.FrameBuffer):
 
-    def __init__(self,width,height):
+    def __init__(self,spi,width,height):
         self.width = width
         self.height = height
 
@@ -64,7 +64,11 @@ class LCD(framebuf.FrameBuffer):
         self.dc(1)
         self.rst(1)
         self.tp_cs(1)
-        self.spi = SPI(1,60_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
+        
+        # self.spi_svc = spi_svc
+        self.spi = spi
+        
+        # self.spi = SPI(1,60_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
         
         gc.collect()
         self.buffer = bytearray(self.height * self.width * 2)
@@ -125,7 +129,10 @@ class LCD(framebuf.FrameBuffer):
         self.write_data(0x62)
         
         self.write_cmd(0x36)   # Memory access control (p. 191) (second one)
-        self.write_data(0x28)  # - parm 2=row/col exchange, 8=BRG vs RBG order
+        self.write_data(0x28)  # - parm 2=row/col exchange, 8=BRG vs RBG order - rotate 90 deg
+        # self.write_data(0xE8)  # - rotate 270 deg
+        # self.write_data(0x48)  # - rotate 0 deg
+        # self.write_data(0x88)  # - rotate 180 deg
         
         gc.collect()
     
@@ -163,35 +170,6 @@ class LCD(framebuf.FrameBuffer):
             pwm.duty_u16(65535)
         else:
             pwm.duty_u16(655*duty)
-        
-    def touch_get(self): 
-        if self.irq() == 0:
-            gc.collect()
-            self.spi = SPI(1,5_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
-            self.tp_cs(0)
-            X_Point = 0
-            Y_Point = 0
-            for i in range(0,3):
-                self.spi.write(bytearray([0XD0]))
-                Read_date = self.spi.read(2)
-                # print("x:",Read_date[0],Read_date[1],end="  ")
-                time.sleep_us(10)
-                X_Point=X_Point+(((Read_date[0]<<8)+Read_date[1])>>3)
-                
-                self.spi.write(bytearray([0X90]))
-                Read_date = self.spi.read(2)
-                # print("y:",Read_date[0],Read_date[1])
-                Y_Point=Y_Point+(((Read_date[0]<<8)+Read_date[1])>>3)
-
-            X_Point=X_Point/3
-            Y_Point=Y_Point/3
-            
-            self.tp_cs(1) 
-            self.spi = SPI(1,60_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
-            Result_list = [X_Point,Y_Point]
-            # print(Result_list)
-            gc.collect()
-            return(Result_list)
         
     def blink(self):
         for i in range(5):

@@ -1,5 +1,9 @@
 '''
-    Display MQTT Messages
+    LCD Display Handler
+    
+    Will (eventually) display on a high resolution
+    LCD using a single smaller buffer that breaks
+    up the larger LCD into multiple "panels".
 
 '''
 
@@ -32,18 +36,6 @@ panel_col_chr_cnt = panel_height/char_height
 c_bkgrnd = clr.BLACK
 c_fgrnd  = clr.WHITE
 
-# Button Class
-class Button():
-    def __init__(self, panel,x,y,title_1,title_2):
-        super().__init__()
-        self.panel = panel
-        self.x = x
-        self.y = y
-        self.title_1 = title_1
-        self.title_2 = title_2
-        self.height = 40
-        self.width  = 80
-        self.selected = False
     
     
 # All initialization classes are named ModuleService
@@ -52,37 +44,18 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
 
-        # spi_svc = parms.get_parm("spi")
-        # self.spi_svc = self.get_svc(spi_svc)
+        spi_svc = parms.get_parm("spi")
+        self.spi_svc = self.get_svc(spi_svc)
         # spi = self.spi_svc.get_spi()
-        
-        self.svc_dsp = self.get_svc("dsp")
-        self.svc_touch = self.get_svc("touch")
 
-        # self.lcd = LCD(self.spi_svc,panel_width,panel_height)
+        self.lcd = LCD(self.spi_svc.spi,panel_width,panel_height)
                 
         self.mqtt_log = [""]*20
         self.curr_pos = 0
         
-        # self.lcd_locked = False
-        
-        self.butns = [
-            Button(0,0,0,"Button","One"),
-            Button(0,80,0,"Button","Two"),
-            Button(1,0,79,"Button","Three"),
-            Button(1,80,0,"Button","Four"),
-            Button(2,0,0,"Button","Five"),
-            Button(2,0,0,"Button","Six"),
-            Button(0,0,0,"Button","Seven"),
-            Button(0,0,0,"Button","Eight"),
-            Button(1,0,0,"Button","Nine"),
-            Button(1,0,0,"Button","Ten"),
-            Button(2,0,0,"Button","Eleven"),
-            Button(2,0,0,"Button","Twelve")
-            
-        ]
-        
-        
+        self.locked = False
+                
+    '''
     async def run(self):
         q    = queue.Queue()
         msg  = SvcMsg()
@@ -90,7 +63,7 @@ class ModuleService(PsosService):
         
         await mqtt.subscribe("#",q)
         
-        # self.menu_task = uasyncio.create_task(self.chk_menu())
+        self.menu_task = uasyncio.create_task(self.chk_menu())
         
         while True:
             data = await q.get()
@@ -101,20 +74,29 @@ class ModuleService(PsosService):
                 if psos_util.to_str(data[1]) == self.get_parm("sub_free"):
                     await self.free_mem()
                     
-                if len(self.mqtt_log) > self.get_parm("max_log",250):
+                if len(self.mqtt_log) > self.get_parm("max_log",150):
                     await self.free_mem()
                     
             except Exception as e:
                 print("exception",str(e))
                 print("data:",data)
-            
-    async def free_mem(self):
-        n = len(self.mqtt_log)
-        if n > 30:
-            await self.log("log len before = {}".format(n))
-            self.mqtt_log = self.mqtt_log[(n-25):]
-            await self.log("log len after  = {}".format(len(self.mqtt_log)))
+    '''
+    
+    # Lock LCD so only one task writing to it at a time
+    async def lock(self):
+        i = 0
+        while self.locked:
+            await uasyncio.sleep_ms(330)
+            i = i + 1
+            if i > 45:
+                raise Exception('waited too long for svc_dsp lock') 
+        
+        self.locked = True
+        
+    def unlock(self):
+        self.locked = False
 
+    '''
     async def show_msg(self,data):
         # print("received",msg)
         
@@ -126,13 +108,11 @@ class ModuleService(PsosService):
         msg = "{0}:{1:02d}:{2:02d} {3} {4}".format(*t)
         self.mqtt_log.append(msg)
         
-        '''  TODO: allow other services to take over display
-        if self.svc_dsp.curr_svc != self._name:
-            return
-        '''
+        await self.spi_svc.lock()
+        # if self.lcd_locked:
+        #   return
         
-        await self.svc_dsp.lock()
-        self.lcd = self.svc_dsp.lcd
+        # self.lcd_locked = True
         
         first_row_idx = len(self.mqtt_log) - 15
         
@@ -150,10 +130,10 @@ class ModuleService(PsosService):
                 # show the panel at x,y = p_col,p_row
                 self.lcd.show_pg(p_col,p_row)
         
-        self.svc_dsp.unlock()
-        # self.spi_svc.unlock()
+        self.spi_svc.unlock()
         # self.lcd_locked = False
-                
+    '''
+    '''
     async def chk_menu(self):
         for i in range(3):
             self.lcd.fill(clr.BLACK)
@@ -168,14 +148,6 @@ class ModuleService(PsosService):
             await uasyncio.sleep_ms(330)
                         
     async def get_touch(self):
-        pt_xy = self.svc_touch.touch_get()
-        
-        if pt_x_y == None:
-            return
-        
-        x_pt = pt_xy[0]
-        y_pt = pt_xy[1]
-        '''
         # todo: make these a parm and customization value
         x_min = 385  # x = 0
         x_max = 3809 # x=480
@@ -184,10 +156,11 @@ class ModuleService(PsosService):
         y_min = 451  # y=320
         y_max = 3504 # y=0
         y_range = y_max - y_min
+            
         
         # may have to wait for a lock on the SPI
         get = await self.lcd.touch_get()
-    
+        
         # print(get)
         if get != None and get[0] != 0 and get[1] != 0:
             await self.spi_svc.lock() # self.lcd_locked = True
@@ -202,27 +175,26 @@ class ModuleService(PsosService):
             y = min(y_max,y)
             y = max(y_min,y)
             y_pt = round((1-(y-y_min)/y_range)*320)
-            '''
-        
-        panel_x = x_pt//160
-        panel_y = y_pt//80
-        
-        panel_pt_x = x_pt%160
-        panel_pt_y = y_pt%80
-        
-        if panel_y < 3:
-            btn = -1
-        else:
-            btn = 0
-            if panel_pt_x >= 80:
-                btn = 1
-                
-            btn = panel_x * 2 + btn
             
-            if panel_pt_y >= 40:
-              btn = btn+6
-              
-            await self.blink_btn(panel_x,panel_y,panel_pt_x,panel_pt_y)
+            panel_x = x_pt//160
+            panel_y = y_pt//80
+            
+            panel_pt_x = x_pt%160
+            panel_pt_y = y_pt%80
+            
+            if panel_y < 3:
+                btn = -1
+            else:
+                btn = 0
+                if panel_pt_x >= 80:
+                    btn = 1
+                    
+                btn = panel_x * 2 + btn
+                
+                if panel_pt_y >= 40:
+                  btn = btn+6
+                  
+                await self.blink_btn(panel_x,panel_y,panel_pt_x,panel_pt_y)
 
 
             m1 = "pt:({},{})".format(x_pt,y_pt)
@@ -244,7 +216,7 @@ class ModuleService(PsosService):
             
             self.lcd.show_pg(1,3)
             
-        # self.spi_svc.unlock()
+        self.spi_svc.unlock()
         # self.lcd_locked = False
         
     # render button n
@@ -268,5 +240,5 @@ class ModuleService(PsosService):
         self.lcd.vline(80,0,80,clr.CYAN)
         self.lcd.hline(0,40,160,clr.CYAN)
         self.lcd.show_pg(panel_x,panel_y)
-                
+    '''            
 
