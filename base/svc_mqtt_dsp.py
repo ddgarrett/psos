@@ -31,19 +31,6 @@ panel_col_chr_cnt = panel_height/char_height
 
 c_bkgrnd = clr.BLACK
 c_fgrnd  = clr.WHITE
-
-# Button Class
-class Button():
-    def __init__(self, panel,x,y,title_1,title_2):
-        super().__init__()
-        self.panel = panel
-        self.x = x
-        self.y = y
-        self.title_1 = title_1
-        self.title_2 = title_2
-        self.height = 40
-        self.width  = 80
-        self.selected = False
     
     
 # All initialization classes are named ModuleService
@@ -61,26 +48,11 @@ class ModuleService(PsosService):
 
         # self.lcd = LCD(self.spi_svc,panel_width,panel_height)
                 
-        self.mqtt_log = [""]*20
+        self.mqtt_log = [] # [""]*20
         self.curr_pos = 0
         
         # self.lcd_locked = False
         
-        self.butns = [
-            Button(0,0,0,"Button","One"),
-            Button(0,80,0,"Button","Two"),
-            Button(1,0,79,"Button","Three"),
-            Button(1,80,0,"Button","Four"),
-            Button(2,0,0,"Button","Five"),
-            Button(2,0,0,"Button","Six"),
-            Button(0,0,0,"Button","Seven"),
-            Button(0,0,0,"Button","Eight"),
-            Button(1,0,0,"Button","Nine"),
-            Button(1,0,0,"Button","Ten"),
-            Button(2,0,0,"Button","Eleven"),
-            Button(2,0,0,"Button","Twelve")
-            
-        ]
         
         
     async def run(self):
@@ -134,7 +106,10 @@ class ModuleService(PsosService):
         await self.svc_dsp.lock()
         self.lcd = self.svc_dsp.lcd
         
-        first_row_idx = len(self.mqtt_log) - 15
+        log_len = len(self.mqtt_log)
+        first_row_idx = log_len - 15
+        if first_row_idx < 0:
+            first_row_idx = 0
         
         for p_row in range(3):         # for each panel row
             r_idx = first_row_idx + (p_row * 5)
@@ -142,10 +117,12 @@ class ModuleService(PsosService):
                 self.lcd.fill(clr.BLACK)                  # init panel
                 char_idx = p_col * 20     # 20 char per panel column
                 for j in range(5):        # 5 lines per panel
-                    line = self.mqtt_log[r_idx+j]
-                    # self.lcd.text("x",0,j*16,clr.WHITE)
-                    if len(line) > char_idx:
-                        self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
+                    i = r_idx+j
+                    if i < log_len:
+                        line = self.mqtt_log[i]
+                        # self.lcd.text("x",0,j*16,clr.WHITE)
+                        if len(line) > char_idx:
+                            self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
                 # show the panel at x,y = p_col,p_row
                 self.lcd.show_pg(p_col,p_row)
