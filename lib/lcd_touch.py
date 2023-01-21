@@ -12,6 +12,7 @@ import gc
 import uasyncio
 
 
+'''
 LCD_DC   = const(8)
 LCD_CS   = const(9)
 LCD_SCK  = const(10)
@@ -19,25 +20,17 @@ LCD_MOSI = const(11)
 LCD_MISO = const(12)
 LCD_BL   = const(13)
 LCD_RST  = const(15)
+'''
 TP_CS    = const(16)
 TP_IRQ   = const(17)
 
 class Touch():
 
-    def __init__(self,spi_svc,width,height):
-        self.width = width
-        self.height = height
-
-        self.cs = Pin(LCD_CS,Pin.OUT)
-        self.rst = Pin(LCD_RST,Pin.OUT)
-        self.dc = Pin(LCD_DC,Pin.OUT)
+    def __init__(self,spi_svc):
         
         self.tp_cs =Pin(TP_CS,Pin.OUT)
         self.irq = Pin(TP_IRQ,Pin.IN)
         
-        self.cs(1)
-        self.dc(1)
-        self.rst(1)
         self.tp_cs(1)
         
         self.spi_svc = spi_svc

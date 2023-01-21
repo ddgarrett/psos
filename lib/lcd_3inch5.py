@@ -44,8 +44,10 @@ LCD_MOSI = const(11)
 LCD_MISO = const(12)
 LCD_BL   = const(13)
 LCD_RST  = const(15)
+'''
 TP_CS    = const(16)
 TP_IRQ   = const(17)
+'''
 
 class LCD(framebuf.FrameBuffer):
 
@@ -57,13 +59,13 @@ class LCD(framebuf.FrameBuffer):
         self.rst = Pin(LCD_RST,Pin.OUT)
         self.dc = Pin(LCD_DC,Pin.OUT)
         
-        self.tp_cs =Pin(TP_CS,Pin.OUT)
-        self.irq = Pin(TP_IRQ,Pin.IN)
+        # self.tp_cs =Pin(TP_CS,Pin.OUT)
+        # self.irq = Pin(TP_IRQ,Pin.IN)
         
         self.cs(1)
         self.dc(1)
         self.rst(1)
-        self.tp_cs(1)
+        # self.tp_cs(1)
         
         # self.spi_svc = spi_svc
         self.spi = spi

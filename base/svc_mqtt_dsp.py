@@ -39,21 +39,13 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
 
-        # spi_svc = parms.get_parm("spi")
-        # self.spi_svc = self.get_svc(spi_svc)
-        # spi = self.spi_svc.get_spi()
-        
         self.svc_dsp = self.get_svc("dsp")
         self.svc_touch = self.get_svc("touch")
 
-        # self.lcd = LCD(self.spi_svc,panel_width,panel_height)
-                
         self.mqtt_log = [] # [""]*20
         self.curr_pos = 0
         
         # self.lcd_locked = False
-        
-        
         
     async def run(self):
         q    = queue.Queue()
@@ -61,8 +53,6 @@ class ModuleService(PsosService):
         mqtt = self.get_mqtt()
         
         await mqtt.subscribe("#",q)
-        
-        # self.menu_task = uasyncio.create_task(self.chk_menu())
         
         while True:
             data = await q.get()
@@ -120,7 +110,6 @@ class ModuleService(PsosService):
                     i = r_idx+j
                     if i < log_len:
                         line = self.mqtt_log[i]
-                        # self.lcd.text("x",0,j*16,clr.WHITE)
                         if len(line) > char_idx:
                             self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
@@ -128,122 +117,5 @@ class ModuleService(PsosService):
                 self.lcd.show_pg(p_col,p_row)
         
         self.svc_dsp.unlock()
-        # self.spi_svc.unlock()
-        # self.lcd_locked = False
-                
-    async def chk_menu(self):
-        for i in range(3):
-            self.lcd.fill(clr.BLACK)
-            self.lcd.rect(0,0,160,80,clr.CYAN)
-            self.lcd.vline(80,0,80,clr.CYAN)
-            self.lcd.hline(0,40,160,clr.CYAN)
-            
-            self.lcd.show_pg(i,3)
-            
-        while True:
-            await self.get_touch()
-            await uasyncio.sleep_ms(330)
-                        
-    async def get_touch(self):
-        pt_xy = self.svc_touch.touch_get()
-        
-        if pt_x_y == None:
-            return
-        
-        x_pt = pt_xy[0]
-        y_pt = pt_xy[1]
-        '''
-        # todo: make these a parm and customization value
-        x_min = 385  # x = 0
-        x_max = 3809 # x=480
-        x_range = x_max - x_min
-        
-        y_min = 451  # y=320
-        y_max = 3504 # y=0
-        y_range = y_max - y_min
-        
-        # may have to wait for a lock on the SPI
-        get = await self.lcd.touch_get()
-    
-        # print(get)
-        if get != None and get[0] != 0 and get[1] != 0:
-            await self.spi_svc.lock() # self.lcd_locked = True
-            
-            # self.lcd.write_cmd(0x20) # invert
-            x = get[0]
-            x = min(x_max,x)
-            x = max(x_min,x)
-            x_pt = round((x-x_min)/x_range*480)
-            
-            y = get[1]
-            y = min(y_max,y)
-            y = max(y_min,y)
-            y_pt = round((1-(y-y_min)/y_range)*320)
-            '''
-        
-        panel_x = x_pt//160
-        panel_y = y_pt//80
-        
-        panel_pt_x = x_pt%160
-        panel_pt_y = y_pt%80
-        
-        if panel_y < 3:
-            btn = -1
-        else:
-            btn = 0
-            if panel_pt_x >= 80:
-                btn = 1
-                
-            btn = panel_x * 2 + btn
-            
-            if panel_pt_y >= 40:
-              btn = btn+6
-              
-            await self.blink_btn(panel_x,panel_y,panel_pt_x,panel_pt_y)
-
-
-            m1 = "pt:({},{})".format(x_pt,y_pt)
-            m2 = "panel:({},{})".format(panel_x,panel_y)
-            m3 = "ppt:({},{}))".format(panel_pt_x,panel_pt_y)
-            m4 = "btn: {}".format(btn)
-            
-            # await self.blink_btn(btn)
-            
-            self.lcd.fill(clr.BLACK)
-            self.lcd.rect(0,0,160,80,clr.CYAN)
-            self.lcd.vline(80,0,80,clr.CYAN)
-            self.lcd.hline(0,40,160,clr.CYAN)
-
-            self.lcd.text(m1,6*8,1*16,clr.YELLOW)
-            self.lcd.text(m2,6*8,2*16,clr.YELLOW)
-            self.lcd.text(m3,6*8,3*16,clr.YELLOW)
-            self.lcd.text(m4,6*8,4*16,clr.YELLOW)
-            
-            self.lcd.show_pg(1,3)
-            
-        # self.spi_svc.unlock()
-        # self.lcd_locked = False
-        
-    # render button n
-    async def blink_btn(self,panel_x,panel_y,panel_pt_x,panel_pt_y):
-        x = 0
-        y = 0
-        if panel_pt_x >=80:
-            x = 80
-        if panel_pt_y >= 40:
-            y = 40
-            
-        self.lcd.fill(clr.BLACK)
-        self.lcd.fill_rect(x,y,80,40,clr.WHITE)
-        self.lcd.rect(0,0,160,80,clr.CYAN)
-        self.lcd.vline(80,0,80,clr.CYAN)
-        self.lcd.hline(0,40,160,clr.CYAN)
-        self.lcd.show_pg(panel_x,panel_y)
-        await uasyncio.sleep_ms(330)
-        self.lcd.fill(clr.BLACK)
-        self.lcd.rect(0,0,160,80,clr.CYAN)
-        self.lcd.vline(80,0,80,clr.CYAN)
-        self.lcd.hline(0,40,160,clr.CYAN)
-        self.lcd.show_pg(panel_x,panel_y)
                 
 

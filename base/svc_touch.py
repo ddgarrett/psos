@@ -38,9 +38,8 @@ class ModuleService(PsosService):
 
         spi_svc = parms.get_parm("spi")
         self.spi_svc = self.get_svc(spi_svc)
-        # spi = self.spi_svc.get_spi()
 
-        self.touch = Touch(self.spi_svc,panel_width,panel_height)
+        self.touch = Touch(self.spi_svc)
         
         # todo: make these a parm and customization value
         self.x_min = 385  # x = 0

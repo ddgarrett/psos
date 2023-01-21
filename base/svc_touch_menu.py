@@ -52,19 +52,8 @@ class ModuleService(PsosService):
     def __init__(self, parms):
         super().__init__(parms)
 
-        # spi_svc = parms.get_parm("spi")
-        # self.spi_svc = self.get_svc(spi_svc)
-        # spi = self.spi_svc.get_spi()
-        
         self.svc_dsp = self.get_svc("dsp")
         self.svc_touch = self.get_svc("touch")
-
-        # self.lcd = LCD(self.spi_svc,panel_width,panel_height)
-                
-        # self.mqtt_log = [""]*20
-        # self.curr_pos = 0
-        
-        # self.lcd_locked = False
         
         self.butns = [
             Button(0,0,0,"Button","One"),
@@ -84,76 +73,8 @@ class ModuleService(PsosService):
         
         
     async def run(self):
-        '''
-        q    = queue.Queue()
-        msg  = SvcMsg()
-        mqtt = self.get_mqtt()
-        
-        
-        await mqtt.subscribe("#",q)
-        '''
         await self.chk_menu()
         
-        # self.menu_task = uasyncio.create_task(self.chk_menu())
-        
-        '''
-        while True:
-            data = await q.get()
-            try:
-                await self.show_msg(data)
-                
-                # was this device sent a "free" message?
-                if psos_util.to_str(data[1]) == self.get_parm("sub_free"):
-                    await self.free_mem()
-                    
-                if len(self.mqtt_log) > self.get_parm("max_log",250):
-                    await self.free_mem()
-                    
-            except Exception as e:
-                print("exception",str(e))
-                print("data:",data)
-            
-    async def free_mem(self):
-        n = len(self.mqtt_log)
-        if n > 30:
-            await self.log("log len before = {}".format(n))
-            self.mqtt_log = self.mqtt_log[(n-25):]
-            await self.log("log len after  = {}".format(len(self.mqtt_log)))
-
-    async def show_msg(self,data):
-        # print("received",msg)
-        
-        topic = psos_util.to_str(data[1])
-        payload = psos_util.to_str(data[2])
-        t = time.localtime(time.mktime(time.localtime())+self.tz*3600)
-        
-        t = (t[3],t[4],t[5],topic,payload)
-        msg = "{0}:{1:02d}:{2:02d} {3} {4}".format(*t)
-        self.mqtt_log.append(msg)
-        
-        await self.svc_dsp.lock()
-        self.lcd = self.svc_dsp.lcd
-        
-        first_row_idx = len(self.mqtt_log) - 15
-        
-        for p_row in range(3):         # for each panel row
-            r_idx = first_row_idx + (p_row * 5)
-            for p_col in range(3):                    # for each panel column
-                self.lcd.fill(clr.BLACK)                  # init panel
-                char_idx = p_col * 20     # 20 char per panel column
-                for j in range(5):        # 5 lines per panel
-                    line = self.mqtt_log[r_idx+j]
-                    # self.lcd.text("x",0,j*16,clr.WHITE)
-                    if len(line) > char_idx:
-                        self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
-
-                # show the panel at x,y = p_col,p_row
-                self.lcd.show_pg(p_col,p_row)
-        
-        self.svc_dsp.unlock()
-        # self.spi_svc.unlock()
-        # self.lcd_locked = False
-        '''
         
     async def chk_menu(self):
         await self.svc_dsp.lock()
@@ -182,34 +103,6 @@ class ModuleService(PsosService):
         x_pt = pt_xy[0]
         y_pt = pt_xy[1]
         
-        '''
-        # todo: make these a parm and customization value
-        x_min = 385  # x = 0
-        x_max = 3809 # x=480
-        x_range = x_max - x_min
-        
-        y_min = 451  # y=320
-        y_max = 3504 # y=0
-        y_range = y_max - y_min
-        
-        # may have to wait for a lock on the SPI
-        get = await self.lcd.touch_get()
-    
-        # print(get)
-        if get != None and get[0] != 0 and get[1] != 0:
-            await self.spi_svc.lock() # self.lcd_locked = True
-            
-            # self.lcd.write_cmd(0x20) # invert
-            x = get[0]
-            x = min(x_max,x)
-            x = max(x_min,x)
-            x_pt = round((x-x_min)/x_range*480)
-            
-            y = get[1]
-            y = min(y_max,y)
-            y = max(y_min,y)
-            y_pt = round((1-(y-y_min)/y_range)*320)
-            '''
         
         panel_x = x_pt//160
         panel_y = y_pt//80
