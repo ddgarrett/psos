@@ -23,28 +23,17 @@ panel_height = const(80)
 
 col_cnt = lcd_width/panel_width   # number of panel columns
 row_cnt = lcd_height/panel_height # number of panel rows
-
-char_width = const(8)
-char_height = const(16)
-
-panel_row_chr_cnt = panel_width/char_width
-panel_col_chr_cnt = panel_height/char_height
-
-c_bkgrnd = clr.BLACK
-c_fgrnd  = clr.WHITE
         
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
     
     def __init__(self, parms):
         super().__init__(parms)
-
         
         self.svc_dsp = self.get_svc("dsp")
         self.svc_touch = self.get_svc("touch")
         lcd = self.svc_dsp.lcd
         self.lcd = lcd
-        
         
         self.butns = [
             Button(lcd,0,0,0,[],select=True),
@@ -63,7 +52,6 @@ class ModuleService(PsosService):
         ]
 
     async def run(self):
-        
         mqtt = self.get_mqtt()
         q = queue.Queue()
         m = SvcMsg()
@@ -80,19 +68,7 @@ class ModuleService(PsosService):
             m.load_subscr(data)
             await self.check_menu(m.get_payload())
         
-    async def run_v1(self):
-        
-        self.svc_dsp = self.get_svc("dsp")
-        self.svc_touch = self.get_svc("touch")
-        lcd = self.svc_dsp.lcd
-        self.lcd = lcd
-        
-        self.init_main_menu()
-        
-        await self.chk_menu()
-        
     def init_main_menu(self):
-        
         self.menu = self.get_parm("menu")
         if type(self.menu) == str:
             c = self._parms.get_config()
@@ -116,16 +92,6 @@ class ModuleService(PsosService):
                 
             self.butns[i+6].title = n
             
-        
-    async def chk_menu(self):
-        
-        await self.render_btns()    
-        
-        
-        while True:
-            await self.get_touch()
-            await uasyncio.sleep_ms(330)
-    
     # render the buttons for a single panel
     async def render_btns(self):
         await self.svc_dsp.lock()
@@ -143,57 +109,11 @@ class ModuleService(PsosService):
             
         self.svc_dsp.unlock()
         
-    async def get_touch_v1(self):
-        pt_xy = await self.svc_touch.get_touch()
-        
-        if pt_xy == None:
-            return
-        
-        x_pt = pt_xy[0]
-        y_pt = pt_xy[1]
-        
-        
-        panel_x = x_pt//160
-        panel_y = y_pt//80
-        
-        panel_pt_x = x_pt%160
-        panel_pt_y = y_pt%80
-        
-        if panel_y < 3:
-            return
-
-        btn = 0
-        if panel_pt_x >= 80:
-            btn = 1
-            
-        btn = panel_x * 2 + btn
-        
-        if panel_pt_y >= 40:
-          btn = btn+6
-                    
-        if btn < 6:
-            for b in self.butns:
-                b.select = False
-            self.butns[btn].select = True
-            self.butns[6].select = True
-            
-        else:
-            for b in range(6):
-                i = b+6
-                if i == btn:
-                    self.butns[i].select = True
-                else:
-                    self.butns[i].select = False
-            
-        await self.render_btns()
-        
     # selects menu button based on MQTT msg
     async def check_menu(self,msg):
-        
         x_pt = msg["x"]
         y_pt = msg["y"]
         
-        
         panel_x = x_pt//160
         panel_y = y_pt//80
         
@@ -227,5 +147,3 @@ class ModuleService(PsosService):
                     self.butns[i].select = False
             
         await self.render_btns()
-              
-
