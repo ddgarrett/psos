@@ -38,6 +38,8 @@ class ModuleService(PsosService):
 
         spi_svc = parms.get_parm("spi")
         self.spi_svc = self.get_svc(spi_svc)
+        
+        self.regions = self.get_parm("regions")
 
         self.touch = Touch(self.spi_svc)
         
@@ -50,7 +52,30 @@ class ModuleService(PsosService):
         self.y_max = 3504 # y=0
         self.y_range = self.y_max - self.y_min
 
+    async def run(self):
+        
+        mqtt = self.get_mqtt()
+        
+        while True:
+            touch = await self.get_touch()
+            if touch != None:
+                for r in self.regions:
+                    if self.in_region(r,touch[0],touch[1]):
+                        await mqtt.publish(r["pub"],{"x":touch[0],"y":touch[1]})
                 
+            await uasyncio.sleep_ms(330)
+                
+    def in_region(self,rgn,x,y):
+        
+        outside = (
+            x < rgn["x"] or
+            y < rgn["y"] or
+            x > (rgn["x"]+rgn["w"]) or
+            y > (rgn["y"]+rgn["h"]) )
+        
+        return not outside
+
+        
     # Return the x,y coordinates of a touch.
     # If no touch, return None
     async def get_touch(self):
