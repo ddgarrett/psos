@@ -103,6 +103,8 @@ class ModuleService(PsosService):
                         ping_wait = 0
                         self._client.ping()
                         # print("pinged mqtt")
+                        # give other tasks a chance to run
+                        await uasyncio.sleep_ms(0)
                         
                     self._client.check_msg()
                     gc.collect()
@@ -215,6 +217,9 @@ class ModuleService(PsosService):
         self._subscriptions.append(sub)
         if self._client != None:
             sub.subscribe(self._client)
+            
+        # give other tasks a chance to run
+        await uasyncio.sleep_ms(0)
 
     # when first connected or after reconnect
     # resubscribe to all previous subscriptions
@@ -235,6 +240,9 @@ class ModuleService(PsosService):
             # go ahead and publish locally
             else:
                 self.mqtt_callback(to_bytes(topic),to_bytes(payload))
+                
+        # give other tasks a chance to run
+        await uasyncio.sleep_ms(0)
 
     # remove all of the subscriptions for a given queue
     async def unsubscribe(self,queue):

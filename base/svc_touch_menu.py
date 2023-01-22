@@ -138,6 +138,9 @@ class ModuleService(PsosService):
             
             self.lcd.show_pg(panel,3)
             
+            # give other tasks a chance to run
+            await uasyncio.sleep_ms(0)
+            
         self.svc_dsp.unlock()
         
     async def get_touch_v1(self):

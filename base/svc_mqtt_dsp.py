@@ -120,6 +120,9 @@ class ModuleService(PsosService):
 
                 # show the panel at x,y = p_col,p_row
                 self.lcd.show_pg(p_col,p_row)
+                
+                # give other tasks a chance to run
+                await uasyncio.sleep_ms(0)
         
         self.svc_dsp.unlock()
                 

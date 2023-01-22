@@ -62,6 +62,9 @@ class ModuleService(PsosService):
                 for r in self.regions:
                     if self.in_region(r,touch[0],touch[1]):
                         await mqtt.publish(r["pub"],{"x":touch[0],"y":touch[1]})
+                        
+                # wait at least 1 second before checking again for touch
+                await uasyncio.sleep_ms(1000)
                 
             await uasyncio.sleep_ms(330)
                 
