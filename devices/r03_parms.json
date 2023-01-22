@@ -17,22 +17,28 @@
     {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq" },
     
     {"name": "spi1",  "module":"svc_spi", "slot":1},
-    
+
     {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
     
+    {"name": "dsp", "module":"svc_dsp", "spi":"spi1", "sub":"{dev}/dsp/tch"},
+    
+    {"name": "menu", "module":"svc_touch_menu", "menu":"touch_menu.json",
+             "svc_dsp":"dsp", "_svc_touch":"touch", "sub":"{dev}/menu/tch" }
+
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
              
-    {"name": "dsp", "module":"svc_dsp", "spi":"spi1" },
-
-    {"name": "touch", "module":"svc_touch", "spi":"spi1" },
+    {"name": "touch", "module":"svc_touch", "spi":"spi1" ,
+             "regions":[
+                 {"x":0, "y":0,   "h":240, "w":480, "pub":"local/r03/dsp/tch" },
+                 {"x":0, "y":240, "h":80,  "w":480, "pub":"local/r03/menu/tch"}
+             ]},
+             
 
     {"name": "dsp_mqtt", "module":"svc_mqtt_dsp",
              "svc_dsp":"dsp", "svc_touch":"touch",
              "sub":"#", "sub_free":"{dev}/dsp/free", "max_log":200 },
              
-    {"name": "menu", "module":"svc_touch_menu",
-             "svc_dsp":"dsp", "svc_touch":"touch"}
              
      
 
@@ -40,6 +46,7 @@
  
 "removed": [
     {"name": "test", "module":"svc_test_lcd", "sub":"{dev}/lcd/upd"  },
+
 
 
 ]
