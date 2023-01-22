@@ -60,14 +60,19 @@ class ModuleService(PsosService):
     async def lock(self):
         i = 0
         while self.locked:
-            await uasyncio.sleep_ms(330)
+            await uasyncio.sleep_ms(100)
             i = i + 1
             if i > 45:
                 raise Exception('waited too long for svc_dsp lock') 
         
         self.locked = True
         
+        # Also lock the SPI
+        # which will be needed to write to the display
+        await self.spi_svc.lock()
+        
     def unlock(self):
+        self.spi_svc.unlock()
         self.locked = False
 
 
