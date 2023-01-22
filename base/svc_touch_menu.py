@@ -11,6 +11,7 @@ import time
 from svc_msg import SvcMsg
 import psos_util
 
+from psos_menu_btn import Button
 from lcd_3inch5 import LCD
 import color_brg_556 as clr
 
@@ -31,70 +32,115 @@ panel_col_chr_cnt = panel_height/char_height
 
 c_bkgrnd = clr.BLACK
 c_fgrnd  = clr.WHITE
-
-# Button Class
-class Button():
-    def __init__(self, panel,x,y,title_1,title_2):
-        super().__init__()
-        self.panel = panel
-        self.x = x
-        self.y = y
-        self.title_1 = title_1
-        self.title_2 = title_2
-        self.height = 40
-        self.width  = 80
-        self.selected = False
-    
-    
+        
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
     
     def __init__(self, parms):
         super().__init__(parms)
 
+        
         self.svc_dsp = self.get_svc("dsp")
         self.svc_touch = self.get_svc("touch")
+        lcd = self.svc_dsp.lcd
+        self.lcd = lcd
+        
         
         self.butns = [
-            Button(0,0,0,"Button","One"),
-            Button(0,80,0,"Button","Two"),
-            Button(1,0,79,"Button","Three"),
-            Button(1,80,0,"Button","Four"),
-            Button(2,0,0,"Button","Five"),
-            Button(2,0,0,"Button","Six"),
-            Button(0,0,0,"Button","Seven"),
-            Button(0,0,0,"Button","Eight"),
-            Button(1,0,0,"Button","Nine"),
-            Button(1,0,0,"Button","Ten"),
-            Button(2,0,0,"Button","Eleven"),
-            Button(2,0,0,"Button","Twelve")
+            Button(lcd,0,0,0,[],select=True),
+            Button(lcd,0,80,0,[]),
+            Button(lcd,1,0,0,[]),
+            Button(lcd,1,80,0,[]),
+            Button(lcd,2,0,0,[]),
+            Button(lcd,2,80,0,[]),
             
+            Button(lcd,0,0,40,[],select=True),
+            Button(lcd,0,80,40,[]),
+            Button(lcd,1,0,40,[]),
+            Button(lcd,1,80,40,[]),
+            Button(lcd,2,0,40,[]),
+            Button(lcd,2,80,40,[])
         ]
-        
-        
+
     async def run(self):
+        
+        mqtt = self.get_mqtt()
+        q = queue.Queue()
+        m = SvcMsg()
+        await mqtt.subscribe(self.get_parm("sub"),q)
+        
+        self.svc_dsp = self.get_svc("dsp")
+        self.lcd = self.svc_dsp.lcd
+        self.init_main_menu()
+        
+        await self.render_btns() 
+
+        while True:
+            data = await q.get()
+            m.load_subscr(data)
+            await self.check_menu(m.get_payload())
+        
+    async def run_v1(self):
+        
+        self.svc_dsp = self.get_svc("dsp")
+        self.svc_touch = self.get_svc("touch")
+        lcd = self.svc_dsp.lcd
+        self.lcd = lcd
+        
+        self.init_main_menu()
+        
         await self.chk_menu()
         
+    def init_main_menu(self):
+        
+        self.menu = self.get_parm("menu")
+        if type(self.menu) == str:
+            c = self._parms.get_config()
+            self.menu = psos_util.load_parms(c,self.menu)
+            
+        main_menu = self.menu["menu"]
+
+        for i in range(len(main_menu)):
+            n = main_menu[i]["name"]
+            if type(n) == str:
+                n = [n]
+            
+            self.butns[i].title = n
+            
+        submenu = main_menu[0]["submenu"]
+        submenu = self.menu[submenu]
+        for i in range(len(submenu)):
+            n = submenu[i]["name"]
+            if type(n) == str:
+                n = [n]
+                
+            self.butns[i+6].title = n
+            
         
     async def chk_menu(self):
-        await self.svc_dsp.lock()
-        self.lcd = self.svc_dsp.lcd
         
-        for i in range(3):
-            self.lcd.fill(clr.BLACK)
-            self.lcd.rect(0,0,160,80,clr.CYAN)
-            self.lcd.vline(80,0,80,clr.CYAN)
-            self.lcd.hline(0,40,160,clr.CYAN)
-            
-            self.lcd.show_pg(i,3)
-            
-        self.svc_dsp.unlock()
+        await self.render_btns()    
+        
         
         while True:
             await self.get_touch()
             await uasyncio.sleep_ms(330)
-                        
-    async def get_touch(self):
+    
+    # render the buttons for a single panel
+    async def render_btns(self):
+        await self.svc_dsp.lock()
+        for panel in range(3):
+            self.lcd.fill(clr.BLACK)
+            
+            for b in self.butns:
+                if b.panel == panel:
+                    b.render()
+            
+            self.lcd.show_pg(panel,3)
+            
+        self.svc_dsp.unlock()
+        
+    async def get_touch_v1(self):
         pt_xy = await self.svc_touch.get_touch()
         
         if pt_xy == None:
@@ -111,70 +157,72 @@ class ModuleService(PsosService):
         panel_pt_y = y_pt%80
         
         if panel_y < 3:
-            btn = -1
-        else:
-            btn = 0
-            if panel_pt_x >= 80:
-                btn = 1
-                
-            btn = panel_x * 2 + btn
-            
-            if panel_pt_y >= 40:
-              btn = btn+6
-              
-                        
-            await self.svc_dsp.lock()
+            return
 
-            await self.blink_btn(panel_x,panel_y,panel_pt_x,panel_pt_y)
-
-
-            m1 = "pt:({},{})".format(x_pt,y_pt)
-            m2 = "panel:({},{})".format(panel_x,panel_y)
-            m3 = "ppt:({},{}))".format(panel_pt_x,panel_pt_y)
-            m4 = "btn: {}".format(btn)
+        btn = 0
+        if panel_pt_x >= 80:
+            btn = 1
             
-            # await self.blink_btn(btn)
-            
-            self.lcd.fill(clr.BLACK)
-            self.lcd.rect(0,0,160,80,clr.CYAN)
-            self.lcd.vline(80,0,80,clr.CYAN)
-            self.lcd.hline(0,40,160,clr.CYAN)
-
-            self.lcd.text(m1,6*8,1*16,clr.YELLOW)
-            self.lcd.text(m2,6*8,2*16,clr.YELLOW)
-            self.lcd.text(m3,6*8,3*16,clr.YELLOW)
-            self.lcd.text(m4,6*8,4*16,clr.YELLOW)
-            
-            self.lcd.show_pg(1,3)
-            
-                        
-            self.svc_dsp.unlock()
-
-            
-            
-        # self.spi_svc.unlock()
-        # self.lcd_locked = False
+        btn = panel_x * 2 + btn
         
-    # render button n
-    async def blink_btn(self,panel_x,panel_y,panel_pt_x,panel_pt_y):
-        x = 0
-        y = 0
-        if panel_pt_x >=80:
-            x = 80
         if panel_pt_y >= 40:
-            y = 40
+          btn = btn+6
+                    
+        if btn < 6:
+            for b in self.butns:
+                b.select = False
+            self.butns[btn].select = True
+            self.butns[6].select = True
             
-        self.lcd.fill(clr.BLACK)
-        self.lcd.fill_rect(x,y,80,40,clr.WHITE)
-        self.lcd.rect(0,0,160,80,clr.CYAN)
-        self.lcd.vline(80,0,80,clr.CYAN)
-        self.lcd.hline(0,40,160,clr.CYAN)
-        self.lcd.show_pg(panel_x,panel_y)
-        await uasyncio.sleep_ms(330)
-        self.lcd.fill(clr.BLACK)
-        self.lcd.rect(0,0,160,80,clr.CYAN)
-        self.lcd.vline(80,0,80,clr.CYAN)
-        self.lcd.hline(0,40,160,clr.CYAN)
-        self.lcd.show_pg(panel_x,panel_y)
-                
+        else:
+            for b in range(6):
+                i = b+6
+                if i == btn:
+                    self.butns[i].select = True
+                else:
+                    self.butns[i].select = False
+            
+        await self.render_btns()
+        
+    # selects menu button based on MQTT msg
+    async def check_menu(self,msg):
+        
+        x_pt = msg["x"]
+        y_pt = msg["y"]
+        
+        
+        panel_x = x_pt//160
+        panel_y = y_pt//80
+        
+        panel_pt_x = x_pt%160
+        panel_pt_y = y_pt%80
+        
+        if panel_y < 3:
+            return
+
+        btn = 0
+        if panel_pt_x >= 80:
+            btn = 1
+            
+        btn = panel_x * 2 + btn
+        
+        if panel_pt_y >= 40:
+          btn = btn+6
+                    
+        if btn < 6:
+            for b in self.butns:
+                b.select = False
+            self.butns[btn].select = True
+            self.butns[6].select = True
+            
+        else:
+            for b in range(6):
+                i = b+6
+                if i == btn:
+                    self.butns[i].select = True
+                else:
+                    self.butns[i].select = False
+            
+        await self.render_btns()
+              
 
