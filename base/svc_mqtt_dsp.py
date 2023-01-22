@@ -40,7 +40,6 @@ class ModuleService(PsosService):
         super().__init__(parms)
 
         self.svc_dsp = self.get_svc("dsp")
-        self.svc_touch = self.get_svc("touch")
 
         self.mqtt_log = [] # [""]*20
         self.curr_pos = 0
@@ -48,6 +47,9 @@ class ModuleService(PsosService):
         # self.lcd_locked = False
         
     async def run(self):
+        self.svc_menu = self.get_svc("menu")
+        self.menu_item = 0
+
         q    = queue.Queue()
         msg  = SvcMsg()
         mqtt = self.get_mqtt()
@@ -92,6 +94,9 @@ class ModuleService(PsosService):
         if self.svc_dsp.curr_svc != self._name:
             return
         '''
+        
+        if not self.svc_menu.butns[self.menu_item].select:
+            return
         
         await self.svc_dsp.lock()
         self.lcd = self.svc_dsp.lcd
