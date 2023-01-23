@@ -14,7 +14,7 @@
     
 "services": [
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
-    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq", "print_local":true },
+    {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq", "print_local":false },
     
     {"name": "spi1",  "module":"svc_spi", "slot":1},
 

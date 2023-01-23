@@ -51,8 +51,6 @@ class ModuleService(PsosService):
         self.active = False # doesn't startup as active
         self.fltr = None
         
-        # self.lcd_locked = False
-        
     async def run(self):
         self.svc_menu = self.get_svc("menu")
         self.menu_item = 0
@@ -112,20 +110,10 @@ class ModuleService(PsosService):
         payload = psos_util.to_str(data[2])
         t = time.localtime(time.mktime(time.localtime())+self.tz*3600)
         
-        t = (t[3],t[4],t[5],topic,payload)
-        msg = "{0}:{1:02d}:{2:02d} {3} {4}".format(*t)
-        self.mqtt_log.append((msg,topic.split("/")))
+        t = ("{3}:{4:02d}:{5:02d}".format(*t),topic,payload) # (time,topic,payload)
+        self.mqtt_log.append(t)
         
-        '''  TODO: allow other services to take over display
-        if self.svc_dsp.curr_svc != self._name:
-            return
-        '''
-        '''
-        if not self.svc_menu.butns[self.menu_item].select:
-            return
-        '''
-        # we build the log of messages but wait to show them
-        # until we are active
+        # we build the log of messages but may wait to show them
         if not self.active:
             return
         
@@ -139,10 +127,10 @@ class ModuleService(PsosService):
     # pass to show_log
     async def show_filtered(self):
         log = []
-        first_row = 15
         for i in range(len(self.mqtt_log)-1,-1,-1):
             row = self.mqtt_log[i]
-            if self.fltr.filter_match(row[1]):
+            filter_split = row[1].split('/')
+            if self.fltr.filter_match(filter_split):
                 log.insert(0,row)
                 if len(log) == 15:
                     break
@@ -154,19 +142,17 @@ class ModuleService(PsosService):
         self.lcd = self.svc_dsp.lcd
         
         log_len = len(mqtt_log)
-        first_row_idx = log_len - 15
-        if first_row_idx < 0:
-            first_row_idx = 0
+        first_row_idx = max((log_len-15),0) # row idx >= 0
         
         for p_row in range(3):         # for each panel row
             r_idx = first_row_idx + (p_row * 5)
-            for p_col in range(3):                    # for each panel column
-                self.lcd.fill(clr.BLACK)                  # init panel
-                char_idx = p_col * 20     # 20 char per panel column
-                for j in range(5):        # 5 lines per panel
+            for p_col in range(3):        # for each panel column
+                self.lcd.fill(clr.BLACK)      # init panel
+                char_idx = p_col * 20         # 20 char wide panel 
+                for j in range(5):            # 5 lines per panel
                     i = r_idx+j
                     if i < log_len:
-                        line = mqtt_log[i][0]
+                        line = "{0} {1} {2}".format(*mqtt_log[i]) # (time,topic,payload)
                         if len(line) > char_idx:
                             self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
