@@ -64,12 +64,12 @@ class Button():
         x = int((self.width-pw)/2)+self.x
         lcd.text(self.title[idx],x,y+self.y,c)
         
-    async def select_btn(self,mqtt):
+    async def select_btn(self,msg_q):
         if not self.selectable():
             return None
         if "select" in self.parms:
             msg = self.parms["select"]
-            await mqtt.publish(msg[0],msg[1])
+            msg_q.append((msg[0],msg[1]))
             
         self.selected = True
         if "submenu" in self.parms:
@@ -77,11 +77,11 @@ class Button():
         
         return None   
     
-    async def deselect_btn(self,mqtt):
+    async def deselect_btn(self,msg_q):
         if self.parms == None:
             return
         if "deselect" in self.parms:
             msg = self.parms["deselect"]
-            await mqtt.publish(msg[0],msg[1])
+            msg_q.append((msg[0],msg[1]))
             
         self.selected = False
