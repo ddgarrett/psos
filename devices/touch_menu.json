@@ -1,33 +1,44 @@
 {
-    "menu":[{"name":["MQTT","Filter"], "submenu":"mqtt", "deselect":["local/{dev}/dsp_mqtt/cmd","stop"] },
+    "menu":[{"name":["MQTT","Filter"], "submenu":"mqtt", 
+                "select":["local/r03/dsp_mqtt/cmd","start"],
+                "deselect":["local/r03/dsp_mqtt/cmd","stop"] },
             {"name":["MQTT","Scroll"],"submenu":"mqtt_scroll"},
+            {"name":"Devices","submenu":"devices"},    
             {"name":"Setup","submenu":"setup"}],    
             
     "mqtt":[
-        {"name":"All", "select":["local/{dev}/dsp_mqtt/flter","#"]},
-        {"name":"Temp","select":["local/{dev}/dsp_mqtt/fltr","+/dht"]},
-        {"name":"e01","select":["local/{dev}/dsp_mqtt/fltr","e01/#"]},
-        {"name":"e02","select":["local/{dev}/dsp_mqtt/fltr","e02/#"]},
-        {"name":"emp","select":["local/{dev}/dsp_mqtt/fltr","emp/#"]},
+        {"name":"All", "select":["local/r03/dsp_mqtt/flter","#"]},
+        {"name":"Temp","select":["local/r03/dsp_mqtt/fltr","+/dht"]},
+        {"name":"e01","select":["local/r03/dsp_mqtt/fltr","e01/#"]},
+        {"name":"e02","select":["local/r03/dsp_mqtt/fltr","e02/#"]},
+        {"name":"emp","select":["local/r03/dsp_mqtt/fltr","emp/#"]},
         {"name":"More...","submenu":"more_mqtt"}
     ],
 
     "more_mqtt":[
-        {"name":"e04", "select":["local/{dev}/dsp_mqtt/flter","e04/#"]},
-        {"name":"e05","select":["local/{dev}/dsp_mqtt/fltr","e05/#"]},
-        {"name":"r02","select":["local/{dev}/dsp_mqtt/fltr","r02/#"]},
-        {"name":"r04","select":["local/{dev}/dsp_mqtt/fltr","r03/#"]},
+        {"name":"e04", "select":["local/r03/dsp_mqtt/flter","e04/#"]},
+        {"name":"e05","select":["local/r03/dsp_mqtt/fltr","e05/#"]},
+        {"name":"r02","select":["local/r03/dsp_mqtt/fltr","r02/#"]},
+        {"name":"r04","select":["local/r03/dsp_mqtt/fltr","r03/#"]},
         {"name":"Back...","cmd":"back"}
+    ],
 
     "mqtt_scroll":[
-        {"name":"Left", "select":["local/{dev}/dsp_mqtt/cmd","scroll_left"]},
-        {"name":"Up","select":["local/{dev}/dsp_mqtt/cmd","scroll_up"]},
-        {"name":"Down","select":["local/{dev}/dsp_mqtt/cmd","scroll_down"]},
-        {"name":"Right","select":["local/{dev}/dsp_mqtt/cmd","scroll_right"]}
+        {"name":"Left", "select":["local/r03/dsp_mqtt/cmd","scroll_left"]},
+        {"name":"Up","select":["local/r03/dsp_mqtt/cmd","scroll_up"]},
+        {"name":"Down","select":["local/r03/dsp_mqtt/cmd","scroll_down"]},
+        {"name":"Right","select":["local/r03/dsp_mqtt/cmd","scroll_right"]}
+    ],
+
+    "devices":[
+        {"name":"Bedroom", "select":["e01/dht/upd","r03"]},
+        {"name":"Office","select":["e02/dht/upd","r03"]},
+        {"name":"Kitchen","select":["emp/dht/upd","r03"]},
+        {"name":"Mobile","select":["r02/dht/upd","r03"]}
     ],
 
     "setup":[
-        {"name":"Touch", "select":["local/{dev}/touch","setup"],
-                         "deselect":["local/{dev}/touch","setup_exit"]}
+        {"name":"Touch", "select":["local/r03/touch","setup"],
+                         "deselect":["local/r03/touch","setup_exit"]}
     ]
 }

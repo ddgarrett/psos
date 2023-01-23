@@ -29,38 +29,35 @@ class ModuleService(PsosService):
     
     def __init__(self, parms):
         super().__init__(parms)
-        
-        self.svc_dsp = self.get_svc("dsp")
-        self.svc_touch = self.get_svc("touch")
-        lcd = self.svc_dsp.lcd
-        self.lcd = lcd
-        
-        self.butns = [
-            Button(lcd,0,0,0,[],select=True),
-            Button(lcd,0,80,0,[]),
-            Button(lcd,1,0,0,[]),
-            Button(lcd,1,80,0,[]),
-            Button(lcd,2,0,0,[]),
-            Button(lcd,2,80,0,[]),
             
-            Button(lcd,0,0,40,[],select=True),
-            Button(lcd,0,80,40,[]),
-            Button(lcd,1,0,40,[]),
-            Button(lcd,1,80,40,[]),
-            Button(lcd,2,0,40,[]),
-            Button(lcd,2,80,40,[])
+        self.btns = [
+            Button(0,0,0),
+            Button(0,80,0),
+            Button(1,0,0),
+            Button(1,80,0),
+            Button(2,0,0),
+            Button(2,80,0),
+            
+            Button(0,0,40),
+            Button(0,80,40),
+            Button(1,0,40),
+            Button(1,80,40),
+            Button(2,0,40),
+            Button(2,80,40)
         ]
 
     async def run(self):
+        self.svc_dsp = self.get_svc("dsp")
+        self.svc_touch = self.get_svc("touch")
+        self.lcd = self.svc_dsp.lcd
+
         mqtt = self.get_mqtt()
+        self.mqtt = mqtt
         q = queue.Queue()
         m = SvcMsg()
         await mqtt.subscribe(self.get_parm("sub"),q)
         
-        self.svc_dsp = self.get_svc("dsp")
-        self.lcd = self.svc_dsp.lcd
-        self.init_main_menu()
-        
+        await self.init_main_menu(mqtt)
         await self.render_btns() 
 
         while True:
@@ -68,7 +65,7 @@ class ModuleService(PsosService):
             m.load_subscr(data)
             await self.check_menu(m.get_payload())
         
-    def init_main_menu(self):
+    async def init_main_menu(self,mqtt):
         self.menu = self.get_parm("menu")
         if type(self.menu) == str:
             c = self._parms.get_config()
@@ -77,30 +74,29 @@ class ModuleService(PsosService):
         main_menu = self.menu["menu"]
 
         for i in range(len(main_menu)):
-            n = main_menu[i]["name"]
-            if type(n) == str:
-                n = [n]
-            
-            self.butns[i].title = n
-            
-        submenu = main_menu[0]["submenu"]
-        submenu = self.menu[submenu]
-        for i in range(len(submenu)):
-            n = submenu[i]["name"]
-            if type(n) == str:
-                n = [n]
+            if i < len(main_menu):
+                self.btns[i].set_parms(main_menu[i])
+            else:
+                self.btns[i].set_parms(None)
                 
-            self.butns[i+6].title = n
+        if "submenu" in main_menu[0]:
+            self.set_submenu(main_menu[0]["submenu"])
+            
+        # Select First Button of Main Menu and Submenu
+        await uasyncio.sleep_ms(1000) # give other services time to start
+        await self.btns[0].select_btn(mqtt)
+        await self.btns[6].select_btn(mqtt)
             
     # render the buttons for a single panel
     async def render_btns(self):
         await self.svc_dsp.lock()
+
         for panel in range(3):
             self.lcd.fill(clr.BLACK)
             
-            for b in self.butns:
+            for b in self.btns:
                 if b.panel == panel:
-                    b.render()
+                    b.render(self.lcd)
             
             self.lcd.show_pg(panel,3)
             
@@ -131,19 +127,38 @@ class ModuleService(PsosService):
         
         if panel_pt_y >= 40:
           btn = btn+6
-                    
-        if btn < 6:
-            for b in self.butns:
-                b.select = False
-            self.butns[btn].select = True
-            self.butns[6].select = True
+              
+        if self.btns[btn].selectable():
+            if btn < 6:
+                for b in self.btns:
+                    if b.selected:
+                        await b.deselect_btn(self.mqtt)
+
+                submenu = await self.btns[btn].select_btn(self.mqtt)
+                self.set_submenu(submenu)
+                await self.btns[6].select_btn(self.mqtt)
+                
+            else:
+                for b in range(6):
+                    i = b+6
+                    if i == btn:
+                        await self.btns[i].select_btn(self.mqtt)
+                    else:
+                        if self.btns[i].selected: 
+                            await self.btns[i].deselect_btn(self.mqtt)
             
-        else:
-            for b in range(6):
-                i = b+6
-                if i == btn:
-                    self.butns[i].select = True
-                else:
-                    self.butns[i].select = False
+            await self.render_btns()
             
-        await self.render_btns()
+    def set_submenu(self,submenu_name):
+        if submenu_name == None or not submenu_name in self.menu:
+            for i in range(6,12):
+                self.btns[i].set_parms(None)
+            return
+        
+        submenu = self.menu[submenu_name]
+        for i in range(6):
+            j = i + 6
+            if i < len(submenu):
+                self.btns[i+6].set_parms(submenu[i])
+            else:
+                self.btns[i+6].set_parms(None)
