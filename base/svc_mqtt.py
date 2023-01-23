@@ -232,6 +232,8 @@ class ModuleService(PsosService):
     async def publish(self,topic,payload,retain=False, qos=0):
         # if local topic, only send to local services
         if topic.startswith('local/'):
+            if self.get_parm("print_local",False):
+                print("pub local: ",topic[6:],payload)
             self.mqtt_callback(to_bytes(topic[6:]),to_bytes(payload))
         else:
             if self._client != None:
