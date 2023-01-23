@@ -57,15 +57,18 @@ class ModuleService(PsosService):
         m = SvcMsg()
         await mqtt.subscribe(self.get_parm("sub"),q)
         
-        await self.init_main_menu(mqtt)
-        await self.render_btns() 
+        msg_q = await self.init_main_menu()
+        await self.render_btns()
+        await uasyncio.sleep_ms(1000) # give other services time to start
+        for mq in msg_q:
+            await mqtt.publish(mq[0],mq[1])
 
         while True:
             data = await q.get()
             m.load_subscr(data)
             await self.check_menu(m.get_payload())
         
-    async def init_main_menu(self,mqtt):
+    async def init_main_menu(self):
         self.menu = self.get_parm("menu")
         if type(self.menu) == str:
             c = self._parms.get_config()
@@ -83,9 +86,12 @@ class ModuleService(PsosService):
             self.set_submenu(main_menu[0]["submenu"])
             
         # Select First Button of Main Menu and Submenu
-        await uasyncio.sleep_ms(1000) # give other services time to start
-        await self.btns[0].select_btn(mqtt)
-        await self.btns[6].select_btn(mqtt)
+        # await uasyncio.sleep_ms(1000) # give other services time to start
+        msg_q = []
+        await self.btns[0].select_btn(msg_q)
+        await self.btns[6].select_btn(msg_q)
+        
+        return msg_q
             
     # render the buttons for a single panel
     async def render_btns(self):
@@ -128,26 +134,31 @@ class ModuleService(PsosService):
         if panel_pt_y >= 40:
           btn = btn+6
               
+        msg_q = []
+        
         if self.btns[btn].selectable():
             if btn < 6:
                 for b in self.btns:
                     if b.selected:
-                        await b.deselect_btn(self.mqtt)
+                        await b.deselect_btn(msg_q)
 
-                submenu = await self.btns[btn].select_btn(self.mqtt)
+                submenu = await self.btns[btn].select_btn(msg_q)
                 self.set_submenu(submenu)
-                await self.btns[6].select_btn(self.mqtt)
+                await self.btns[6].select_btn(msg_q)
                 
             else:
                 for b in range(6):
                     i = b+6
                     if i == btn:
-                        await self.btns[i].select_btn(self.mqtt)
+                        await self.btns[i].select_btn(msg_q)
                     else:
                         if self.btns[i].selected: 
-                            await self.btns[i].deselect_btn(self.mqtt)
+                            await self.btns[i].deselect_btn(msg_q)
             
             await self.render_btns()
+            
+            for m in msg_q:
+                await self.mqtt.publish(m[0],m[1])
             
     def set_submenu(self,submenu_name):
         if submenu_name == None or not submenu_name in self.menu:

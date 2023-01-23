@@ -2,12 +2,14 @@
     "menu":[{"name":["MQTT","Filter"], "submenu":"mqtt", 
                 "select":["local/r03/dsp_mqtt/cmd","start"],
                 "deselect":["local/r03/dsp_mqtt/cmd","stop"] },
-            {"name":["MQTT","Scroll"],"submenu":"mqtt_scroll"},
+            {"name":["MQTT","Scroll"],"submenu":"mqtt_scroll", 
+                "select":["local/r03/dsp_mqtt/cmd","start"],
+                "deselect":["local/r03/dsp_mqtt/cmd","stop"]},
             {"name":"Devices","submenu":"devices"},    
             {"name":"Setup","submenu":"setup"}],    
             
     "mqtt":[
-        {"name":"All", "select":["local/r03/dsp_mqtt/flter","#"]},
+        {"name":"All", "select":["local/r03/dsp_mqtt/fltr","#"]},
         {"name":"Temp","select":["local/r03/dsp_mqtt/fltr","+/dht"]},
         {"name":"e01","select":["local/r03/dsp_mqtt/fltr","e01/#"]},
         {"name":"e02","select":["local/r03/dsp_mqtt/fltr","e02/#"]},

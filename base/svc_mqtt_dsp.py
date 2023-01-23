@@ -14,6 +14,10 @@ import psos_util
 from lcd_3inch5 import LCD
 import color_brg_556 as clr
 
+from psos_subscription import Subscription
+
+import gc
+
 lcd_width = const(480)
 lcd_height = const(320)
 
@@ -44,6 +48,9 @@ class ModuleService(PsosService):
         self.mqtt_log = [] # [""]*20
         self.curr_pos = 0
         
+        self.active = False # doesn't startup as active
+        self.fltr = None
+        
         # self.lcd_locked = False
         
     async def run(self):
@@ -58,20 +65,41 @@ class ModuleService(PsosService):
         
         while True:
             data = await q.get()
-            try:
-                await self.show_msg(data)
+        
+            # did we receive a command?
+            if psos_util.to_str(data[1]) == self.get_parm("sub_cmd"):
+                await self.exec_cmd(data[2])
+            # did we receive a filter?
+            elif psos_util.to_str(data[1]) == self.get_parm("sub_fltr"):
+                await self.set_filter(data[2])
                 
-                # was this device sent a "free" message?
-                if psos_util.to_str(data[1]) == self.get_parm("sub_free"):
-                    await self.free_mem()
-                    
-                if len(self.mqtt_log) > self.get_parm("max_log",250):
-                    await self.free_mem()
-                    
-            except Exception as e:
-                print("exception",str(e))
-                print("data:",data)
-            
+            await self.show_msg(data)
+
+            if len(self.mqtt_log) > self.get_parm("max_log",250):
+                await self.free_mem()
+                
+            gc.collect()
+                
+    # execute a command
+    async def exec_cmd(self,cmd):
+        if cmd == "free":
+            await self.free_mem()
+        elif cmd == "start":
+            self.active = True
+        elif cmd == "stop":
+            self.active = False
+        else:
+            await self.log("unrecognized command: {}".format(cmd))
+    
+    # create a filter
+    async def set_filter(self,fltr):
+        if fltr == "#":
+            self.fltr = None
+        else:
+            # don't actually subscribe
+            # just use this to select messages for display
+            self.fltr = Subscription(fltr,None,0)
+    
     async def free_mem(self):
         n = len(self.mqtt_log)
         if n > 30:
@@ -80,28 +108,52 @@ class ModuleService(PsosService):
             await self.log("log len after  = {}".format(len(self.mqtt_log)))
 
     async def show_msg(self,data):
-        # print("received",msg)
-        
         topic = psos_util.to_str(data[1])
         payload = psos_util.to_str(data[2])
         t = time.localtime(time.mktime(time.localtime())+self.tz*3600)
         
         t = (t[3],t[4],t[5],topic,payload)
         msg = "{0}:{1:02d}:{2:02d} {3} {4}".format(*t)
-        self.mqtt_log.append(msg)
+        self.mqtt_log.append((msg,topic.split("/")))
         
         '''  TODO: allow other services to take over display
         if self.svc_dsp.curr_svc != self._name:
             return
         '''
-        
+        '''
         if not self.svc_menu.butns[self.menu_item].select:
             return
+        '''
+        # we build the log of messages but wait to show them
+        # until we are active
+        if not self.active:
+            return
         
+        if self.fltr == None:
+            await self.show_log(self.mqtt_log)
+        else:
+            await self.show_filtered()
+            
+    # show only those rows which meet filter criteria
+    # Build a log of filtered results up to the maximum (15) then
+    # pass to show_log
+    async def show_filtered(self):
+        log = []
+        first_row = 15
+        for i in range(len(self.mqtt_log)-1,-1,-1):
+            row = self.mqtt_log[i]
+            if self.fltr.filter_match(row[1]):
+                log.insert(0,row)
+                if len(log) == 15:
+                    break
+                
+        await self.show_log(log)
+
+    async def show_log(self,mqtt_log):
         await self.svc_dsp.lock()
         self.lcd = self.svc_dsp.lcd
         
-        log_len = len(self.mqtt_log)
+        log_len = len(mqtt_log)
         first_row_idx = log_len - 15
         if first_row_idx < 0:
             first_row_idx = 0
@@ -114,7 +166,7 @@ class ModuleService(PsosService):
                 for j in range(5):        # 5 lines per panel
                     i = r_idx+j
                     if i < log_len:
-                        line = self.mqtt_log[i]
+                        line = mqtt_log[i][0]
                         if len(line) > char_idx:
                             self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
@@ -126,4 +178,4 @@ class ModuleService(PsosService):
         
         self.svc_dsp.unlock()
                 
-
+        
