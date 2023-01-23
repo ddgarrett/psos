@@ -8,6 +8,7 @@
 from psos_svc import PsosService
 from machine import Pin,SPI,PWM
 import gc
+import uasyncio 
 
 class ModuleService(PsosService):
 
