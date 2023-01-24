@@ -51,6 +51,9 @@ class ModuleService(PsosService):
         self.active = False # doesn't startup as active
         self.fltr = None
         
+        self.last_displ_row = ("","","")
+
+        
     async def run(self):
         self.svc_menu = self.get_svc("menu")
         self.menu_item = 0
@@ -69,6 +72,7 @@ class ModuleService(PsosService):
                 await self.exec_cmd(data[2])
             # did we receive a filter?
             elif psos_util.to_str(data[1]) == self.get_parm("sub_fltr"):
+                self.last_displ_row = ("","","filter changed")
                 await self.set_filter(data[2])
                 
             await self.show_msg(data)
@@ -101,9 +105,9 @@ class ModuleService(PsosService):
     async def free_mem(self):
         n = len(self.mqtt_log)
         if n > 30:
-            await self.log("log len before = {}".format(n))
+            # await self.log("log len before = {}".format(n))
             self.mqtt_log = self.mqtt_log[(n-25):]
-            await self.log("log len after  = {}".format(len(self.mqtt_log)))
+            # await self.log("log len after  = {}".format(len(self.mqtt_log)))
 
     async def show_msg(self,data):
         topic = psos_util.to_str(data[1])
@@ -134,7 +138,17 @@ class ModuleService(PsosService):
                 log.insert(0,row)
                 if len(log) == 15:
                     break
-                
+        # if filtered results didn't change anything,
+        # don't display the results
+        if len(log) == 0:
+            last_row = ("","","empty")
+        else:
+            last_row = log[len(log)-1]
+ 
+        if self.last_displ_row == last_row:
+            return
+        
+        self.last_displ_row = last_row
         await self.show_log(log)
 
     async def show_log(self,mqtt_log):
