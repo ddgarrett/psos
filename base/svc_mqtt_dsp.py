@@ -46,7 +46,6 @@ class ModuleService(PsosService):
         self.svc_dsp = self.get_svc("dsp")
 
         self.mqtt_log = [] # [""]*20
-        self.curr_pos = 0
         
         self.active = False # doesn't startup as active
         self.fltr = None
@@ -55,9 +54,6 @@ class ModuleService(PsosService):
 
         
     async def run(self):
-        self.svc_menu = self.get_svc("menu")
-        self.menu_item = 0
-
         q    = queue.Queue()
         msg  = SvcMsg()
         mqtt = self.get_mqtt()
@@ -106,15 +102,28 @@ class ModuleService(PsosService):
         n = len(self.mqtt_log)
         if n > 30:
             # await self.log("log len before = {}".format(n))
+            await self.save_log(n-25)
             self.mqtt_log = self.mqtt_log[(n-25):]
             # await self.log("log len after  = {}".format(len(self.mqtt_log)))
 
+    async def save_log(self,n):
+        fn = self.get_parm("save_fn",None)
+        if fn != None:
+            await self.svc_dsp.lock()
+            with open(fn, "a") as myfile:
+                for i in range(n):
+                    line = "{0}\t{1}\t{2}\t{3}".format(*self.mqtt_log[i])
+                    myfile.write(line)
+                    myfile.write("\n")
+                    
+            self.svc_dsp.unlock()
+            
     async def show_msg(self,data):
         topic = psos_util.to_str(data[1])
-        payload = psos_util.to_str(data[2])
+        payload = psos_util.to_str(data[2]).replace("\n","↵")
         t = time.localtime(time.mktime(time.localtime())+self.tz*3600)
         
-        t = ("{3}:{4:02d}:{5:02d}".format(*t),topic,payload) # (time,topic,payload)
+        t = ("{1}/{2}/{0}".format(*t),"{3}:{4:02d}:{5:02d}".format(*t),topic,payload) # (time,topic,payload)
         self.mqtt_log.append(t)
         
         # we build the log of messages but may wait to show them
@@ -166,7 +175,7 @@ class ModuleService(PsosService):
                 for j in range(5):            # 5 lines per panel
                     i = r_idx+j
                     if i < log_len:
-                        line = "{0} {1} {2}".format(*mqtt_log[i]) # (time,topic,payload)
+                        line = "{1} {2} {3}".format(*mqtt_log[i]) # (time,topic,payload)
                         if len(line) > char_idx:
                             self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
