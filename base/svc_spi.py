@@ -33,7 +33,6 @@ class ModuleService(PsosService):
     def reset(self):
         p = self.default
         self.spi = SPI(p["slot"],p["baud"],sck=Pin(p["sck"]),mosi=Pin(p["mosi"]),miso=Pin(p["miso"]))
-        self.unlock()
         
     def unlock(self):
         self.locked = False
