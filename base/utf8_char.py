@@ -35,6 +35,8 @@ SYM_WIFI              = "📶"
 SYM_EX_OUT            = "✗"
 CHR_NULL              = "\x00"
 
+KEY_RETURN            = "↵"
+
 '''
 # Keys that scroll up and down between apps
 KEYS_NAVIGATE = [KEY_INCREASE, KEY_DECREASE]
