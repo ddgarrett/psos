@@ -5,7 +5,9 @@
             {"name":["MQTT","Scroll"],"submenu":"mqtt_scroll", 
                 "select":["local/r03/dsp_mqtt/cmd","start"],
                 "deselect":["local/r03/dsp_mqtt/cmd","stop"]},
-            {"name":"Devices","submenu":"devices"},    
+            {"name":"Devices","submenu":"devices", 
+                "select":["local/r03/dsp_dvc/cmd","start"],
+                "deselect":["local/r03/dsp_dvc/cmd","stop"]},    
             {"name":"Setup","submenu":"setup"}],    
             
     "mqtt":[
