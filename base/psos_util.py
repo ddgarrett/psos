@@ -67,4 +67,9 @@ def load_json(fn):
     
     return None
 
-    
+# return the size of a file
+def file_sz(fn):
+    try:
+        return os.stat(fn)[6]
+    except:
+        return 0
