@@ -115,7 +115,7 @@ async def main(parms,config):
         uasyncio.create_task(svc.run())
 
         
-    pmap = False
+    pmap = True
     defaults["started"] = True
     
     if lcd_svc != None:
