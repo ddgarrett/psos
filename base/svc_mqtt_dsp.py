@@ -111,15 +111,9 @@ class ModuleService(PsosService):
         log_file_len = await self.mqtt.log_len()
         insert_pos = len(log)
         
-        '''
-        last_row_idx = -1
-        if insert_pos > 0:
-            last_row_idx = log[insert_pos-1][0]
-        '''
-        
         cnt = 0
         
-        t1 = time.ticks_ms()
+        # t1 = time.ticks_ms()
         
         # read backwards through log file entries
         for i in range(log_file_len-1,-1,-1):
@@ -150,17 +144,17 @@ class ModuleService(PsosService):
             if cnt%10 == 0:
                 await uasyncio.sleep_ms(0)
             
-        interval = time.ticks_diff(time.ticks_ms(),t1)
+        # interval = time.ticks_diff(time.ticks_ms(),t1)
         self.last_row_idx = log_file_len - 1
-        print("read {} records from disk in {}ms, last row idx={}".format(cnt,interval,self.last_row_idx))
+        #print("read {} records from disk in {}ms, last row idx={}".format(cnt,interval,self.last_row_idx))
 
-        t1 = time.ticks_ms()
+        #t1 = time.ticks_ms()
         if self.need_refresh:
             await self.show_log(log)
             self.need_refresh = False
             
-        interval = time.ticks_diff(time.ticks_ms(),t1)
-        print("... {}ms to display data".format(interval))
+        # interval = time.ticks_diff(time.ticks_ms(),t1)
+        # print("... {}ms to display data".format(interval))
 
     async def show_log(self,mqtt_log):
         await self.svc_dsp.lock()
@@ -180,7 +174,7 @@ class ModuleService(PsosService):
                         row = mqtt_log[i] # data is in second position
                         row = row[1]
                         line = "{1} {2} {3}".format(*row) # (time,topic,payload)
-                        line = "{} {}".format(mqtt_log[i][0],line)
+                        # line = "{} {}".format(mqtt_log[i][0],line)
                         if len(line) > char_idx:
                             self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
