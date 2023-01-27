@@ -45,120 +45,122 @@ class ModuleService(PsosService):
 
         self.svc_dsp = self.get_svc("dsp")
 
-        self.mqtt_log = [] # [""]*20
+        self.mqtt_log = [] 
         
         self.active = False # doesn't startup as active
-        self.fltr = None
+        self.fltr_str = "#"
+        self.fltr = self.fltr = Subscription("#",None,0)
         
-        self.last_displ_row = ("","","")
-
+        #self.last_displ_row = ("","","")
+        self.last_row_idx = -1
+        self.need_refresh = True
         
     async def run(self):
         q    = queue.Queue()
         msg  = SvcMsg()
-        mqtt = self.get_mqtt()
         
-        await mqtt.subscribe("#",q)
+        # receive via MQTT LOG instead of directly from MQTT
+        # This will allow us to index through disk version of log
+        mqtt = self.get_parm("mqtt_log",None)
+        self.mqtt = self.get_svc(mqtt)
+        await self.mqtt.subscribe("#",q)
         
         while True:
             data = await q.get()
-        
+            
             # did we receive a command?
             if psos_util.to_str(data[1]) == self.get_parm("sub_cmd"):
                 await self.exec_cmd(data[2])
+                
             # did we receive a filter?
             elif psos_util.to_str(data[1]) == self.get_parm("sub_fltr"):
-                self.last_displ_row = ("","","filter changed")
+                # self.last_displ_row = ("","","filter changed")
                 await self.set_filter(data[2])
-                
+        
             await self.show_msg(data)
-
-            if len(self.mqtt_log) > self.get_parm("max_log",250):
-                await self.free_mem()
-                
+            
             gc.collect()
                 
     # execute a command
     async def exec_cmd(self,cmd):
-        if cmd == "free":
-            await self.free_mem()
-        elif cmd == "start":
+        if cmd == "start":
             self.active = True
+            self.need_refresh = True
         elif cmd == "stop":
             self.active = False
+            self.need_refresh = True
         else:
             await self.log("unrecognized command: {}".format(cmd))
     
     # create a filter
-    async def set_filter(self,fltr):
-        if fltr == "#":
-            self.fltr = None
-        else:
-            # don't actually subscribe
-            # just use this to select messages for display
+    async def set_filter(self,fltr):        
+        if fltr != self.fltr_str:
+            self.fltr_str = fltr
             self.fltr = Subscription(fltr,None,0)
+            self.mqtt_log = []
+            self.last_row_idx = -1
     
-    async def free_mem(self):
-        n = len(self.mqtt_log)
-        if n > 30:
-            # await self.log("log len before = {}".format(n))
-            await self.save_log(n-25)
-            self.mqtt_log = self.mqtt_log[(n-25):]
-            # await self.log("log len after  = {}".format(len(self.mqtt_log)))
-
-    async def save_log(self,n):
-        fn = self.get_parm("save_fn",None)
-        if fn != None:
-            await self.svc_dsp.lock()
-            with open(fn, "a") as myfile:
-                for i in range(n):
-                    line = "{0}\t{1}\t{2}\t{3}".format(*self.mqtt_log[i])
-                    myfile.write(line)
-                    myfile.write("\n")
-                    
-            self.svc_dsp.unlock()
-            
+    
+    # Add Data to Array to be displayed
     async def show_msg(self,data):
-        topic = psos_util.to_str(data[1])
-        payload = psos_util.to_str(data[2]).replace("\n","↵")
-        t = time.localtime(time.mktime(time.localtime())+self.tz*3600)
-        
-        t = ("{1}/{2}/{0}".format(*t),"{3}:{4:02d}:{5:02d}".format(*t),topic,payload) # (time,topic,payload)
-        self.mqtt_log.append(t)
-        
-        # we build the log of messages but may wait to show them
         if not self.active:
             return
+
+        log = self.mqtt_log
         
-        if self.fltr == None:
-            await self.show_log(self.mqtt_log)
-        else:
-            await self.show_filtered()
+        log_file_len = await self.mqtt.log_len()
+        insert_pos = len(log)
+        
+        '''
+        last_row_idx = -1
+        if insert_pos > 0:
+            last_row_idx = log[insert_pos-1][0]
+        '''
+        
+        cnt = 0
+        
+        t1 = time.ticks_ms()
+        
+        # read backwards through log file entries
+        for i in range(log_file_len-1,-1,-1):
+            # reached previously read data?
+            if self.last_row_idx == i:
+                break
             
-    # show only those rows which meet filter criteria
-    # Build a log of filtered results up to the maximum (15) then
-    # pass to show_log
-    async def show_filtered(self):
-        log = []
-        for i in range(len(self.mqtt_log)-1,-1,-1):
-            row = self.mqtt_log[i]
-            filter_split = row[1].split('/')
+            # new row match filter?
+            row = await self.mqtt.read_log_entry(i)
+            cnt += 1
+            row = row.split("\t")    
+            filter_split = row[2].split('/')
             if self.fltr.filter_match(filter_split):
-                log.insert(0,row)
-                if len(log) == 15:
-                    break
-        # if filtered results didn't change anything,
-        # don't display the results
-        if len(log) == 0:
-            last_row = ("","","empty")
-        else:
-            last_row = log[len(log)-1]
- 
-        if self.last_displ_row == last_row:
-            return
-        
-        self.last_displ_row = last_row
-        await self.show_log(log)
+                
+                # add row to end
+                log.insert(insert_pos,(i,row))
+                self.need_refresh = True
+
+                # more rows than we need?
+                if len(log) > 15:
+                    del log[0]
+                    insert_pos = insert_pos -1
+                    if insert_pos < 0:
+                        break
+                    
+            # give other tasks a chance to run every 10th record
+            # based on some timings, that's ~1/3 second
+            if cnt%10 == 0:
+                await uasyncio.sleep_ms(0)
+            
+        interval = time.ticks_diff(time.ticks_ms(),t1)
+        self.last_row_idx = log_file_len - 1
+        print("read {} records from disk in {}ms, last row idx={}".format(cnt,interval,self.last_row_idx))
+
+        t1 = time.ticks_ms()
+        if self.need_refresh:
+            await self.show_log(log)
+            self.need_refresh = False
+            
+        interval = time.ticks_diff(time.ticks_ms(),t1)
+        print("... {}ms to display data".format(interval))
 
     async def show_log(self,mqtt_log):
         await self.svc_dsp.lock()
@@ -175,7 +177,10 @@ class ModuleService(PsosService):
                 for j in range(5):            # 5 lines per panel
                     i = r_idx+j
                     if i < log_len:
-                        line = "{1} {2} {3}".format(*mqtt_log[i]) # (time,topic,payload)
+                        row = mqtt_log[i] # data is in second position
+                        row = row[1]
+                        line = "{1} {2} {3}".format(*row) # (time,topic,payload)
+                        line = "{} {}".format(mqtt_log[i][0],line)
                         if len(line) > char_idx:
                             self.lcd.text(line[char_idx:],0,j*16,clr.WHITE)
 
@@ -186,5 +191,3 @@ class ModuleService(PsosService):
                 await uasyncio.sleep_ms(0)
         
         self.svc_dsp.unlock()
-                
-        

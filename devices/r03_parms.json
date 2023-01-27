@@ -6,6 +6,7 @@
     "dev"  :"{device}",
     "base" :"emp",
     "log_file":"reset_rsn.txt",
+    "mqtt_log":"mqtt_log",
     "no_format":["format"],
     "tz"    : -8
     },
@@ -16,17 +17,20 @@
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq", "print_local":false },
     
-    {"name": "spi1",  "module":"svc_spi", "slot":1},
+    {"name": "spi1",  "module":"svc_spi", "slot":1, "baud":10000000},
     
     {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
     
     {"name":"sdcard", "module":"svc_sdcard_v2", "cs":22, "spi":"spi1",
             "mount_pt":"/sd", "sub":"{dev}/sdcard/upd", "pub":"{dev}/sdcard"},
     
+    {"name":"mqtt_log", "module":"svc_mqtt_log", "sub":"#", "print":false,
+            "log_fn":"/sd/mqtt_log.txt", "idx_fn":"/sd/mqtt_log_idx.txt", "spi_lock":"spi1" },
+             
     {"name": "dsp", "module":"svc_dsp", "spi":"spi1", "sub":"{dev}/dsp/tch"},
     
     {"name": "menu", "module":"svc_touch_menu", "menu":"touch_menu.json",
-             "svc_dsp":"dsp", "sub":"{dev}/menu/tch" }
+             "svc_dsp":"dsp", "sub":"{dev}/menu/tch" },
 
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
@@ -37,18 +41,19 @@
                  {"x":0, "y":240, "h":80,  "w":480, "pub":"local/r03/menu/tch"}
              ]},
              
-
     {"name": "dsp_mqtt", "module":"svc_mqtt_dsp",
-             "svc_dsp":"dsp", "svc_touch":"touch", "max_log":100,
-             "sub":"#", "save_fn":"/sd/save_mqtt.txt"
+             "svc_dsp":"dsp", "svc_touch":"touch", "max_log":50,
+             "sub":"#", "save_fn":"/sd/save_mqtt.txt",
              "sub_cmd":"{dev}/dsp_mqtt/cmd", 
              "sub_fltr":"{dev}/dsp_mqtt/fltr"},
              
-    {"name": "dsp_dvc", "module":"svc_dsp_dvc",
-             "svc_dsp":"dsp",
-             "sub_cmd":"{dev}/dsp_dvc/cmd",
+    {"name": "dsp_dvc", "module":"svc_dsp_dvc","svc_dsp":"dsp",
+             "subs":{"tch": "r03/dsp/tch", "cmd":"r03/dsp_dvc/cmd",
+                    "temp": "+/dht", "soil":"+/soil", "mem":"+/mem"},
              "dvc":[["e01","e02","emp"],
-                    ["r02","e05"]]  }
+                    ["r02","e05","r03"]] },
+                    
+
 
  ],
  
