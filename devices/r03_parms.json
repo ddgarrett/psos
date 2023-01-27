@@ -51,7 +51,7 @@
              "subs":{"tch": "r03/dsp/tch", "cmd":"r03/dsp_dvc/cmd",
                     "temp": "+/dht", "soil":"+/soil", "mem":"+/mem"},
              "dvc":[["e01","e02","emp"],
-                    ["r02","e05","r03"]] },
+                    ["r02","e05","r03"]] }
                     
 
 
