@@ -41,7 +41,9 @@ class ModuleService(PsosService):
         
         self.regions = self.get_parm("regions")
 
-        self.touch = Touch(self.spi_svc)
+                
+        baud = self.get_parm("baud",5_000_000)
+        self.touch = Touch(self.spi_svc,baud=baud)
         
         # todo: make these a parm and customization value
         self.x_min = 385  # x = 0

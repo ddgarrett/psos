@@ -17,7 +17,7 @@
     {"name": "wifi", "module":"svc_wifi", "disconnect":false},
     {"name": "mqtt", "module":"svc_mqtt", "broker":"hivemq", "print_local":false },
     
-    {"name": "spi1",  "module":"svc_spi", "slot":1, "baud":10000000},
+    {"name": "spi1",  "module":"svc_spi", "slot":1, "baud":60000000},
     
     {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
     
@@ -35,7 +35,7 @@
     {"name": "mem_use", "module":"svc_mem_use", 
              "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
              
-    {"name": "touch", "module":"svc_touch", "spi":"spi1" ,
+    {"name": "touch", "module":"svc_touch", "spi":"spi1" , "baud":5000000,
              "regions":[
                  {"x":0, "y":0,   "h":240, "w":480, "pub":"local/r03/dsp/tch" },
                  {"x":0, "y":240, "h":80,  "w":480, "pub":"local/r03/menu/tch"}

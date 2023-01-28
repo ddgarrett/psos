@@ -22,6 +22,8 @@ class ModuleService(PsosService):
         miso = self.get_parm("miso",12)
         baud = self.get_parm("baud",5_000_000)
         
+        self.baud = baud
+        
         # self.spi = SPI(slot,baud,sck=Pin(sck),mosi=Pin(mosi),miso=Pin(miso))
         
         self.default = {"slot":slot, "sck":sck, "mosi":mosi, "miso":miso, "baud":baud}
@@ -29,10 +31,17 @@ class ModuleService(PsosService):
         self.reset()
         
     # reset to the default SPI configuration
-    # also sets locked to False
     def reset(self):
         p = self.default
         self.spi = SPI(p["slot"],p["baud"],sck=Pin(p["sck"]),mosi=Pin(p["mosi"]),miso=Pin(p["miso"]))
+        
+    # change baud rate to specified value.
+    # IF no value specified, set it to the original value
+    def reinit(self,baud=None):
+        if baud == None:
+            baud = self.baud
+
+        self.spi.init(baudrate=baud)
         
     def unlock(self):
         self.locked = False

@@ -26,7 +26,7 @@ TP_IRQ   = const(17)
 
 class Touch():
 
-    def __init__(self,spi_svc):
+    def __init__(self,spi_svc,baud=5_000_000):
         
         self.tp_cs =Pin(TP_CS,Pin.OUT)
         self.irq = Pin(TP_IRQ,Pin.IN)
@@ -36,6 +36,7 @@ class Touch():
         self.spi_svc = spi_svc
         self.spi = spi_svc.get_spi()
 
+        self.baud = baud
         
         gc.collect()
         
@@ -44,6 +45,8 @@ class Touch():
             gc.collect()
             
             await self.spi_svc.lock()
+            
+            self.spi_svc.reinit(baud=self.baud)
             
             # self.spi = await self.spi_svc.set_spi(5_000_000,LCD_SCK,LCD_MOSI,LCD_MISO)
             # self.spi = SPI(1,5_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
@@ -69,6 +72,7 @@ class Touch():
             self.tp_cs(1)
             
             # resets spi to previous settings and unlocks spi
+            self.spi_svc.reinit() # defaults baud rate to original baud rate
             self.spi_svc.unlock()
             # self.spi_svc.reset()
             # self.spi = SPI(1,60_000_000,sck=Pin(LCD_SCK),mosi=Pin(LCD_MOSI),miso=Pin(LCD_MISO))
