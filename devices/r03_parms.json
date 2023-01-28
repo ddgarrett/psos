@@ -47,7 +47,7 @@
              "sub_cmd":"{dev}/dsp_mqtt/cmd", 
              "sub_fltr":"{dev}/dsp_mqtt/fltr"},
              
-    {"name": "dsp_dvc", "module":"svc_dsp_dvc","svc_dsp":"dsp",
+    {"name": "dsp_dvc", "module":"svc_dsp_dvc","svc_dsp":"dsp", "print_stats":false,
              "subs":{"tch": "r03/dsp/tch", "cmd":"r03/dsp_dvc/cmd",
                     "temp": "+/dht", "soil":"+/soil", "mem":"+/mem"},
              "dvc":[["e01","e02","emp"],

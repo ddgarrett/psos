@@ -55,6 +55,8 @@ class ModuleService(PsosService):
         self.last_row_idx = -1
         self.need_refresh = True
         
+        self.print_stats = self.get_parm("print_stats",False)
+        
     async def run(self):
         q    = queue.Queue()
         msg  = SvcMsg()
@@ -112,8 +114,9 @@ class ModuleService(PsosService):
         insert_pos = len(log)
         
         cnt = 0
+        b_cnt = 0
         
-        # t1 = time.ticks_ms()
+        t1 = time.ticks_ms()
         
         # read backwards through log file entries
         for i in range(log_file_len-1,-1,-1):
@@ -124,6 +127,7 @@ class ModuleService(PsosService):
             # new row match filter?
             row = await self.mqtt.read_log_entry(i)
             cnt += 1
+            b_cnt = b_cnt + len(row)+1+4
             row = row.split("\t")    
             filter_split = row[2].split('/')
             if self.fltr.filter_match(filter_split):
@@ -144,9 +148,14 @@ class ModuleService(PsosService):
             if cnt%10 == 0:
                 await uasyncio.sleep_ms(0)
             
-        # interval = time.ticks_diff(time.ticks_ms(),t1)
-        self.last_row_idx = log_file_len - 1
-        #print("read {} records from disk in {}ms, last row idx={}".format(cnt,interval,self.last_row_idx))
+        if self.print_stats:
+            interval = time.ticks_diff(time.ticks_ms(),t1)
+            self.last_row_idx = log_file_len - 1
+            # print("read {} records from disk in {}ms, last row idx={}".format(cnt,interval,self.last_row_idx))
+            if interval > 0:
+                print("In {:.3f} sec, read {} recs @ {:.0f}recs/sec, {} bytes @ {:.0f}bytes/sec".format(interval/1000,cnt,cnt/interval*1000,b_cnt,b_cnt/interval*1000))
+            else:
+                print(" 0 seconds, read {} recs".format(cnt))
 
         #t1 = time.ticks_ms()
         if self.need_refresh:
