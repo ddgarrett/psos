@@ -1,123 +1,53 @@
 {
-"name":"PSOS v00.02 - e02 device",
+"name":"PSOS v0.1.0 - e02 type device",
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"e02/",
-    "mqtt_name":"office_monitor",
-    "mqtt_descr":"e02 - ESP32 Office Temperature and Humidity Monitor",
+    "dev"  :"{device}",
+    "lcd"  :"lcd",
+    "gyro" :"gyro",
+    "menu" :"substation_menu.json",
     "log_file":"reset_rsn.txt",
-    
-    "conf_pfx":"base/config/"
+    "no_format":["format"],
+    "tz"    : -8
     },
-    
-"NOTE":"wifi and mqtt must be first two services",
     
 "services": [
     {"name": "wifi", "module":"svc_wifi",  "disconnect":false, "set_time":true},
-    {"name": "mqtt", "module":"svc_mqtt",  "_broker":"_docker_home_acer", "broker":"hivemq" },
+    {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq" },
     {"name": "i2c0", "module":"svc_i2c", "channel":0 },
     {"name": "i2c1", "module":"svc_i2c", "channel":1 },
-    
-    {"name": "log",  "module":"svc_log",   "pub_log":"e02/log" },
-    
-    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C", "timeout":10,
-             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
-             "disp_driver":"ssd1306_lcd",
-             "subscr_msg":"e02/lcd" },
-             
-    {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
-             "subscr_upd":"e02/dht/upd",   "pub_upd":"e02/dht" },
-    {"name": "dsp_dht", "module":"svc_pipe",
-             "subscr_in":"e02/dht",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e02'}}]" },
 
-    {"name": "soil", "module":"svc_soil",   "pin": 32, "dry":56118, "wet":27223, 
-             "sub":"e02/soil/upd",   "pub":"e02/soil" },
-    {"name": "dsp_soil", "module":"svc_pipe",
-             "subscr_in":"e02/soil",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: e02'}}]" },
-             
-    {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e02/mem/upd",   "pub_upd":"e02/mem" },
-             
-    {"name": "dsp_cam", "module":"svc_pipe",
-             "subscr_in":"cam02/#",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'{payload}'}}]" },
+    {"name": "log",  "module":"svc_log",   "pub_log":"{dev}/log" },
+
+    {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C", "timeout":10,
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°✗📶", 
+             "disp_driver":"ssd1306_lcd",
+             "subscr_msg":"{dev}/lcd" },
              
     {"name": "gyro", "module":"svc_gyro", "i2c":"i2c1", "trigger":25,
-             "pub":"local/e02/menu" },
+             "pub":"local/{dev}/menu" },
              
-    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e02/menu",
-             "quick": {
-                 "up":[{"cmd":"msg", "msg":"E02 TEMP"},
-                       {"cmd":"pub", "pub":"e02/dht/upd"}], 
-                       
-                 "down":[{"cmd":"msg", "msg":"E02 SOIL"},
-                         {"cmd":"pub", "pub":"e02/soil/upd"}],
-                       
-                 "exit":[{"cmd":"pub", "pub":"local/e02/lcd", "msg":["backlight_on"]}]
-                 },
-             "items": [
-                 {"item":" --- SETUP ---", "cmd":[]},
-                 {"item":"SET DRY", "cmds":[{"cmd":"exit"}] },
-                 {"item":"SET WET", "cmds":[{"cmd":"exit"}]},
-                 {"item":"SET TEMP", "cmds":[{"cmd":"exit"}]},
-                 {"item":"SET HUMIDITY", "cmds":[{"cmd":"exit"}]},
-                 {"item":" --- MISC ---", "cmds":[]},
-                 {"item":"CLICK", "cmds":[
-                     {"cmd":"exit"},
-                     {"cmd":"pub", "pub":"cam02/click", "msg":"click"} ]},
-                 {"item":"TEMPS...", "cmds":[{"cmd":"menu","name":"menu_temp"}]}
-             ]},
+    {"name": "mem_use", "module":"svc_mem_use", 
+             "subscr_upd":"{dev}/mem/upd",   "pub_upd":"{dev}/mem" },
              
-    {"name": "menu_temp", "module":"svc_submenu",
-            "items":[
-                {"item":" --- TEMP ---", "cmd":[]},
-                {"item":"EMP-OFFICE",   "cmds":[
-                    {"cmd":"exit"},
-                    {"cmd":"pub", "pub":"emp/dht/upd"}]},
-                {"item":"E01-BEDROOM",   "cmds":[
-                    {"cmd":"exit"},
-                    {"cmd":"pub", "pub":"e01/dht/upd"}]},
-                {"item":"E02-VARIES",   "cmds":[
-                    {"cmd":"exit"},
-                    {"cmd":"pub", "pub":"e01/dht/upd"}]}
-    ]}
-       
- ],
- 
- "removed":[
- 
-    {"name": "fwd_e02", "module":"svc_pipe",
-             "subscr_in":"e02/lcd",  "pub_out":"e05/lcd" },
- 
-    {"name": "dsp_dht_e01", "module":"svc_pipe",
-             "subscr_in":"e01/dht",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e01'}}]" },
-    {"name": "dsp_dht_e04", "module":"svc_pipe",
-             "subscr_in":"e04/dht",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e04'}}]" },
-    {"name": "dsp_dht_e05", "module":"svc_pipe",
-             "subscr_in":"e05/dht",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e05'}}]" },
-    {"name": "dsp_dht_emp", "module":"svc_pipe",
-             "subscr_in":"emp/dht",  "pub_out":"local/e02/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: emp'}}]" },
-
-    {"name": "sd_card", "module":"svc_sd_card", "mount_pt":"/sd", 
-             "slot":2, "sck":18, "mosi":23, "miso":19, "cs":5, "baud":1000000,
-             "subscr_upd":"e02/sd/upd",  "pub_upd":"e02/sd" },
-    
-    {"name": "log_dht", "module":"svc_log_dat", "subscr_log":"+/dht", "file_name":"sd/dht_log.txt"},
-    {"name": "log_log", "module":"svc_log_dat", "subscr_log":"+/log", "file_name":"sd/log_log.txt"},
-    {"name": "log_all", "module":"svc_log_dat", "subscr_log":"#",     "file_name":"sd/all_log.txt"},
-
-    {"name": "trigger", "module":"svc_pub_timer", "pub_wait":300, "sleep_ms":3000,
-             "pub_msg":["upd","upd","upd","upd","upd","upd","upd"],
-             "pub_topics": ["emp/mem/upd","e01/mem/upd","e02/mem/upd","e02/sd/upd","d01/mem/upd","d02/mem/upd","d03/mem/upd"] },
-    
-    {"name": "fwd_emp", "module":"svc_pipe",
-             "subscr_in":"emp/lcd",  "pub_out":"e02/lcd" }
+    {"name": "temp", "module":"svc_dht", "dht_pin":4, "dht22":true,
+             "subscr_upd":"{dev}/dht/upd",   "pub_upd":"{dev}/dht" },
+    {"name": "dsp_dht", "module":"svc_pipe",
+             "subscr_in":"{dev}/dht",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e02'}}]" },
+             
+    {"name": "soil", "module":"svc_soil",   "pin": 32, "dry":56118, "wet":27223, 
+             "sub":"{dev}/soil/upd",   "pub":"{dev}/soil" },
+    {"name": "dsp_soil", "module":"svc_pipe",
+             "subscr_in":"{dev}/soil",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: e02'}}]" },
+             
+    {"name": "git", "module":"svc_git_rst", 
+         "upd_parms":"git_oled_upd_parms.json", "sub":"{dev}/git/upd" },
+         
+    {"name": "reset", "module":"svc_reset", "sub":"{dev}/reset/upd" },
+         
+    {"name": "menu", "module":"svc_menu", "sub":"{dev}/menu", "menu":"{menu}"},
  ]
 }
