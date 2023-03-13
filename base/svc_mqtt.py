@@ -84,6 +84,12 @@ class ModuleService(PsosService):
         for subscr in self._subscriptions:
             subscr.put_match(t_split,t,m)
             
+    def exit_svc(self):
+        if (self._client != None and
+            self.wifi.wifi_connected()):
+            self._client.disconnect()
+            print("mqtt disconnected")
+        
     async def run(self):
                 
         ping_wait = 0
