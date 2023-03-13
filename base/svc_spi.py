@@ -33,7 +33,15 @@ class ModuleService(PsosService):
     # reset to the default SPI configuration
     def reset(self):
         p = self.default
-        self.spi = SPI(p["slot"],p["baud"],sck=Pin(p["sck"]),mosi=Pin(p["mosi"]),miso=Pin(p["miso"]))
+        self.spi = SPI(p["slot"],baudrate=p["baud"],sck=Pin(p["sck"]),mosi=Pin(p["mosi"]),miso=Pin(p["miso"]))
+        # print("reset:",self.spi)
+        
+    def exit_svc(self):
+        try:
+            self.spi.deinit()
+            print("spi deinit")
+        except:
+            pass
         
     # change baud rate to specified value.
     # IF no value specified, set it to the original value
@@ -42,11 +50,14 @@ class ModuleService(PsosService):
             baud = self.baud
 
         self.spi.init(baudrate=baud)
+        # print("reinit:",self.spi)
         
-    def unlock(self):
+    def unlock(self,baud=None):
+        self.reinit(baud=baud)
+        # print("unlock:",self.spi)
         self.locked = False
         
-    async def lock(self):
+    async def lock(self,baud=None):
         i = 0
         while self.locked:
             await uasyncio.sleep_ms(100)
@@ -55,6 +66,8 @@ class ModuleService(PsosService):
                 raise Exception('waited too long for spi lock') 
             
         self.locked = True
+        self.reinit(baud)
+        # print("lock:",self.spi)
         
     def get_spi(self):
         return self.spi
