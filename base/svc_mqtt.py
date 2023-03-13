@@ -4,6 +4,23 @@
     Class that connects to MQTT and supports
     publish and subscribe.
     
+    Other services use this service to publish and subscribe to MQTT. 
+    
+    Notes:
+    1. If topic begins with "local/" this service
+       a. removes the "local/" prefix
+       b. forwards the message to any services subscribing to the topic
+       c. does not forward the message the global MQTT broker
+       
+    2. If there is no wifi service or the wifi service has not yet connected
+       or this service has not yet connected to the MQTT broker,
+       it will forward published messages to any subscribed service.
+       
+       Note that this allows MQTT subscribe/publish to be used without an MQTT broker.
+       This can be useful for testing since it allows running the test without
+       waiting for WiFi and the MQTT broker. This also allows PSOS to be run on
+       microcontrollers without WiFi such as the original Raspberry Pi Pico.
+    
 """
 
 from psos_svc import PsosService
