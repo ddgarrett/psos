@@ -40,7 +40,7 @@ class ModuleService(PsosService):
         # wait for wifi
         wifi    = self.get_svc("wifi")
         while not wifi.wifi_connected():
-            pass
+            await uasyncio.sleep_ms(500)
         
         mqtt = self.get_mqtt()
 
@@ -86,10 +86,8 @@ class ModuleService(PsosService):
     async def update(self):
         # read github manifest file as generated 
         # by buid_manifest.py run on local PC
-        self.display_lcd_msg("read github\nmanifest.json")
-        await self.log("read github manifest.json")
-        
         git = await self.get_github_file("manifest.json")
+               
         git = ujson.loads(git)
         git = self.cnv_list_to_dict(git["obj"],"name")
 
@@ -131,7 +129,7 @@ class ModuleService(PsosService):
             fn = local_file["name"]
             if not fn in git_mani:
                 self.display_lcd_msg("delete file\n"+directory+"/"+fn)
-                await self.log("delete file "+directory+"/"+fn)
+                self.log("delete file "+directory+"/"+fn)
                 self.updates = True
                 self.delete_file(directory+"/"+fn)
             else:
@@ -178,6 +176,13 @@ class ModuleService(PsosService):
 
         uri = "https://raw.githubusercontent.com/{repo}/{sha}/{fn}".format(**self.git_parms)
         r = urequests.get(uri)
+        
+        if r.status_code  != 200:
+            self.display_lcd_msg("NOT FOUND: git file\n{}".format(fn))
+            await self.log("NOT FOUND: uri {}".format(uri))
+            r.close()
+            self.reset(rsn="git uri not found: {}".format(uri))
+        
         c = psos_util.to_str(r.content)
         r.close()
         
