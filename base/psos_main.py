@@ -32,6 +32,11 @@ import micropython
 
 
 async def main(parms,config):
+    
+    # should memory map be printed?
+    pmap = False
+    if "pmap" in config:
+        pmap = config["pmap"]
         
     # globally accessible default parameters
     defaults = {}
@@ -73,17 +78,7 @@ async def main(parms,config):
     if "lcd" in defaults:
         lcd_name = defaults["lcd"]
     
-    '''
-    # import all modules first to reduce fragmentation (a bit)
-    for svc_parms in svc:       
-        # module_name = svc_parms["module"]
-        # print("... " + module_name)
-        services[svc_parms["name"]] = __import__(svc_parms["module"])
-        gc.collect()
-    '''
-    
     for svc_parms in svc:
-        
         gc.collect()
 
         # create module specific parms object
@@ -115,7 +110,7 @@ async def main(parms,config):
         uasyncio.create_task(svc.run())
 
         
-    pmap = True
+    # pmap = True
     defaults["started"] = True
     
     if lcd_svc != None:
@@ -130,9 +125,8 @@ async def main(parms,config):
         await uasyncio.sleep_ms(5000)
         
         
-        if not pmap:
+        if pmap:
             gc.collect()
             print("memory: ",gc.mem_free())
-            pmap = True
+            pmap = False
             micropython.mem_info(1)
-        
