@@ -19,6 +19,9 @@ class Customization:
         self.new_cust = None
 
     def get_cust(self):
+        if self.cust == None:
+            self.cust = self.read_cust()
+            
         return self.cust
     
     def begin_new_cust(self):
