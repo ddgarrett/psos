@@ -17,7 +17,7 @@ class ModuleService(PsosService):
         self.svc = self.get_svc(svc_soil)
         self.attr = self.get_parm("attr")
         
-        self.svc.begin_new_cust()
+        self.svc.cust.begin_new_cust()
         
     async def run(self):
         self.menu.update_lcd("running test...")
@@ -32,11 +32,11 @@ class ModuleService(PsosService):
         s_raw /= 5
         s_raw = round(s_raw)
         
-        self.svc.new_cust[self.attr] = s_raw
+        self.svc.cust.new_cust[self.attr] = s_raw
         
         v = {}
         v["raw"] = s_raw
-        v["curr"] = self.svc.cust[self.attr]
+        v["curr"] = self.svc.cust.cust[self.attr]
         msg = "CURR: {curr}\nNEW: {raw}".format(**v)
         self.menu.update_lcd(msg)
         

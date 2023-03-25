@@ -16,16 +16,16 @@ class ModuleService(PsosService):
         svc = self.get_svc(svc)
         
         if self.get_parm("save",False):
-            if svc.new_cust == None:
+            if svc.cust.new_cust == None:
                 menu.update_lcd("NO CHANGES MADE")
             else:
-                svc.save_new_cust()
+                svc.cust.save_new_cust()
                 menu.update_lcd("Change Saved")
         else:
-            if svc.new_cust == None:
+            if svc.cust.new_cust == None:
                 menu.update_lcd("Exited")
             else:
-                svc.discard_new_cust()
+                svc.cust.discard_new_cust()
                 menu.update_lcd("Change Discarded")
         
               
