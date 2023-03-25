@@ -20,7 +20,7 @@
        This can be useful for testing since it allows running the test without
        waiting for WiFi and the MQTT broker. This also allows PSOS to be run on
        microcontrollers without WiFi such as the original Raspberry Pi Pico.
-    
+
 """
 
 from psos_svc import PsosService
@@ -91,8 +91,12 @@ class ModuleService(PsosService):
         self._client = None
         self._subscriptions = []       
         self.wifi    = self.get_svc("wifi")
+        self._msg_buff = []
 
     def mqtt_callback(self,topic,msg):
+        if self._in_buff(topic,msg):
+            return
+        
         t = to_str(topic)
         m = to_str(msg)
         
@@ -101,6 +105,27 @@ class ModuleService(PsosService):
         for subscr in self._subscriptions:
             subscr.put_match(t_split,t,m)
             
+    # check if we recently received the the same topic and buffer.
+    # This deals with duplicate messages received due to the
+    # RPi400 Mosquitto MQTT broker bridge with HiveMQ
+    def _in_buff(self,topic,msg):
+        # remove any messages in buffer older than 3 seconds
+        t = time.ticks_ms()
+        while len(self._msg_buff) > 0:
+            if time.ticks_diff(t,self._msg_buff[0][0]) > 3000:
+                self._msg_buff.pop(0)
+            else:
+                break
+                
+        for i in range(len(self._msg_buff)):
+            b = self._msg_buff[i]
+            if b[1] == topic and b[2] == msg:
+                return True
+            
+        # msg not in buff, add it
+        self._msg_buff.append([t,topic,msg])
+        return False
+          
     def exit_svc(self):
         if (self._client != None and
             self.wifi.wifi_connected()):
