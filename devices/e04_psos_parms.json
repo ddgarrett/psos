@@ -3,37 +3,48 @@
 "main":"psos_main",
 
 "defaults": {
-    "mqtt_prefix":"e04",
-    "pub_hourglass":"local/e04/lcd"
-    },
+    "dev"  :"{device}",
+    "lcd"  :"lcd",
+    "gyro" :"gyro",
+    "menu" :"substation_menu.json",
+    "log_file":"reset_rsn.txt",
+    "no_format":["format"],
+    "tz"    : -8
+ },
     
 "NOTE":"wifi, mqtt and i2c (if used) must be first three services",
     
 "services": [
     {"name": "wifi", "module":"svc_wifi", "disconnect":false, "set_time":true},
-    {"name": "mqtt", "module":"svc_mqtt",  "broker":"hivemq", "__broker":"docker_esp", "_broker":"docker_home_acer" },
+    {"name": "mqtt", "module":"svc_mqtt",  "_broker":"hivemq", "broker":"rpi400_mqtt" },
     {"name": "i2c0", "module":"svc_i2c",   "channel":0 },
     
     {"name": "log",  "module":"svc_log",   "pub_log":"e04/log" },
     
     {"name": "lcd", "module":"svc_lcd", "i2c":"i2c0", "i2c_addr":"0x3C", "timeout":10,
-             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°⌛", 
+             "lcd_col_cnt":16, "lcd_row_cnt":4, "custom_char":"°✗📶", 
              "disp_driver":"ssd1306_lcd",
              "subscr_msg":"e04/lcd" },
              
     {"name": "temp", "module":"svc_dht", "dht_pin":5,
              "subscr_upd":"e04/dht/upd",   "pub_upd":"e04/dht" },
-    {"name": "touch0", "module":"svc_touch", "pin":4, "threshold":300,
-             "pub_touch":"e04/dht/upd" },      
     {"name": "dsp_temp_e04", "module":"svc_pipe",
-             "subscr_in":"e04/dht",  "pub_out":"e04/lcd",
-             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e04'}}]" },   
-    {"name": "dsp_temp_emp", "module":"svc_pipe",
-             "subscr_in":"e04/dht",  "pub_out":"emp/lcd",
-             "format":"['clear',{{'msg':'Temp & Humidity\nTemp: {temp}°\nHum: {hum}%\nDev: e04'}}]" },   
+             "subscr_in":"e04/dht",  "pub_out":"local/e04/lcd",
+             "format":"['clear',{{'msg':'TEMP & HUMIDITY\nTEMP: {temp}°\nHUM: {hum}%\nDEV: e04'}}]" },
 
+    {"name": "soil", "module":"svc_soil",   "pin":15, "dry":5700, "wet":2700, "cycles":5,
+             "sub":"e04/soil/upd",   "pub":"e04/soil" },
+    {"name": "dsp_soil", "module":"svc_pipe",
+             "subscr_in":"{dev}/soil",  "pub_out":"local/{dev}/lcd",
+             "format":"['clear',{{'msg':'SOIL MOISTURE\nLVL: {lvl_10}\nREADING: {raw}\nDEV: {dev}'}}]" },
+             
+    {"name": "gyro", "module":"svc_gyro", "i2c":"i2c0", "trigger":25,
+             "pub":"local/e04/menu" },
+             
     {"name": "mem_use", "module":"svc_mem_use", 
-             "subscr_upd":"e04/mem/upd",   "pub_upd":"e04/mem" }
+             "subscr_upd":"e04/mem/upd",   "pub_upd":"e04/mem" },
+             
+    {"name": "menu", "module":"svc_menu", "lcd":"lcd", "sub":"e04/menu", "menu":"{menu}"}
 
  ]
 }
