@@ -21,6 +21,8 @@ import uasyncio
 from machine import ADC, Pin
 import queue
 
+from psos_cust import Customization
+
 # All initialization classes are named ModuleService
 class ModuleService(PsosService):
     
@@ -41,11 +43,11 @@ class ModuleService(PsosService):
         # self.dry = self.get_parm("dry",58000)
         self.cycles = self.get_parm("cycles",5)
         
-        self.cust = self.read_cust()
-        if self.cust == None:
-            self.cust = {
+        self.cust = Customization(parms)
+        if self.cust.get_cust() == None:
+            self.cust.cust = {
                 "wet":self.get_parm("wet",25000),
-                "dry":self.get_parm("dry",58000)}
+                "dry":self.get_parm("dry",58000) }
         
     async def run(self):
         
@@ -58,8 +60,8 @@ class ModuleService(PsosService):
             await mqtt.publish(self.pub,r)
 
     async def get_adc_value(self):
-        dry = self.cust["dry"]
-        wet = self.cust["wet"]
+        dry = self.cust.cust["dry"]
+        wet = self.cust.cust["wet"]
         
         cycle=5
         raw = 0
