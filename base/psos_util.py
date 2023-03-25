@@ -35,7 +35,7 @@ def format_defaults(defaults,config):
         
     for k,v in defaults.items():
         # v = defaults
-        if type(v) == str and '{' in v and not v in no_fmt:
+        if type(v) == str and '{' in v and not k in no_fmt:
             defaults[k] = v.format(**config)
         
 # return the file path of a file,
